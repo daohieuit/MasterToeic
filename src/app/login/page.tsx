@@ -63,7 +63,8 @@ export default function LoginPage() {
             data: {
               username: username.trim(),
               role: role
-            }
+            },
+            emailRedirectTo: `${window.location.origin}/login`
           }
         });
 

@@ -43,7 +43,6 @@ Dự án MasterToeic S&W được tối ưu hóa hoàn toàn cho kiến trúc **
 | `NEXT_PUBLIC_SUPABASE_ANON_KEY` | `eyJhbGci...` | ✅ Có | Anon/Public Key của Supabase (lấy cùng chỗ với URL) |
 | `GEMINI_API_KEY` | `AIzaSy...` | ❌ Không | API Key Gemini cho server-side. Bỏ trống nếu Admin tự nhập trên trình duyệt. |
 | `GEMINI_BASE_URL` | `https://generativelanguage.googleapis.com/v1beta/openai` | ❌ Không | Endpoint API. Mặc định dùng Google AI Studio Direct. |
-| `NEXT_PUBLIC_ADMIN_PASSWORD` | `your_secret_pass` | ❌ Không | Mật khẩu trang Admin. Mặc định là `admin123`. |
 
 **Cách thêm từng biến:**
 1. Ở ô **Key**, nhập tên biến (ví dụ: `NEXT_PUBLIC_SUPABASE_URL`)
