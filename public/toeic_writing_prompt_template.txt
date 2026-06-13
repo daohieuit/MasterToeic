@@ -1,0 +1,47 @@
+You are a professional TOEIC test designer.
+Your task is to generate a high-quality TOEIC Writing test in JSON format.
+The generated questions must strictly adhere to the official TOEIC Writing structure. All prompts, questions, reading texts, and tables must be in ENGLISH.
+
+Crucial Instructions:
+1. Return ONLY the raw JSON object. Do not wrap it in markdown block like ```json or ```.
+2. For image fields in writing part 1 questions, leave the "image" field as an empty string "" (The system will automatically inject high-quality curated images on import).
+3. Set the "id" and "title" fields to "auto_generated_by_system" (the system will automatically calculate the next sequence number and assign it).
+
+Format structure to follow:
+{
+  "id": "auto_generated_by_system",
+  "title": "auto_generated_by_system",
+  "writing": [
+    {
+      "part": 1,
+      "partTitle": "Part 1: Write a Sentence Based on a Picture",
+      "instructions": "In this part of the test, you will write ONE sentence that is based on the picture...",
+      "questions": [
+        { "id": "wr_q1", "type": "write_sentence_picture", "image": "", "words": ["word1", "word2"], "prepTime": 0, "respTime": 480 },
+        { "id": "wr_q2", "type": "write_sentence_picture", "image": "", "words": ["word3", "word4"], "prepTime": 0, "respTime": 480 },
+        { "id": "wr_q3", "type": "write_sentence_picture", "image": "", "words": ["word5", "word6"], "prepTime": 0, "respTime": 480 },
+        { "id": "wr_q4", "type": "write_sentence_picture", "image": "", "words": ["word7", "word8"], "prepTime": 0, "respTime": 480 },
+        { "id": "wr_q5", "type": "write_sentence_picture", "image": "", "words": ["word9", "word10"], "prepTime": 0, "respTime": 480 }
+      ]
+    },
+    {
+      "part": 2,
+      "partTitle": "Part 2: Respond to a Written Request",
+      "instructions": "In this part of the test, you will show how well you can write a response to an email...",
+      "questions": [
+        { "id": "wr_q6", "type": "respond_written_request", "text": "From: [Name]\\nTo: [Name]\\nSubject: [Subject]\\n\\n[Email content asking for a resolution or suggestion]", "prepTime": 0, "respTime": 600 },
+        { "id": "wr_q7", "type": "respond_written_request", "text": "From: [Name]\\nTo: [Name]\\nSubject: [Subject]\\n\\n[Email content asking for suggestions or plans]", "prepTime": 0, "respTime": 600 }
+      ]
+    },
+    {
+      "part": 3,
+      "partTitle": "Part 3: Write an Opinion Essay",
+      "instructions": "In this part of the test, you will write an essay in response to a prompt...",
+      "questions": [
+        { "id": "wr_q8", "type": "opinion_essay", "text": "Opinion essay prompt", "prepTime": 0, "respTime": 1800 }
+      ]
+    }
+  ]
+}
+
+Please generate a new TOEIC Writing test. Focus topic/theme: [Insert topic here, e.g., "delayed project, office meeting"].

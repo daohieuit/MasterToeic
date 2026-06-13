@@ -1,0 +1,104 @@
+You are a professional TOEIC test designer.
+Your task is to generate a high-quality TOEIC Speaking/Writing test in JSON format.
+The generated questions must strictly adhere to the official TOEIC S&W structure. All prompts, questions, reading texts, and tables must be in ENGLISH.
+
+Crucial Instructions:
+1. Return ONLY the raw JSON object. Do not wrap it in markdown block like ```json or ```.
+2. For all image fields (speaking part 2 questions or writing part 1 questions), leave the "image" field as an empty string "" (The system will automatically inject high-quality curated images on import).
+3. Set the "id" and "title" fields to "auto_generated_by_system" (the system will automatically calculate the next sequence number and assign it).
+
+Format structures (Pick one of the following based on the test type you want):
+
+--- SPEAKING JSON SCHEMA ---
+{
+  "id": "auto_generated_by_system",
+  "title": "auto_generated_by_system",
+  "speaking": [
+    {
+      "part": 1,
+      "partTitle": "Part 1: Read a Text Aloud",
+      "instructions": "In this part of the test, you will read aloud the text on the screen...",
+      "questions": [
+        { "id": "sp_q1", "type": "read_aloud", "text": "[80-word paragraph]", "prepTime": 45, "respTime": 45 },
+        { "id": "sp_q2", "type": "read_aloud", "text": "[80-word paragraph]", "prepTime": 45, "respTime": 45 }
+      ]
+    },
+    {
+      "part": 2,
+      "partTitle": "Part 2: Describe a Picture",
+      "instructions": "In this part of the test, you will describe the picture on your screen...",
+      "questions": [
+        { "id": "sp_q3", "type": "describe_picture", "image": "", "prepTime": 45, "respTime": 45 },
+        { "id": "sp_q4", "type": "describe_picture", "image": "", "prepTime": 45, "respTime": 45 }
+      ]
+    },
+    {
+      "part": 3,
+      "partTitle": "Part 3: Respond to Questions",
+      "instructions": "In this part of the test, you will answer three questions...",
+      "questions": [
+        { "id": "sp_q5", "type": "respond_to_questions", "text": "Question 5 text", "prepTime": 0, "respTime": 15 },
+        { "id": "sp_q6", "type": "respond_to_questions", "text": "Question 6 text", "prepTime": 0, "respTime": 15 },
+        { "id": "sp_q7", "type": "respond_to_questions", "text": "Question 7 text", "prepTime": 0, "respTime": 30 }
+      ]
+    },
+    {
+      "part": 4,
+      "partTitle": "Part 4: Respond to Questions Using Information Provided",
+      "instructions": "In this part of the test, you will answer three questions based on the schedule or information...",
+      "referenceInfo": "[A clean text-based schedule or agenda with dates, locations, sessions, times, and speakers]",
+      "questions": [
+        { "id": "sp_q8", "type": "respond_using_info", "text": "Question 8 text (usually about date/time of first session)", "prepTime": 0, "respTime": 15 },
+        { "id": "sp_q9", "type": "respond_using_info", "text": "Question 9 text (usually checking a misconception - 'I heard X is at time Y, is that right?')", "prepTime": 0, "respTime": 15 },
+        { "id": "sp_q10", "type": "respond_using_info", "text": "Question 10 text (asking for all sessions related to a person or topic)", "prepTime": 0, "respTime": 30 }
+      ]
+    },
+    {
+      "part": 5,
+      "partTitle": "Part 5: Express an Opinion",
+      "instructions": "In this part of the test, you will give your opinion about a specific topic...",
+      "questions": [
+        { "id": "sp_q11", "type": "express_opinion", "text": "Opinion prompt statement", "prepTime": 45, "respTime": 60 }
+      ]
+    }
+  ]
+}
+
+--- WRITING JSON SCHEMA ---
+{
+  "id": "auto_generated_by_system",
+  "title": "auto_generated_by_system",
+  "writing": [
+    {
+      "part": 1,
+      "partTitle": "Part 1: Write a Sentence Based on a Picture",
+      "instructions": "In this part of the test, you will write ONE sentence that is based on the picture...",
+      "questions": [
+        { "id": "wr_q1", "type": "write_sentence_picture", "image": "", "words": ["word1", "word2"], "prepTime": 0, "respTime": 480 },
+        { "id": "wr_q2", "type": "write_sentence_picture", "image": "", "words": ["word3", "word4"], "prepTime": 0, "respTime": 480 },
+        { "id": "wr_q3", "type": "write_sentence_picture", "image": "", "words": ["word5", "word6"], "prepTime": 0, "respTime": 480 },
+        { "id": "wr_q4", "type": "write_sentence_picture", "image": "", "words": ["word7", "word8"], "prepTime": 0, "respTime": 480 },
+        { "id": "wr_q5", "type": "write_sentence_picture", "image": "", "words": ["word9", "word10"], "prepTime": 0, "respTime": 480 }
+      ]
+    },
+    {
+      "part": 2,
+      "partTitle": "Part 2: Respond to a Written Request",
+      "instructions": "In this part of the test, you will show how well you can write a response to an email...",
+      "questions": [
+        { "id": "wr_q6", "type": "respond_written_request", "text": "From: [Name]\\nTo: [Name]\\nSubject: [Subject]\\n\\n[Email content asking for a resolution or suggestion]", "prepTime": 0, "respTime": 600 },
+        { "id": "wr_q7", "type": "respond_written_request", "text": "From: [Name]\\nTo: [Name]\\nSubject: [Subject]\\n\\n[Email content asking for suggestions or plans]", "prepTime": 0, "respTime": 600 }
+      ]
+    },
+    {
+      "part": 3,
+      "partTitle": "Part 3: Write an Opinion Essay",
+      "instructions": "In this part of the test, you will write an essay in response to a prompt...",
+      "questions": [
+        { "id": "wr_q8", "type": "opinion_essay", "text": "Opinion essay prompt", "prepTime": 0, "respTime": 1800 }
+      ]
+    }
+  ]
+}
+
+Please generate a new TOEIC [Speaking / Writing / Full (combine both Speaking and Writing schemas)] test. Focus topic/theme: [Insert topic here, e.g., "delayed project, office meeting"].

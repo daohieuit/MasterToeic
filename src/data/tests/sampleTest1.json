@@ -1,0 +1,204 @@
+{
+  "id": "toeic_sw_test_1",
+  "title": "TOEIC S&W Full Test 1",
+  "description": "Đề thi thử TOEIC Speaking & Writing số 1 bám sát định dạng cấu trúc đề thi chính thức.",
+  "speaking": [
+    {
+      "part": 1,
+      "partTitle": "Part 1: Read a Text Aloud",
+      "instructions": "In this part of the test, you will read aloud the text on the screen. You will have 45 seconds to prepare. Then, you will have 45 seconds to read the text aloud.",
+      "questions": [
+        {
+          "id": "sp_q1",
+          "type": "read_aloud",
+          "text": "Thank you for calling Apex Electronics. Our offices are currently closed. Our regular business hours are Monday through Friday, from nine A.M. to six P.M. If you are calling to check the status of an order, please visit our website at www.apexelectronics.com. Otherwise, please leave a message after the tone, and one of our customer service representatives will return your call as soon as possible. Thank you.",
+          "prepTime": 45,
+          "respTime": 45
+        },
+        {
+          "id": "sp_q2",
+          "type": "read_aloud",
+          "text": "Attention passengers of Flight 402 to Chicago. Due to severe weather conditions in the destination area, our departure has been delayed by approximately forty-five minutes. We apologize for any inconvenience this may cause to your travel plans. Please remain near the boarding gate area for further announcements. Light refreshments are being served at the counter near Gate 12 for all ticket holders.",
+          "prepTime": 45,
+          "respTime": 45
+        }
+      ]
+    },
+    {
+      "part": 2,
+      "partTitle": "Part 2: Describe a Picture",
+      "instructions": "In this part of the test, you will describe the picture on your screen in as much detail as possible. You will have 45 seconds to prepare your response. Then, you will have 45 seconds to speak about the picture.",
+      "questions": [
+        {
+          "id": "sp_q3",
+          "type": "describe_picture",
+          "image": "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800",
+          "prepTime": 45,
+          "respTime": 45
+        },
+        {
+          "id": "sp_q4",
+          "type": "describe_picture",
+          "image": "https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=800",
+          "prepTime": 45,
+          "respTime": 45
+        }
+      ]
+    },
+    {
+      "part": 3,
+      "partTitle": "Part 3: Respond to Questions",
+      "instructions": "In this part of the test, you will answer three questions. You will have no preparation time. You will have 15 seconds to respond to Questions 5 and 6, and 30 seconds to respond to Question 7.",
+      "questions": [
+        {
+          "id": "sp_q5",
+          "type": "respond_to_questions",
+          "text": "How often do you dine out at restaurants, and who do you usually go with?",
+          "prepTime": 0,
+          "respTime": 15
+        },
+        {
+          "id": "sp_q6",
+          "type": "respond_to_questions",
+          "text": "What is your favorite type of cuisine, and why do you prefer it?",
+          "prepTime": 0,
+          "respTime": 15
+        },
+        {
+          "id": "sp_q7",
+          "type": "respond_to_questions",
+          "text": "When choosing a new restaurant to visit, which of the following has the biggest influence on your decision: recommendations from friends, online reviews, or television food shows?",
+          "prepTime": 0,
+          "respTime": 30
+        }
+      ]
+    },
+    {
+      "part": 4,
+      "partTitle": "Part 4: Respond to Questions Using Information Provided",
+      "instructions": "In this part of the test, you will answer three questions based on the schedule or information provided on your screen. You will have 45 seconds to read the information before the questions begin. You will have no preparation time. You will have 15 seconds to respond to Questions 8 and 9, and 30 seconds to respond to Question 10.",
+      "referenceInfo": "Global Tech Summit 2026\nDate: October 15, 2026\nLocation: Ballroom A, Grand Hotel\n\nSchedule:\n- 09:00 AM - 10:00 AM: Keynote Address: The Future of AI (Speaker: Dr. Ellen Vance)\n- 10:00 AM - 11:30 AM: Panel Discussion: Cybersecurity Trends (Moderator: John Miller)\n- 11:30 AM - 01:00 PM: Lunch Break (Buffet provided at the Hotel Restaurant)\n- 01:00 PM - 02:30 PM: Workshop: Cloud Computing Best Practices (Speaker: Sarah Chen)\n- 02:30 PM - 04:00 PM: Closing Remarks & Networking Session",
+      "questions": [
+        {
+          "id": "sp_q8",
+          "type": "respond_using_info",
+          "text": "Could you tell me what date the Global Tech Summit is scheduled for, and what time the keynote address starts?",
+          "prepTime": 0,
+          "respTime": 15
+        },
+        {
+          "id": "sp_q9",
+          "type": "respond_using_info",
+          "text": "I was planning to attend the panel discussion on Cybersecurity Trends, but I can only make it in the afternoon. That session is scheduled for the afternoon, correct?",
+          "prepTime": 0,
+          "respTime": 15
+        },
+        {
+          "id": "sp_q10",
+          "type": "respond_using_info",
+          "text": "I am very interested in learning from Dr. Ellen Vance and Sarah Chen. Could you please give me all the details about the sessions they are hosting?",
+          "prepTime": 0,
+          "respTime": 30
+        }
+      ]
+    },
+    {
+      "part": 5,
+      "partTitle": "Part 5: Express an Opinion",
+      "instructions": "In this part of the test, you will give your opinion about a specific topic. You will have 45 seconds to prepare your response. Then, you will have 60 seconds to speak.",
+      "questions": [
+        {
+          "id": "sp_q11",
+          "type": "express_opinion",
+          "text": "Do you agree or disagree with the following statement? 'Employees are much more productive when they work from home than when they work in a traditional office.' Give specific reasons and examples to support your opinion.",
+          "prepTime": 45,
+          "respTime": 60
+        }
+      ]
+    }
+  ],
+  "writing": [
+    {
+      "part": 1,
+      "partTitle": "Part 1: Write a Sentence Based on a Picture",
+      "instructions": "In this part of the test, you will write ONE sentence that is based on the picture shown. Your sentence must contain the two words or phrases given below the picture. You cannot change the forms of the words, and you must use them in a single sentence. You will have 8 minutes to complete all 5 questions in this part.",
+      "questions": [
+        {
+          "id": "wr_q1",
+          "type": "write_sentence_picture",
+          "image": "https://images.unsplash.com/photo-1582719508461-905c673771fd?w=800",
+          "words": ["receptionist", "guest"],
+          "prepTime": 0,
+          "respTime": 480
+        },
+        {
+          "id": "wr_q2",
+          "type": "write_sentence_picture",
+          "image": "https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=800",
+          "words": ["presentation", "projector"],
+          "prepTime": 0,
+          "respTime": 480
+        },
+        {
+          "id": "wr_q3",
+          "type": "write_sentence_picture",
+          "image": "https://images.unsplash.com/photo-1579154204601-01588f351167?w=800",
+          "words": ["scientist", "microscope"],
+          "prepTime": 0,
+          "respTime": 480
+        },
+        {
+          "id": "wr_q4",
+          "type": "write_sentence_picture",
+          "image": "https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800",
+          "words": ["worker", "box"],
+          "prepTime": 0,
+          "respTime": 480
+        },
+        {
+          "id": "wr_q5",
+          "type": "write_sentence_picture",
+          "image": "https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800",
+          "words": ["engineer", "blueprint"],
+          "prepTime": 0,
+          "respTime": 480
+        }
+      ]
+    },
+    {
+      "part": 2,
+      "partTitle": "Part 2: Respond to a Written Request",
+      "instructions": "In this part of the test, you will show how well you can write a response to an email. You will have 10 minutes to read the email and write your response for each question.",
+      "questions": [
+        {
+          "id": "wr_q6",
+          "type": "respond_written_request",
+          "text": "From: Sarah Jenkins, Purchasing Manager (sjenkins@apextech.com)\nTo: Customer Support Representative\nSubject: Delayed Shipment of Order #99281\n\nDear Customer Support,\n\nI am writing to express my frustration regarding the order we placed last week (Order #99281). The shipment was scheduled to arrive at our office yesterday morning, but we have not received it yet, and we have received no updates. This delay is causing significant disruptions to our current project.\n\nPlease let me know the current status of our shipment and explain why it was delayed. Also, please suggest how you can resolve this issue immediately.\n\nSincerely,\nSarah Jenkins",
+          "prepTime": 0,
+          "respTime": 600
+        },
+        {
+          "id": "wr_q7",
+          "type": "respond_written_request",
+          "text": "From: Robert Vance, HR Director (rvance@scrantongroup.com)\nTo: All Staff Members\nSubject: Suggestions for Annual Team Building Event\n\nDear Team,\n\nWe are currently planning our Annual Team Building Event, which is scheduled to take place next month. In the past, we have organized outdoor sports events, but this year we would like to try something different that encourages collaboration and is enjoyable for everyone.\n\nI would appreciate it if you could reply to this email with two suggestions for our team building activities. Please make sure to explain why your suggestions would be beneficial for our team.\n\nBest regards,\nRobert Vance",
+          "prepTime": 0,
+          "respTime": 600
+        }
+      ]
+    },
+    {
+      "part": 3,
+      "partTitle": "Part 3: Write an Opinion Essay",
+      "instructions": "In this part of the test, you will write an essay in response to a prompt that asks you to state, explain, and support your opinion on an issue. Typically, an effective essay will contain a minimum of 300 words. You will have 30 minutes to plan, write, and revise your essay.",
+      "questions": [
+        {
+          "id": "wr_q8",
+          "type": "opinion_essay",
+          "text": "Some people think that technology has made it much easier for students to learn, while others believe it has created too many distractions in the classroom. Which opinion do you agree with? Support your answer with specific reasons and examples.",
+          "prepTime": 0,
+          "respTime": 1800
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,65 @@
+You are a professional TOEIC test designer.
+Your task is to generate a high-quality TOEIC Speaking test in JSON format.
+The generated questions must strictly adhere to the official TOEIC Speaking structure. All prompts, questions, reading texts, and tables must be in ENGLISH.
+
+Crucial Instructions:
+1. Return ONLY the raw JSON object. Do not wrap it in markdown block like ```json or ```.
+2. For image fields in speaking part 2, leave the "image" field as an empty string "" (The system will automatically inject high-quality curated images on import).
+3. Set the "id" and "title" fields to "auto_generated_by_system" (the system will automatically calculate the next sequence number and assign it).
+
+Format structure to follow:
+{
+  "id": "auto_generated_by_system",
+  "title": "auto_generated_by_system",
+  "speaking": [
+    {
+      "part": 1,
+      "partTitle": "Part 1: Read a Text Aloud",
+      "instructions": "In this part of the test, you will read aloud the text on the screen...",
+      "questions": [
+        { "id": "sp_q1", "type": "read_aloud", "text": "[80-word paragraph]", "prepTime": 45, "respTime": 45 },
+        { "id": "sp_q2", "type": "read_aloud", "text": "[80-word paragraph]", "prepTime": 45, "respTime": 45 }
+      ]
+    },
+    {
+      "part": 2,
+      "partTitle": "Part 2: Describe a Picture",
+      "instructions": "In this part of the test, you will describe the picture on your screen...",
+      "questions": [
+        { "id": "sp_q3", "type": "describe_picture", "image": "", "prepTime": 45, "respTime": 45 },
+        { "id": "sp_q4", "type": "describe_picture", "image": "", "prepTime": 45, "respTime": 45 }
+      ]
+    },
+    {
+      "part": 3,
+      "partTitle": "Part 3: Respond to Questions",
+      "instructions": "In this part of the test, you will answer three questions...",
+      "questions": [
+        { "id": "sp_q5", "type": "respond_to_questions", "text": "Question 5 text", "prepTime": 0, "respTime": 15 },
+        { "id": "sp_q6", "type": "respond_to_questions", "text": "Question 6 text", "prepTime": 0, "respTime": 15 },
+        { "id": "sp_q7", "type": "respond_to_questions", "text": "Question 7 text", "prepTime": 0, "respTime": 30 }
+      ]
+    },
+    {
+      "part": 4,
+      "partTitle": "Part 4: Respond to Questions Using Information Provided",
+      "instructions": "In this part of the test, you will answer three questions based on the schedule or information...",
+      "referenceInfo": "[A clean text-based schedule or agenda with dates, locations, sessions, times, and speakers]",
+      "questions": [
+        { "id": "sp_q8", "type": "respond_using_info", "text": "Question 8 text (usually about date/time of first session)", "prepTime": 0, "respTime": 15 },
+        { "id": "sp_q9", "type": "respond_using_info", "text": "Question 9 text (usually checking a misconception - 'I heard X is at time Y, is that right?')", "prepTime": 0, "respTime": 15 },
+        { "id": "sp_q10", "type": "respond_using_info", "text": "Question 10 text (asking for all sessions related to a person or topic)", "prepTime": 0, "respTime": 30 }
+      ]
+    },
+    {
+      "part": 5,
+      "partTitle": "Part 5: Express an Opinion",
+      "instructions": "In this part of the test, you will give your opinion about a specific topic...",
+      "questions": [
+        { "id": "sp_q11", "type": "express_opinion", "text": "Opinion prompt statement", "prepTime": 45, "respTime": 60 }
+      ]
+    }
+  ]
+}
+
+Please generate a new TOEIC Speaking test. Focus topic/theme: [Insert topic here, e.g., "delayed project, office meeting"].
