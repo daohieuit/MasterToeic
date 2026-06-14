@@ -52,3 +52,7 @@ Thumbs.db
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# local tool data & proxy secrets
+.codegraph/
+cookie.txt

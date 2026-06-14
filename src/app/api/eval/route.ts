@@ -1,7 +1,34 @@
 import { NextResponse } from 'next/server';
+import { createClient } from '@supabase/supabase-js';
 
 export async function POST(req: Request) {
   try {
+    const authHeader = req.headers.get('authorization');
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return NextResponse.json({ error: 'Unauthorized: Vui lòng đăng nhập để sử dụng tính năng này.', isUnauthorized: true }, { status: 403 });
+    }
+    const token = authHeader.split(' ')[1];
+    
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    
+    if (supabaseUrl && supabaseAnonKey) {
+      const supabase = createClient(supabaseUrl, supabaseAnonKey);
+      const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+      
+      if (authError || !user) {
+        return NextResponse.json({ error: 'Unauthorized: Phiên đăng nhập không hợp lệ.', isUnauthorized: true }, { status: 403 });
+      }
+
+      const { data: profile } = await supabase.from('profiles').select('can_use_ai_grading').eq('id', user.id).single();
+      
+      if (!profile || !profile.can_use_ai_grading) {
+        return NextResponse.json({ error: 'Forbidden: Tính năng chấm điểm bằng AI chỉ dành cho tài khoản được cấp quyền.', isUnauthorized: true }, { status: 403 });
+      }
+    } else {
+      return NextResponse.json({ error: 'Server Configuration Error: Thiếu kết nối cơ sở dữ liệu.' }, { status: 500 });
+    }
+
     const { question, answer, type, details } = await req.json();
 
     const isBlank = !answer || 
@@ -102,6 +129,10 @@ Crucial Instructions for Grading Strictness:
   * Does not start with a capitalized letter: Max score 80/100.
   * Does not end with a period '.': Max score 80/100.
   * Does not match the picture context (irrelevant): Max score 40/100.
+- For picture-based questions (Writing Part 1 "write_sentence_picture" and Speaking Part 2 "describe_picture"):
+  * You will be provided with the actual image. Keep in mind that a single picture can have many valid descriptions.
+  * The AI's original reference description might only focus on one aspect of the image (e.g. Person A). If the user describes a different aspect of the image (e.g. Person B, or the background objects, or the room itself) and their description is factually true and accurate regarding the actual image, you MUST mark it as correct and not penalize them.
+  * Do not strictly compare the user's response to the reference description. As long as the user's response accurately describes something that is actually visible in the image, it is relevant and correct (lenient grading).
 - For Writing Part 2 (Respond to a Written Request): The response must cover ALL requested tasks in the prompt. If any task/requirement is missing, deduct points directly (each missing task drops the max possible score by 25 points).
 - For Writing Part 3 (Write an Opinion Essay): The essay MUST be at least 300 words. If it is shorter, apply a heavy penalty (e.g., if it is less than 300 words, the max score is 60/100; if less than 200 words, the max score is 40/100; if less than 100 words, the max score is 20/100).
 - For Speaking Part 1 (Read a Text Aloud): Grade strictly on Pronunciation (especially ending sounds like -s, -es, -ed, -t, -k) and Intonation (using PIPE technique: content words emphasized, lowered voice at the end of statements, raised voice for Yes/No questions, correct phrasing pauses).
@@ -119,6 +150,14 @@ Additional Output Requirements:
 JSON Structure:
 {
   "score": number, // 0-100
+  "subscores": {
+    "pronunciation": number, // 0-100 (only for Speaking questions)
+    "fluency": number, // 0-100 (only for Speaking questions)
+    "taskCompletion": number, // 0-100 (only for Writing questions)
+    "grammar": number, // 0-100 (both)
+    "vocabulary": number, // 0-100 (both)
+    "cohesion": number // 0-100 (both)
+  },
   "grammarErrors": [
     {
       "original": "original text with error",
@@ -136,6 +175,7 @@ JSON Structure:
 Type: ${type}
 Question/Prompt: ${question}
 ${details?.image ? `Image URL: ${details.image}` : ''}
+${details?.imageDescription ? `Reference AI Image Description: ${details.imageDescription}` : ''}
 ${details?.words ? `Required Words: ${details.words.join(', ')}` : ''}
 ${details?.referenceInfo ? `Reference Information:\n${details.referenceInfo}` : ''}
 
@@ -144,28 +184,87 @@ ${answer}
 
 Please evaluate the user's response according to: ${evaluationCriteria}.`;
 
-    // Make API request to gemini-web2api
-    const response = await fetch(`${baseUrl}/chat/completions`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...(apiKey ? { 'Authorization': `Bearer ${apiKey}` } : {}),
-      },
-      body: JSON.stringify({
-        model: 'gemini-3.5-flash',
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: userMessage }
-        ]
-      }),
-    });
+    const requestMessages: any[] = [
+      { role: 'system', content: systemPrompt }
+    ];
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      return NextResponse.json({ error: `API error: ${errorText}` }, { status: response.status });
+    if (details?.image && (type === 'describe_picture' || type === 'write_sentence_picture')) {
+      requestMessages.push({
+        role: 'user',
+        content: [
+          {
+            type: 'text',
+            text: userMessage
+          },
+          {
+            type: 'image_url',
+            image_url: {
+              url: details.image
+            }
+          }
+        ]
+      });
+    } else {
+      requestMessages.push({
+        role: 'user',
+        content: userMessage
+      });
     }
 
-    const data = await response.json();
+    // Make API request to gemini-web2api with fallback logic
+    const models = [
+      'gemini-3.5-flash',
+      'gemini-3.5-pro',
+      'gemini-3.0-flash',
+      'gemini-3.0-pro',
+      'gemini-2.5-flash',
+      'gemini-2.5-pro',
+      'gemini-2.0-flash',
+      'gemini-1.5-pro',
+      'gemini-1.5-flash'
+    ];
+
+    let response;
+    let data;
+    let success = false;
+    let lastError = '';
+
+    for (const model of models) {
+      try {
+        response = await fetch(`${baseUrl}/chat/completions`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(apiKey ? { 'Authorization': `Bearer ${apiKey}` } : {}),
+          },
+          body: JSON.stringify({
+            model: model,
+            messages: requestMessages
+          }),
+        });
+
+        if (response.ok) {
+          data = await response.json();
+          success = true;
+          console.log(`Successfully evaluated using model: ${model}`);
+          break; // Thoát vòng lặp khi thành công
+        } else {
+          const errorText = await response.text();
+          console.warn(`Model ${model} failed with status ${response.status}: ${errorText}`);
+          lastError = `Status ${response.status}: ${errorText}`;
+          // Tiếp tục thử model tiếp theo
+        }
+      } catch (err: any) {
+        console.warn(`Fetch error for model ${model}:`, err);
+        lastError = err.message || String(err);
+        // Tiếp tục thử model tiếp theo
+      }
+    }
+
+    if (!success || !data) {
+      return NextResponse.json({ error: `Tất cả các model đều gặp lỗi hoặc hết hạn mức. Lỗi cuối cùng: ${lastError}` }, { status: 502 });
+    }
+
     let textResponse = data.choices?.[0]?.message?.content || '';
 
     // Robust JSON extraction
@@ -186,6 +285,14 @@ Please evaluate the user's response according to: ${evaluationCriteria}.`;
       // Fallback response structure
       parsedResult = {
         score: 50,
+        subscores: {
+          pronunciation: 50,
+          fluency: 50,
+          taskCompletion: 50,
+          grammar: 50,
+          vocabulary: 50,
+          cohesion: 50
+        },
         grammarErrors: [],
         feedback: `Không thể phân tích phản hồi tự động từ AI. Nhận xét thô:\n${textResponse}`,
         pronunciationFeedback: null,

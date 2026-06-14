@@ -1,36 +1,36 @@
 :root {
-  /* Light Theme */
-  --background: #FAF9F6;
+  /* Light Theme (Warm Alabaster & Muted Gold) */
+  --background: #FAF7F0;
   --background-secondary: #FFFFFF;
-  --border: #D1D5DB;
-  --border-focus: #111827;
-  --text-primary: #111827;
-  --text-secondary: #4B5563;
-  --accent: #E64A19;
-  --accent-rgb: 230, 74, 25;
-  --accent-hover: #D84315;
-  --accent-light: rgba(230, 74, 25, 0.08);
-  --success: #059669;
-  --success-light: rgba(5, 150, 105, 0.08);
+  --border: #E5DEC9;
+  --border-focus: #403225;
+  --text-primary: #0F0A05;
+  --text-secondary: #6E6455;
+  --accent: #938053;
+  --accent-rgb: 147, 128, 83;
+  --accent-hover: #BEA45F;
+  --accent-light: rgba(147, 128, 83, 0.08);
+  --success: #4A6B3D;
+  --success-light: rgba(74, 107, 61, 0.08);
   --font-mono: monospace;
   --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
   --border-radius: 1px; /* Sharp edges */
 }
 
 [data-theme='dark'] {
-  /* Dark Theme */
-  --background: #0F1115;
-  --background-secondary: #161920;
-  --border: #242B35;
-  --border-focus: #E3E8EF;
-  --text-primary: #E3E8EF;
-  --text-secondary: #8896A6;
-  --accent: #FF5A1F;
-  --accent-rgb: 255, 90, 31;
-  --accent-hover: #FF7D4F;
-  --accent-light: rgba(255, 90, 31, 0.08);
-  --success: #10B981;
-  --success-light: rgba(16, 185, 129, 0.08);
+  /* Dark Theme (Pure Black & Antique Gold) */
+  --background: #000000;
+  --background-secondary: #0F0A05;
+  --border: #403225;
+  --border-focus: #938053;
+  --text-primary: #F6F4EE;
+  --text-secondary: #A09686;
+  --accent: #BEA45F;
+  --accent-rgb: 190, 164, 95;
+  --accent-hover: #D4BD7D;
+  --accent-light: rgba(190, 164, 95, 0.08);
+  --success: #889E73;
+  --success-light: rgba(136, 158, 115, 0.08);
   --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.1);
 }
 
@@ -153,6 +153,20 @@ button {
     grid-template-columns: 7fr 3fr;
   }
 }
+
+/* Admin Dashboard PC-First 60/40 Grid */
+.admin-dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px;
+}
+
+@media (min-width: 1024px) {
+  .admin-dashboard-grid {
+    grid-template-columns: 6fr 4fr;
+  }
+}
+
 
 .card-sharp {
   background-color: var(--background-secondary);
@@ -811,4 +825,68 @@ button {
   display: grid;
   grid-template-columns: 1fr;
   gap: 24px;
+}
+
+/* Custom Admin UI Improvements */
+.admin-test-item-card {
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.admin-test-item-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--accent) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.pulsing-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: currentColor;
+  display: inline-block;
+  animation: adminDotPulse 1.6s infinite ease-in-out;
+}
+
+@keyframes adminDotPulse {
+  0% {
+    transform: scale(0.85);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.85);
+    opacity: 0.5;
+  }
+}
+
+/* Custom code input blocks for admin */
+.admin-code-input {
+  font-family: var(--font-mono), monospace !important;
+  font-size: 0.85rem !important;
+  background-color: #0E1116 !important;
+  color: #E3E8EF !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 0px !important;
+  padding: 12px !important;
+}
+
+.admin-code-input:focus {
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 0 1px var(--accent) !important;
+}
+
+/* Admin Input & Select premium focus */
+.admin-premium-input {
+  border: 1px solid var(--border);
+  background: var(--background);
+  color: var(--text-primary);
+  border-radius: 0px !important;
+  transition: all 0.15s ease;
+}
+
+.admin-premium-input:focus {
+  border-color: var(--accent) !important;
+  box-shadow: 0 0 0 1px var(--accent);
 }

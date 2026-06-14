@@ -31,7 +31,7 @@ export default function SpeakingConsole({
   timeMultiplier,
   language
 }: SpeakingConsoleProps) {
-  const { isRecording, audioUrl, startRecording, stopRecording } = useAudioRecorder();
+  const { isRecording, audioUrl, startRecording, stopRecording, stream } = useAudioRecorder();
   const { transcript, isListening, startListening, stopListening, isSupported } = useSpeechRecognition();
   
   // Set limits based on time multiplier (999 means infinite)
@@ -43,6 +43,12 @@ export default function SpeakingConsole({
   const [phase, setPhase] = useState<'prepare' | 'respond' | 'completed'>(question.prepTime > 0 ? 'prepare' : 'respond');
   const [timeLeft, setTimeLeft] = useState(question.prepTime > 0 ? prepDuration : respDuration);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Canvas Waveform visualizer Refs
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const animationRef = useRef<number | null>(null);
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const analyserRef = useRef<AnalyserNode | null>(null);
 
   const handleStartRecording = useCallback(() => {
     startRecording();
@@ -90,6 +96,81 @@ export default function SpeakingConsole({
       handleStartRecording();
     }
   }, [phase, handleStartRecording]);
+
+  // Audio visualizer drawing logic
+  useEffect(() => {
+    if (isRecording && stream && canvasRef.current) {
+      const canvas = canvasRef.current;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      const AudioCtx = window.AudioContext || (window as any).webkitAudioContext;
+      const audioCtx = new AudioCtx();
+      const analyser = audioCtx.createAnalyser();
+      analyser.fftSize = 64; // Small fftSize for simple visualizer bars
+      const source = audioCtx.createMediaStreamSource(stream);
+      source.connect(analyser);
+
+      audioContextRef.current = audioCtx;
+      analyserRef.current = analyser;
+
+      const bufferLength = analyser.frequencyBinCount;
+      const dataArray = new Uint8Array(bufferLength);
+
+      const draw = () => {
+        if (!canvasRef.current) return;
+        animationRef.current = requestAnimationFrame(draw);
+
+        analyser.getByteFrequencyData(dataArray);
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const barWidth = 4;
+        const barGap = 3;
+        const totalBars = Math.floor(canvas.width / (barWidth + barGap));
+        
+        // Use css variable --accent or default to MasterTOEIC gold #BEA45F
+        ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#BEA45F';
+
+        for (let i = 0; i < totalBars; i++) {
+          const dataIdx = Math.floor((i / totalBars) * bufferLength);
+          const value = dataArray[dataIdx] || 0;
+          const percent = value / 255;
+          const barHeight = Math.max(4, percent * canvas.height);
+          const x = i * (barWidth + barGap);
+          const y = (canvas.height - barHeight) / 2;
+
+          // Draw sharp bars (sharp geometry)
+          ctx.fillRect(x, y, barWidth, barHeight);
+        }
+      };
+
+      draw();
+    } else {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+        animationRef.current = null;
+      }
+      if (audioContextRef.current) {
+        if (audioContextRef.current.state !== 'closed') {
+          audioContextRef.current.close();
+        }
+        audioContextRef.current = null;
+      }
+      analyserRef.current = null;
+    }
+
+    return () => {
+      if (animationRef.current) {
+        cancelAnimationFrame(animationRef.current);
+      }
+      if (audioContextRef.current) {
+        if (audioContextRef.current.state !== 'closed') {
+          audioContextRef.current.close();
+        }
+      }
+    };
+  }, [isRecording, stream]);
 
   const handleSubmit = () => {
     handleStopRecording();
@@ -207,12 +288,8 @@ export default function SpeakingConsole({
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--background-secondary)', padding: '12px 16px', border: '1px solid var(--border)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
             {isRecording ? (
-              <div className="waveform-container">
-                <div className="wave-bar active-1" />
-                <div className="wave-bar active-2" />
-                <div className="wave-bar active-3" />
-                <div className="wave-bar active-4" />
-                <div className="wave-bar active-5" />
+              <div style={{ display: 'flex', alignItems: 'center', height: '36px', padding: '0 16px' }}>
+                <canvas ref={canvasRef} width={120} height={36} style={{ display: 'block', background: 'transparent' }} />
               </div>
             ) : (
               <MicOff size={24} style={{ color: 'var(--text-secondary)' }} />

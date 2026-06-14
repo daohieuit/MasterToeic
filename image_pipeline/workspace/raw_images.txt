@@ -1,0 +1,4 @@
+# Dán danh sách link ảnh thô từ internet vào đây (mỗi dòng 1 link)
+# Ví dụ:
+# https://apnews.com/some-image-1.jpg
+# https://apnews.com/some-image-2.jpg

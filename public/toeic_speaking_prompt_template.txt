@@ -4,7 +4,7 @@ The generated questions must strictly adhere to the official TOEIC Speaking stru
 
 Crucial Instructions:
 1. Return ONLY the raw JSON object. Do not wrap it in markdown block like ```json or ```.
-2. For image fields in speaking part 2, leave the "image" field as an empty string "" (The system will automatically inject high-quality curated images on import).
+2. For image fields in speaking part 2, leave the "image" field as an empty string "" (The system will automatically inject high-quality curated images and generate descriptions using Vision AI on import).
 3. Set the "id" and "title" fields to "auto_generated_by_system" (the system will automatically calculate the next sequence number and assign it).
 
 Format structure to follow:

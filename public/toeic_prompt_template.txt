@@ -4,8 +4,9 @@ The generated questions must strictly adhere to the official TOEIC S&W structure
 
 Crucial Instructions:
 1. Return ONLY the raw JSON object. Do not wrap it in markdown block like ```json or ```.
-2. For all image fields (speaking part 2 questions or writing part 1 questions), leave the "image" field as an empty string "" (The system will automatically inject high-quality curated images on import).
-3. Set the "id" and "title" fields to "auto_generated_by_system" (the system will automatically calculate the next sequence number and assign it).
+2. For all image fields (speaking part 2 questions or writing part 1 questions), leave the "image" field as an empty string "".
+3. For writing part 1 questions (write_sentence_picture), leave the "words" field as an empty array [] (The system will automatically inject curated images and analyze them to generate matching words/descriptions using Vision AI).
+4. Set the "id" and "title" fields to "auto_generated_by_system" (the system will automatically calculate the next sequence number and assign it).
 
 Format structures (Pick one of the following based on the test type you want):
 
@@ -74,11 +75,11 @@ Format structures (Pick one of the following based on the test type you want):
       "partTitle": "Part 1: Write a Sentence Based on a Picture",
       "instructions": "In this part of the test, you will write ONE sentence that is based on the picture...",
       "questions": [
-        { "id": "wr_q1", "type": "write_sentence_picture", "image": "", "words": ["word1", "word2"], "prepTime": 0, "respTime": 480 },
-        { "id": "wr_q2", "type": "write_sentence_picture", "image": "", "words": ["word3", "word4"], "prepTime": 0, "respTime": 480 },
-        { "id": "wr_q3", "type": "write_sentence_picture", "image": "", "words": ["word5", "word6"], "prepTime": 0, "respTime": 480 },
-        { "id": "wr_q4", "type": "write_sentence_picture", "image": "", "words": ["word7", "word8"], "prepTime": 0, "respTime": 480 },
-        { "id": "wr_q5", "type": "write_sentence_picture", "image": "", "words": ["word9", "word10"], "prepTime": 0, "respTime": 480 }
+        { "id": "wr_q1", "type": "write_sentence_picture", "image": "", "words": [], "prepTime": 0, "respTime": 480 },
+        { "id": "wr_q2", "type": "write_sentence_picture", "image": "", "words": [], "prepTime": 0, "respTime": 480 },
+        { "id": "wr_q3", "type": "write_sentence_picture", "image": "", "words": [], "prepTime": 0, "respTime": 480 },
+        { "id": "wr_q4", "type": "write_sentence_picture", "image": "", "words": [], "prepTime": 0, "respTime": 480 },
+        { "id": "wr_q5", "type": "write_sentence_picture", "image": "", "words": [], "prepTime": 0, "respTime": 480 }
       ]
     },
     {

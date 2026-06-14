@@ -19,10 +19,9 @@ interface TestHistory {
 }
 
 export default function Dashboard() {
-  const { theme, toggleTheme, language, setLanguage, user, isAdmin, logout, adminApiKey, setAdminApiKey, adminBaseUrl, setAdminBaseUrl, isDbConfigured } = useApp();
+  const { theme, toggleTheme, language, setLanguage, user, isAdmin, logout, isDbConfigured } = useApp();
   const [history, setHistory] = useState<TestHistory[]>([]);
   const [loadingHistory, setLoadingHistory] = useState(false);
-  const [adminApiKeyLocal, setAdminApiKeyLocal] = useState('');
   const [showConfig, setShowConfig] = useState(false);
   const [filter, setFilter] = useState<'all' | 'full' | 'speaking' | 'writing'>('all');
   
@@ -34,7 +33,7 @@ export default function Dashboard() {
     const fetchHistoryAndTests = async () => {
       setLoadingHistory(true);
       
-      // 1. If User is Logged In, fetch from Database
+      // 1. Fetch History based on Auth status
       if (user && supabase) {
         try {
           // Fetch History
@@ -59,8 +58,24 @@ export default function Dashboard() {
             }));
             setHistory(mappedHistory);
           }
+        } catch (e) {
+          console.error('Failed to load database history:', e);
+        }
+      } else {
+        // Guest Mode: Load history from browser LocalStorage
+        const savedHistory = localStorage.getItem('toeic_sw_history');
+        if (savedHistory) {
+          try {
+            setHistory(JSON.parse(savedHistory));
+          } catch (e) {
+            console.error(e);
+          }
+        }
+      }
 
-          // Fetch Custom Tests from Supabase
+      // 2. Fetch Custom Tests (Public for everyone)
+      if (supabase) {
+        try {
           const { data: tests, error } = await supabase
             .from('custom_tests')
             .select('*')
@@ -75,41 +90,30 @@ export default function Dashboard() {
               writing: t.writing_data
             }));
             setCustomTests(mappedTests);
+          } else {
+            throw new Error('Fallback to local tests');
           }
         } catch (e) {
-          console.error('Failed to load database history:', e);
+          // Fallback if db error
+          const savedTests = localStorage.getItem('toeic_sw_custom_tests');
+          if (savedTests) {
+            try { setCustomTests(JSON.parse(savedTests)); } catch (err) {}
+          }
         }
       } else {
-        // 2. Guest Mode: Load from browser LocalStorage
-        const savedHistory = localStorage.getItem('toeic_sw_history');
-        if (savedHistory) {
-          try {
-            setHistory(JSON.parse(savedHistory));
-          } catch (e) {
-            console.error(e);
-          }
-        }
-
         const savedTests = localStorage.getItem('toeic_sw_custom_tests');
         if (savedTests) {
-          try {
-            setCustomTests(JSON.parse(savedTests));
-          } catch (e) {
-            console.error(e);
-          }
+          try { setCustomTests(JSON.parse(savedTests)); } catch (e) {}
         }
       }
+      
       setLoadingHistory(false);
     };
 
     fetchHistoryAndTests();
   }, [user, language]);
 
-  // Load API keys
-  useEffect(() => {
-    const savedApiKey = localStorage.getItem('admin_api_key') || '';
-    if (savedApiKey) setAdminApiKeyLocal(savedApiKey);
-  }, []);
+
 
   const clearHistory = async () => {
     if (confirm(language === 'vi' ? 'Bạn có chắc chắn muốn xóa toàn bộ lịch sử luyện tập không?' : 'Are you sure you want to clear all practice history?')) {
@@ -164,11 +168,6 @@ export default function Dashboard() {
       testList: 'Danh sách đề thi',
       builtIn: 'Mặc định',
       custom: 'Đám mây / Custom',
-      adminConfig: 'Cấu hình API Gemini',
-      save: 'Lưu',
-      apiKeyLabel: 'Gemini API Key (Cục bộ ở trình duyệt)',
-      baseUrlLabel: 'Endpoint API (Mặc định: localhost:8081)',
-      apiConfigDesc: 'API Key được lưu cục bộ trên trình duyệt để gọi AI nhận xét bài làm của bạn.',
       login: 'Đăng Nhập',
       logout: 'Đăng Xuất',
       loadingHistoryText: 'Đang tải lịch sử...',
@@ -200,11 +199,6 @@ export default function Dashboard() {
       testList: 'Available Exams',
       builtIn: 'Standard',
       custom: 'Cloud / Custom',
-      adminConfig: 'Gemini API Config',
-      save: 'Save',
-      apiKeyLabel: 'Gemini API Key (Local browser store)',
-      baseUrlLabel: 'API Endpoint (Default: localhost:8081)',
-      apiConfigDesc: 'API Key is stored locally in your browser to process evaluations and comments.',
       login: 'Student Sign In',
       logout: 'Sign Out',
       loadingHistoryText: 'Loading history...',
@@ -256,7 +250,7 @@ export default function Dashboard() {
             )
           )}
 
-          <button className="btn-secondary" onClick={() => setShowConfig(true)} title={t.adminConfig} style={{ padding: '8px 12px', gap: '6px' }}>
+          <button className="btn-secondary" onClick={() => setShowConfig(true)} title={language === 'vi' ? 'Cài đặt' : 'Settings'} style={{ padding: '8px 12px', gap: '6px' }}>
             <Settings size={18} />
             <span style={{ fontSize: '0.8rem' }} className="desktop-only">{language === 'vi' ? 'Cài đặt' : 'Settings'}</span>
           </button>
@@ -536,44 +530,7 @@ export default function Dashboard() {
               </button>
             </div>
 
-            {/* Gemini API Configurations (Admin Only) */}
-            {isAdmin && (
-              <div style={{ borderTop: '1px solid var(--border)', paddingTop: '16px' }}>
-                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 'bold', marginBottom: '8px', color: 'var(--text-secondary)' }}>
-                  {t.adminConfig}
-                </label>
-                <p style={{ color: 'var(--text-secondary)', fontSize: '0.7rem', marginBottom: '12px', lineHeight: '1.4' }}>
-                  {t.apiConfigDesc}
-                </p>
-                
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.7rem', fontWeight: 'bold', marginBottom: '6px' }}>
-                      {t.apiKeyLabel}
-                    </label>
-                    <input 
-                      type="password" 
-                      placeholder="sk-..."
-                      value={adminApiKeyLocal}
-                      onChange={(e) => setAdminApiKeyLocal(e.target.value)}
-                      style={{ width: '100%', padding: '8px 12px', border: '1px solid var(--border)', background: 'var(--background)', color: 'var(--text-primary)', fontSize: '0.85rem' }}
-                    />
-                  </div>
-                  
-                  <button 
-                    className="btn-primary" 
-                    style={{ width: '100%', justifyContent: 'center', padding: '10px' }}
-                    onClick={() => {
-                      setAdminApiKey(adminApiKeyLocal);
-                      toast.success(language === 'vi' ? 'Đã lưu cấu hình API Key!' : 'API Key Saved!');
-                      setShowConfig(false);
-                    }}
-                  >
-                    {t.save}
-                  </button>
-                </div>
-              </div>
-            )}
+
 
             {/* Bottom Section (Admin Panel & Logout) */}
             <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '12px', borderTop: '1px solid var(--border)', paddingTop: '16px' }}>

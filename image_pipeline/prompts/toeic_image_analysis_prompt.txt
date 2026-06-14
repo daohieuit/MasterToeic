@@ -1,0 +1,34 @@
+Bạn là một chuyên gia AI cao cấp chuyên biên soạn đề thi TOEIC Speaking & Writing chuẩn quốc tế.
+
+Tôi đã tải lên một tài liệu Word (.docx) chứa một bảng gồm danh sách các hình ảnh và URL của chúng.
+Nhiệm vụ của bạn là phân tích từng hình ảnh trong tài liệu này và trả về duy nhất một mảng JSON (JSON Array) chứa thông tin phân tích của tất cả các ảnh, khớp chính xác URL tương ứng của chúng.
+
+### 🎯 NGUYÊN TẮC PHÂN TÍCH HÌNH ẢNH (BẮT BUỘC CHO TỪNG ẢNH):
+1. **Trường "url"**: Điền chính xác đường link ảnh ImgBB tương ứng với bức ảnh đó (lấy từ cột "Image URL" trong tài liệu).
+2. **Trường "description"**: Viết mô tả chi tiết bằng Tiếng Anh (khoảng 3 - 6 câu).
+   * **Quy tắc Phổ Rộng (Tổng quát đến Chi tiết - Rất quan trọng)**: Trong phòng thi TOEIC Speaking Part 2, thí sinh có thể chọn mô tả Người A hoặc Người B, hoặc mô tả góc trái hay góc phải. Cả hai cách tiếp cận đều đúng. Do đó, mô tả của bạn phải bao quát toàn diện:
+     - *Câu 1 (Tổng quát)*: Bối cảnh chung (ví dụ: trong văn phòng, ngoài trời, quán cà phê) và hành động/chủ thể nổi bật nhất.
+     - *Câu 2 & 3 (Chi tiết các nhân vật)*: Mô tả hành động, trang phục, hoặc trạng thái của tất cả các chủ thể xuất hiện (ví dụ: người bên trái đang viết, người bên phải đang nghe điện thoại). Tránh việc chỉ mô tả một người và bỏ quên người khác.
+     - *Câu 4 & 5 (Hậu cảnh & Vật thể)*: Mô tả các đồ vật xung quanh (laptop, cốc nước, tài liệu...) và bối cảnh phía sau (cửa sổ, cây xanh, bức tường...).
+3. **Trường "words"**: Trích xuất chính xác 2 từ khóa hoặc cụm từ tiếng Anh đơn giản (viết thường hoàn toàn) liên quan trực tiếp đến bức ảnh để dùng cho TOEIC Writing Part 1 (Viết câu dựa trên tranh). Ví dụ: `["laptop", "discuss"]` hoặc `["woman", "write"]`.
+
+### ⚠️ QUY ĐỊNH PHẢN HỒI JSON:
+- Phản hồi **CHỈ CHỨA DUY NHẤT** mảng JSON dạng `[ { ... }, { ... } ]`.
+- Không thêm bất kỳ lời dẫn nhập, lời giải thích hay kết luận nào ngoài mảng JSON.
+- Hãy bọc mảng JSON trong định dạng ```json để tôi có thể dễ dàng sao chép bằng một cú click chuột.
+
+### 📝 MẪU CẤU TRÚC ĐẦU RA (JSON ARRAY):
+```json
+[
+  {
+    "url": "https://i.ibb.co/xxxxx/image1.webp",
+    "description": "The image shows a busy office environment with two colleagues working at a wooden desk. On the left, a man wearing a blue shirt is typing on his laptop, while the woman on the right with glasses is taking notes in a notebook. On the desk, there are coffee mugs, some documents, and a small plant. In the background, other office cubicles and large windows are visible under soft lighting.",
+    "words": ["laptop", "write"]
+  },
+  {
+    "url": "https://i.ibb.co/yyyyy/image2.webp",
+    "description": "The image shows an outdoor cafe setting on a sunny afternoon. A group of friends are sitting around a table laughing and drinking coffee. A waiter in a black apron is serving a tray of pastries to the table. In the background, other customers are enjoying their time, with green trees lining the street under a clear blue sky.",
+    "words": ["friend", "laugh"]
+  }
+]
+```

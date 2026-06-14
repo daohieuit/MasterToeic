@@ -5,12 +5,14 @@ export function useAudioRecorder() {
   const [isRecording, setIsRecording] = useState(false);
   const [audioUrl, setAudioUrl] = useState<string | null>(null);
   const [audioBlob, setAudioBlob] = useState<Blob | null>(null);
+  const [stream, setStream] = useState<MediaStream | null>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
 
   const startRecording = useCallback(async () => {
     setAudioUrl(null);
     setAudioBlob(null);
+    setStream(null);
     audioChunksRef.current = [];
 
     try {
@@ -18,8 +20,9 @@ export function useAudioRecorder() {
         throw new Error('Media devices are not supported in this environment');
       }
 
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-      const mediaRecorder = new MediaRecorder(stream);
+      const activeStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      setStream(activeStream);
+      const mediaRecorder = new MediaRecorder(activeStream);
       mediaRecorderRef.current = mediaRecorder;
 
       mediaRecorder.ondataavailable = (event) => {
@@ -35,7 +38,8 @@ export function useAudioRecorder() {
         setAudioUrl(url);
 
         // Stop all tracks to release the mic
-        stream.getTracks().forEach((track) => track.stop());
+        activeStream.getTracks().forEach((track) => track.stop());
+        setStream(null);
       };
 
       mediaRecorder.start();
@@ -43,6 +47,7 @@ export function useAudioRecorder() {
     } catch (err) {
       console.error('Failed to start recording:', err);
       toast.error('Không thể truy cập Microphone. Vui lòng cấp quyền ghi âm cho trình duyệt của bạn.');
+      setStream(null);
     }
   }, []);
 
@@ -59,5 +64,6 @@ export function useAudioRecorder() {
     audioBlob,
     startRecording,
     stopRecording,
+    stream,
   };
 }

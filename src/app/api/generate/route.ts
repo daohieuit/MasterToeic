@@ -1,20 +1,283 @@
 import { NextResponse } from 'next/server';
+import { createClient } from '@supabase/supabase-js';
+import fs from 'fs';
+import path from 'path';
 
-const CURED_IMAGES = [
-  'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?w=800', // Presentation / Meeting
-  'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800', // Team collaboration
-  'https://images.unsplash.com/photo-1497366216548-37526070297c?w=800', // Modern workspace
-  'https://images.unsplash.com/photo-1431540015161-0bf868a2d407?w=800', // Meeting / Presentation
-  'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?w=800', // Warehouse logistics
-  'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800', // Construction engineer
-  'https://images.unsplash.com/photo-1582719508461-905c673771fd?w=800', // Office lobby reception
-  'https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=800', // Cafe street terrace
-  'https://images.unsplash.com/photo-1579154204601-01588f351167?w=800'  // Laboratory science
-];
+// Helper to generate sample answer from description (text-only call, cheap and reliable)
+async function generateSampleAnswerFromDescription(
+  description: string,
+  questionType: 'describe_picture' | 'write_sentence_picture',
+  words: string[],
+  apiKey: string,
+  baseUrl: string
+): Promise<string> {
+  const prompt = questionType === 'write_sentence_picture'
+    ? `You are a professional TOEIC Writing designer.
+Based on this image description: "${description}"
+Write ONE high-scoring sample sentence in English that contains BOTH of these words: ${JSON.stringify(words)}.
+Ensure the sentence is grammatically correct and logically describes the scene.
+Return ONLY the raw sample sentence. No explanations, no JSON wrapping, no quotes.`
+    : `You are a professional TOEIC Speaking coach.
+Based on this image description: "${description}"
+Write a high-scoring spoken description of the image in English suitable for a 45-second TOEIC Speaking Part 2 response (around 60-80 words).
+Return ONLY the raw spoken description. No explanations, no JSON wrapping, no quotes.`;
 
-function getRandomImages(count: number): string[] {
-  const shuffled = [...CURED_IMAGES].sort(() => 0.5 - Math.random());
-  return shuffled.slice(0, count);
+  try {
+    const response = await fetch(`${baseUrl}/chat/completions`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(apiKey ? { 'Authorization': `Bearer ${apiKey}` } : {}),
+      },
+      body: JSON.stringify({
+        model: process.env.GEMINI_MODEL || 'gemini-3.5-flash',
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    if (!response.ok) {
+      throw new Error(`Failed text API call`);
+    }
+
+    const data = await response.json();
+    return data.choices?.[0]?.message?.content?.trim() || "";
+  } catch (error) {
+    console.error("Failed to generate sample answer from description:", error);
+    return questionType === 'write_sentence_picture'
+      ? `A sample sentence using ${words.join(' and ')}.`
+      : `Based on the picture, ${description}`;
+  }
+}
+
+async function analyzeImage(
+  imageUrl: string,
+  questionType: 'describe_picture' | 'write_sentence_picture',
+  apiKey: string,
+  baseUrl: string
+): Promise<{ words?: string[]; description: string; sampleAnswer: string }> {
+  const systemPrompt = `You are a professional TOEIC test content designer.
+Your task is to analyze the provided image and generate metadata for a TOEIC exam question.
+
+Return ONLY a valid JSON object. Do not include any markdown wrapping like \`\`\`json or \`\`\` around the JSON code, just the raw JSON text.
+
+JSON Schema:
+${questionType === 'write_sentence_picture' 
+  ? `{
+      "words": ["noun_or_verb_1", "noun_or_verb_2"], // Exactly 2 simple lowercase English words/phrases clearly visible and relevant to the image, suitable for a TOEIC Writing Part 1 question (e.g. one noun and one verb, or a preposition and a noun, etc., which the candidate must use in one sentence to describe the image).
+      "description": "[A detailed description of the image in English]",
+      "sampleAnswer": "[A high-scoring sample sentence in English using both words that describes the image]"
+    }`
+  : `{
+      "description": "[A detailed description of the image in English]",
+      "sampleAnswer": "[A high-scoring spoken description of the image in English, suitable for a 45-second TOEIC Speaking Part 2 response]"
+    }`
+}`;
+
+  const response = await fetch(`${baseUrl}/chat/completions`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(apiKey ? { 'Authorization': `Bearer ${apiKey}` } : {}),
+    },
+    body: JSON.stringify({
+      model: process.env.GEMINI_MODEL || 'gemini-3.5-flash',
+      messages: [
+        { role: 'system', content: systemPrompt },
+        {
+          role: 'user',
+          content: [
+            {
+              type: 'text',
+              text: `Analyze this image for a TOEIC ${questionType === 'write_sentence_picture' ? 'Writing Part 1' : 'Speaking Part 2'} question.`
+            },
+            {
+              type: 'image_url',
+              image_url: {
+                url: imageUrl
+              }
+            }
+          ]
+        }
+      ]
+    })
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`Failed to analyze image: ${errorText}`);
+  }
+
+  const data = await response.json();
+  let textResponse = data.choices?.[0]?.message?.content || '';
+  textResponse = textResponse.trim();
+  if (textResponse.startsWith('```')) {
+    textResponse = textResponse.replace(/^```(json)?/, '');
+    textResponse = textResponse.replace(/```$/, '');
+    textResponse = textResponse.trim();
+  }
+
+  return JSON.parse(textResponse);
+}
+
+async function syncTestImages(parsedTest: any, apiKey: string, baseUrl: string): Promise<any> {
+  const unusedPath = path.join(process.cwd(), 'image_pipeline', 'data', 'unused_images.json');
+  const usedPath = path.join(process.cwd(), 'image_pipeline', 'data', 'used_images.json');
+  const fallbackPath = path.join(process.cwd(), 'image_pipeline', 'data', 'images_to_process.json');
+
+  let unusedImages: any[] = [];
+  let usedImages: any[] = [];
+
+  // Read unused images
+  if (fs.existsSync(unusedPath)) {
+    try {
+      unusedImages = JSON.parse(fs.readFileSync(unusedPath, 'utf8'));
+    } catch (err) {
+      console.error("Failed to read unused_images.json:", err);
+    }
+  } else if (fs.existsSync(fallbackPath)) {
+    // Fallback to images_to_process.json if unused_images.json doesn't exist yet
+    try {
+      unusedImages = JSON.parse(fs.readFileSync(fallbackPath, 'utf8')).filter(
+        (img: any) => img.url && img.description && img.description.trim() !== ""
+      );
+    } catch (err) {
+      console.error("Failed to read fallback images_to_process.json:", err);
+    }
+  }
+
+  // Read used images
+  if (fs.existsSync(usedPath)) {
+    try {
+      usedImages = JSON.parse(fs.readFileSync(usedPath, 'utf8'));
+    } catch (err) {
+      console.error("Failed to read used_images.json:", err);
+    }
+  }
+
+  const drawnImagesForThisSession: any[] = [];
+
+  // Helper to draw an image and move it from unused to used
+  const drawUnusedImage = (skillType: 'speaking' | 'writing') => {
+    if (unusedImages.length === 0) return null;
+    let pool = unusedImages;
+    if (skillType === 'writing') {
+      pool = unusedImages.filter((img: any) => img.words && img.words.length > 0);
+      if (pool.length === 0) pool = unusedImages;
+    }
+    const idx = Math.floor(Math.random() * pool.length);
+    const selected = pool[idx];
+    
+    // Remove from unused list
+    const mainIdx = unusedImages.findIndex((img: any) => img.url === selected.url);
+    if (mainIdx !== -1) {
+      unusedImages.splice(mainIdx, 1);
+    }
+    
+    drawnImagesForThisSession.push(selected);
+    return selected;
+  };
+
+  // Collect all Speaking Part 2 image questions
+  if (parsedTest.speaking) {
+    const imageQuestions: any[] = [];
+    parsedTest.speaking.forEach((part: any) => {
+      if (part.part === 2 && part.questions) {
+        part.questions.forEach((q: any) => {
+          imageQuestions.push(q);
+        });
+      }
+    });
+
+    if (imageQuestions.length > 0) {
+      await Promise.all(
+        imageQuestions.map(async (q) => {
+          // If image is empty, grab from pool
+          if (!q.image || q.image.trim() === '') {
+            const drawn = drawUnusedImage('speaking');
+            if (drawn) {
+              q.image = drawn.url;
+              q.description = drawn.description;
+              q.sampleAnswer = await generateSampleAnswerFromDescription(drawn.description, 'describe_picture', [], apiKey, baseUrl);
+            } else {
+              q.description = q.description || '';
+              q.sampleAnswer = q.sampleAnswer || '';
+            }
+            return;
+          }
+          // Vision AI fallback for manually provided image URL
+          try {
+            const analysis = await analyzeImage(q.image, 'describe_picture', apiKey, baseUrl);
+            q.description = analysis.description || '';
+            q.sampleAnswer = analysis.sampleAnswer || '';
+          } catch (error) {
+            console.error(`Failed to analyze speaking image ${q.image}:`, error);
+            q.description = q.description || "A scene showing people or objects in a workspace or public setting.";
+            q.sampleAnswer = q.sampleAnswer || "In this picture, there are people gathered...";
+          }
+        })
+      );
+    }
+  }
+
+  // Collect all Writing Part 1 image questions
+  if (parsedTest.writing) {
+    const imageQuestions: any[] = [];
+    parsedTest.writing.forEach((part: any) => {
+      if (part.part === 1 && part.questions) {
+        part.questions.forEach((q: any) => {
+          imageQuestions.push(q);
+        });
+      }
+    });
+
+    if (imageQuestions.length > 0) {
+      await Promise.all(
+        imageQuestions.map(async (q) => {
+          // If image is empty, grab from pool
+          if (!q.image || q.image.trim() === '') {
+            const drawn = drawUnusedImage('writing');
+            if (drawn) {
+              q.image = drawn.url;
+              q.description = drawn.description;
+              q.words = drawn.words || [];
+              q.sampleAnswer = await generateSampleAnswerFromDescription(drawn.description, 'write_sentence_picture', drawn.words || [], apiKey, baseUrl);
+            } else {
+              q.words = q.words || [];
+              q.description = q.description || '';
+              q.sampleAnswer = q.sampleAnswer || '';
+            }
+            return;
+          }
+          // Vision AI fallback for manually provided image URL
+          try {
+            const analysis = await analyzeImage(q.image, 'write_sentence_picture', apiKey, baseUrl);
+            q.words = analysis.words || ["people", "work"];
+            q.description = analysis.description || '';
+            q.sampleAnswer = analysis.sampleAnswer || '';
+          } catch (error) {
+            console.error(`Failed to analyze writing image ${q.image}:`, error);
+            q.words = q.words && q.words.length > 0 ? q.words : ["people", "work"];
+            q.description = q.description || "A workplace scene with people working.";
+            q.sampleAnswer = q.sampleAnswer || "The people are working together at their desks.";
+          }
+        })
+      );
+    }
+  }
+
+  // Write changes back to disk
+  if (drawnImagesForThisSession.length > 0) {
+    usedImages.push(...drawnImagesForThisSession);
+    try {
+      fs.writeFileSync(unusedPath, JSON.stringify(unusedImages, null, 2));
+      fs.writeFileSync(usedPath, JSON.stringify(usedImages, null, 2));
+      console.log(`Successfully moved ${drawnImagesForThisSession.length} images from unused to used.`);
+    } catch (err) {
+      console.error("Failed to update unused/used image files:", err);
+    }
+  }
+
+  return parsedTest;
 }
 
 async function generateSingleTest(
@@ -29,7 +292,7 @@ The generated questions must strictly adhere to the official TOEIC S&W structure
 
 Important:
 1. Return ONLY a valid JSON object. Do not include any markdown wrapping like \`\`\`json or \`\`\` around the JSON code, just the raw JSON text.
-2. For image fields in speaking Q3-4 or writing Q1-5, leave the "image" field as an empty string "" (we will automatically inject high-quality curated images on the server side).
+2. For image fields in speaking Q3-4 or writing Q1-5, leave the "image" field as an empty string "" and for writing Q1-5 leave the "words" field as an empty array [] (we will automatically inject high-quality curated images and generate matching keywords/descriptions on the server side using Vision AI).
 
 JSON Schema to follow:
 For '${skill}':
@@ -94,11 +357,11 @@ ${skill === 'speaking' ? `{
       "partTitle": "Part 1: Write a Sentence Based on a Picture",
       "instructions": "In this part of the test, you will write ONE sentence that is based on the picture...",
       "questions": [
-        { "id": "wr_q1", "type": "write_sentence_picture", "image": "", "words": ["word1", "word2"], "prepTime": 0, "respTime": 480 },
-        { "id": "wr_q2", "type": "write_sentence_picture", "image": "", "words": ["word3", "word4"], "prepTime": 0, "respTime": 480 },
-        { "id": "wr_q3", "type": "write_sentence_picture", "image": "", "words": ["word5", "word6"], "prepTime": 0, "respTime": 480 },
-        { "id": "wr_q4", "type": "write_sentence_picture", "image": "", "words": ["word7", "word8"], "prepTime": 0, "respTime": 480 },
-        { "id": "wr_q5", "type": "write_sentence_picture", "image": "", "words": ["word9", "word10"], "prepTime": 0, "respTime": 480 }
+        { "id": "wr_q1", "type": "write_sentence_picture", "image": "", "words": [], "prepTime": 0, "respTime": 480 },
+        { "id": "wr_q2", "type": "write_sentence_picture", "image": "", "words": [], "prepTime": 0, "respTime": 480 },
+        { "id": "wr_q3", "type": "write_sentence_picture", "image": "", "words": [], "prepTime": 0, "respTime": 480 },
+        { "id": "wr_q4", "type": "write_sentence_picture", "image": "", "words": [], "prepTime": 0, "respTime": 480 },
+        { "id": "wr_q5", "type": "write_sentence_picture", "image": "", "words": [], "prepTime": 0, "respTime": 480 }
       ]
     },
     {
@@ -131,7 +394,7 @@ ${topics ? `Focus topics/themes: ${topics}` : 'Ensure it has common office, busi
       ...(apiKey ? { 'Authorization': `Bearer ${apiKey}` } : {}),
     },
     body: JSON.stringify({
-      model: 'gemini-3.5-flash',
+      model: process.env.GEMINI_MODEL || 'gemini-3.5-flash',
       messages: [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userMessage }
@@ -163,38 +426,25 @@ ${topics ? `Focus topics/themes: ${topics}` : 'Ensure it has common office, busi
     throw new Error(`Failed to parse generated ${skill} test as JSON.`);
   }
 
-  // Auto-inject high-quality curated images
-  if (skill === 'speaking' && parsedTest.speaking) {
-    const images = getRandomImages(2);
-    let imgIdx = 0;
-    parsedTest.speaking.forEach((part: any) => {
-      if (part.part === 2 && part.questions) {
-        part.questions.forEach((q: any) => {
-          q.image = images[imgIdx++];
-        });
-      }
-    });
-  } else if (skill === 'writing' && parsedTest.writing) {
-    const images = getRandomImages(5);
-    let imgIdx = 0;
-    parsedTest.writing.forEach((part: any) => {
-      if (part.part === 1 && part.questions) {
-        part.questions.forEach((q: any) => {
-          q.image = images[imgIdx++];
-        });
-      }
-    });
-  }
-
-  return parsedTest;
+  // Synchronize and analyze images using Vision AI
+  const syncedTest = await syncTestImages(parsedTest, apiKey, baseUrl);
+  return syncedTest;
 }
 
 export async function POST(req: Request) {
   try {
-    const { skill, topics } = await req.json();
+    const { skill, topics, action, testData } = await req.json();
 
     const apiKey = req.headers.get('x-gemini-api-key') || process.env.GEMINI_API_KEY || '';
     const baseUrl = req.headers.get('x-gemini-base-url') || process.env.GEMINI_BASE_URL || 'http://localhost:8081/v1';
+
+    if (action === 'sync_images') {
+      if (!testData) {
+        return NextResponse.json({ error: 'No testData provided for sync_images' }, { status: 400 });
+      }
+      const synced = await syncTestImages(testData, apiKey, baseUrl);
+      return NextResponse.json(synced);
+    }
 
     if (skill === 'speaking' || skill === 'writing') {
       const test = await generateSingleTest(skill, topics, apiKey, baseUrl);

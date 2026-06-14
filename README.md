@@ -9,12 +9,17 @@ Master Toeic là ứng dụng web serverless tối giản, hiệu quả và hoà
 * **Zen Exam Room (Phòng thi tập trung):** Giao diện phòng thi tối giản, tự động ẩn mọi yếu tố điều hướng để học viên tập trung cao độ khi làm bài.
 * **Chuẩn Format TOEIC S&W:** Các phần thi được thiết kế bám sát 100% cấu trúc bài thi thực tế của ETS (11 câu hỏi Speaking, 8 câu hỏi Writing).
 * **Chấm Điểm & Nhận Xét Bằng Tiếng Việt:** AI tự động phân tích câu trả lời, sửa lỗi ngữ pháp, gợi ý diễn đạt lại và cung cấp bài mẫu đạt điểm tối đa (Sample Answer).
-* **Ghi Âm & Nhận Diện Giọng Nói Cục Bộ:** 
-  * Sử dụng **MediaRecorder API** để ghi âm câu trả lời giúp học viên nghe lại bài nói của mình.
-  * Tích hợp **Web Speech API (Speech Recognition)** để nhận diện giọng nói sang văn bản tiếng Anh phục vụ chấm điểm.
+* **Nhận diện giọng nói & Sóng âm động thời gian thực (Real-time Audio Visualizer):** 
+  * Sử dụng **MediaRecorder API** và HTML5 Web Audio API vẽ biểu đồ sóng Canvas thời gian thực động khi thu âm Speaking.
+  * Tích hợp **Web Speech API (Speech Recognition)** để nhận diện giọng nói sang văn bản phục vụ chấm điểm.
+* **Biểu đồ Radar & Trình phát Audio tuỳ chỉnh:**
+  * Biểu đồ **Radar Chart (`react-chartjs-2`)** phân tích đa khía cạnh điểm số thành phần (Phát âm, Trôi chảy, Ngữ pháp, Từ vựng, Liên kết).
+  * Trình phát Custom Audio Player hỗ trợ điều chỉnh tốc độ phát (0.75x, 1x, 1.25x, 1.5x, 2x) hữu ích khi shadowing.
 * **Thời Gian Tùy Biến (Practice Mode):** Cho phép học viên kéo dài thời gian chuẩn bị/trả lời (x1.5) hoặc rút ngắn (x0.5) để thử thách bản thân.
-* **Trang Admin Tạo Đề Nhanh:** Hỗ trợ Admin sinh đề thi ngẫu nhiên qua AI, chỉnh sửa trực tiếp và xuất tệp JSON hoặc lưu vào trình duyệt.
-* **Kiến Trúc Serverless 0đ:** Không cần cơ sở dữ liệu. Điểm số và lịch sử làm bài được lưu trữ an toàn tại `localStorage` trình duyệt.
+* **Bảng điều khiển Admin Pipeline & Editor Drawer:**
+  * Sinh đề tự động bằng AI, quản lý đề thi trực quan, kiểm tra link ảnh bị hỏng có lưu bộ đệm (cache) 24h.
+  * Trình biên tập đề thi Split-pane chia cột trực quan, chỉnh sửa câu hỏi chuyên sâu và nhập dữ liệu JSON nhanh chóng.
+* **Kiến trúc Linh hoạt (Cloud Sync & Local-first):** Hỗ trợ lưu trữ lịch sử thi và đề custom linh hoạt tại đám mây **Supabase Database** (khi đăng nhập) hoặc tự động chuyển hướng về bộ nhớ **LocalStorage** trình duyệt (chế độ Guest).
 
 ---
 

@@ -4,7 +4,6 @@ import React, { useState, useEffect, use } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useApp } from '@/context/AppContext';
 import { supabase } from '@/utils/supabase';
-import sampleTest1 from '@/data/tests/sampleTest1.json';
 import SpeakingConsole from '@/components/SpeakingConsole';
 import WritingConsole from '@/components/WritingConsole';
 import ReviewConsole from '@/components/ReviewConsole';
@@ -12,6 +11,7 @@ import PartIntroScreen from '@/components/PartIntroScreen';
 import ConfirmModal from '@/components/ConfirmModal';
 import { AlertCircle, RefreshCw, Activity, ArrowRight, Loader } from 'lucide-react';
 import confetti from 'canvas-confetti';
+import toast from 'react-hot-toast';
 
 interface TestParams {
   id: string;
@@ -80,47 +80,48 @@ export default function TestPage({ params }: { params: Promise<TestParams> }) {
   useEffect(() => {
     const initTest = async () => {
       setLoading(true);
-      // 1. Get test object (check local/cloud custom tests first, fall back to builtin)
+      // 1. Get test object (check local/cloud custom tests first)
       let selectedTest: any = null;
       
-      if (testId === sampleTest1.id) {
-        selectedTest = sampleTest1;
-      } else {
-        // Try to load custom test from database (if logged in) or localStorage (guest)
-        if (user && supabase) {
+      // Try to load custom test from database first (Public for everyone)
+      if (supabase) {
+        try {
+          const { data, error } = await supabase
+            .from('custom_tests')
+            .select('*')
+            .eq('id', testId)
+            .single();
+          if (!error && data) {
+            selectedTest = {
+              id: data.id,
+              title: data.title,
+              description: data.description,
+              speaking: data.speaking_data,
+              writing: data.writing_data
+            };
+          }
+        } catch (e) {
+          console.error(e);
+        }
+      }
+      
+      // Fallback to localStorage if not found in db or db error
+      if (!selectedTest) {
+        const savedTests = localStorage.getItem('toeic_sw_custom_tests');
+        if (savedTests) {
           try {
-            const { data, error } = await supabase
-              .from('custom_tests')
-              .select('*')
-              .eq('id', testId)
-              .single();
-            if (!error && data) {
-              selectedTest = {
-                id: data.id,
-                title: data.title,
-                description: data.description,
-                speaking: data.speaking_data,
-                writing: data.writing_data
-              };
-            }
+            const list = JSON.parse(savedTests);
+            selectedTest = list.find((t: any) => t.id === testId);
           } catch (e) {
             console.error(e);
-          }
-        } else {
-          const savedTests = localStorage.getItem('toeic_sw_custom_tests');
-          if (savedTests) {
-            try {
-              const list = JSON.parse(savedTests);
-              selectedTest = list.find((t: any) => t.id === testId);
-            } catch (e) {
-              console.error(e);
-            }
           }
         }
       }
 
       if (!selectedTest) {
-        selectedTest = sampleTest1; // fallback
+        toast.error(language === 'vi' ? 'Không tìm thấy đề thi này!' : 'Test not found!');
+        router.push('/');
+        return;
       }
       setTestData(selectedTest);
 
@@ -339,7 +340,8 @@ export default function TestPage({ params }: { params: Promise<TestParams> }) {
         section: currentQ.section,
         image: currentQ.image || null,
         words: currentQ.words || null,
-        referenceInfo: currentQ.referenceInfo || null
+        referenceInfo: currentQ.referenceInfo || null,
+        description: currentQ.description || null
       }
     ];
     setAnswers(newAnswers);
@@ -370,9 +372,20 @@ export default function TestPage({ params }: { params: Promise<TestParams> }) {
     let spCount = 0;
     let wrScoreSum = 0;
     let wrCount = 0;
+    let isUnauthorized = false;
+    let unauthorizedMessage = '';
 
     const localKey = localStorage.getItem('admin_api_key') || adminApiKey || '';
     const localUrl = localStorage.getItem('admin_base_url') || adminBaseUrl || 'http://localhost:8081/v1';
+
+    // Get current session token for API authorization
+    let sessionToken = '';
+    if (user && supabase) {
+      const { data } = await supabase.auth.getSession();
+      if (data.session) {
+        sessionToken = data.session.access_token;
+      }
+    }
 
     const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -390,6 +403,7 @@ export default function TestPage({ params }: { params: Promise<TestParams> }) {
       if (isBlank) {
         evaluationResults.push({
           ...ans,
+          userAnswer: ans.answer,
           score: 0,
           feedback: language === 'vi' ? 'Không có câu trả lời. Bạn nhận 0 điểm cho câu hỏi này.' : 'No response provided. You receive 0 points for this question.',
           grammarErrors: [],
@@ -404,6 +418,20 @@ export default function TestPage({ params }: { params: Promise<TestParams> }) {
         continue;
       }
 
+      if (isUnauthorized) {
+        // If already flagged as unauthorized, skip calling API
+        evaluationResults.push({
+          ...ans,
+          userAnswer: ans.answer,
+          score: 0,
+          feedback: unauthorizedMessage || 'Tài khoản không có quyền chấm AI.',
+          grammarErrors: [],
+          sampleAnswer: ''
+        });
+        if (ans.section === 'speaking') spCount++; else wrCount++;
+        continue;
+      }
+
       // Add a small delay between requests to avoid Gemini API rate limits (429)
       if (i > 0) {
         await sleep(800);
@@ -415,7 +443,8 @@ export default function TestPage({ params }: { params: Promise<TestParams> }) {
           headers: {
             'Content-Type': 'application/json',
             'x-gemini-api-key': localKey,
-            'x-gemini-base-url': localUrl
+            'x-gemini-base-url': localUrl,
+            ...(sessionToken ? { 'Authorization': `Bearer ${sessionToken}` } : {})
           },
           body: JSON.stringify({
             question: ans.questionText,
@@ -424,10 +453,29 @@ export default function TestPage({ params }: { params: Promise<TestParams> }) {
             details: {
               image: ans.image,
               words: ans.words,
-              referenceInfo: ans.referenceInfo
+              referenceInfo: ans.referenceInfo,
+              imageDescription: ans.description
             }
           })
         });
+
+        if (response.status === 403) {
+          const errData = await response.json();
+          if (errData.isUnauthorized) {
+            isUnauthorized = true;
+            unauthorizedMessage = errData.error;
+            evaluationResults.push({
+              ...ans,
+              userAnswer: ans.answer,
+              score: 0,
+              feedback: unauthorizedMessage,
+              grammarErrors: [],
+              sampleAnswer: ''
+            });
+            if (ans.section === 'speaking') spCount++; else wrCount++;
+            continue;
+          }
+        }
 
         if (!response.ok) {
           throw new Error('Chấm điểm thất bại');
@@ -437,6 +485,7 @@ export default function TestPage({ params }: { params: Promise<TestParams> }) {
         
         evaluationResults.push({
           ...ans,
+          userAnswer: ans.answer,
           score: evaluation.score || 0,
           feedback: evaluation.feedback || 'Không thể đánh giá.',
           grammarErrors: evaluation.grammarErrors || [],
@@ -454,6 +503,7 @@ export default function TestPage({ params }: { params: Promise<TestParams> }) {
         console.error('Error evaluating question:', ans.questionId, err);
         evaluationResults.push({
           ...ans,
+          userAnswer: ans.answer,
           score: 0,
           feedback: 'Lỗi kết nối API. Không thể chấm bài cho câu hỏi này.',
           grammarErrors: [],
@@ -470,8 +520,8 @@ export default function TestPage({ params }: { params: Promise<TestParams> }) {
 
     setEvalProgress(100);
 
-    const averageSpeaking = spCount > 0 ? Math.round((spScoreSum / spCount) * 2) : null;
-    const averageWriting = wrCount > 0 ? Math.round((wrScoreSum / wrCount) * 2) : null;
+    const averageSpeaking = (!isUnauthorized && spCount > 0) ? Math.round((spScoreSum / spCount) * 2) : null;
+    const averageWriting = (!isUnauthorized && wrCount > 0) ? Math.round((wrScoreSum / wrCount) * 2) : null;
 
     const attemptResult = {
       testId: testData.id,
@@ -480,7 +530,8 @@ export default function TestPage({ params }: { params: Promise<TestParams> }) {
       partName: mode === 'part' ? `${skill.toUpperCase()} Part ${part}` : undefined,
       speakingScore: averageSpeaking,
       writingScore: averageWriting,
-      reviews: evaluationResults
+      reviews: evaluationResults,
+      unauthorizedForAI: isUnauthorized
     };
 
     // Save Attempt
