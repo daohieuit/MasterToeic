@@ -1,0 +1,154 @@
+{
+  "title": "TOEIC Speaking & Writing Sample Test (Dựa trên Format ETS)",
+  "speaking_data": [
+    {
+      "part": 1,
+      "questions": [
+        {
+          "text": "If you’re shopping, sightseeing and running around every minute, your vacation can seem like hard work. To avoid vacation stress, come to the Blue Valley Inn on beautiful Lake Mead. While staying at our inn, you’ll breathe clean country air as you view spectacular sights. With its spacious rooms, swimming pool and many outdoor activities, the inn is the perfect place for a vacation you won’t forget. The Blue Valley Inn prides itself on the personal attention it provides to every guest. The Blue Valley motto has always been 'A happy guest is our greatest treasure.'",
+          "sampleAnswer": "If you’re shopping, sightseeing and running around every minute, your vacation can seem like hard work. To avoid vacation stress, come to the Blue Valley Inn on beautiful Lake Mead. While staying at our inn, you’ll breathe clean country air as you view spectacular sights. With its spacious rooms, swimming pool and many outdoor activities, the inn is the perfect place for a vacation you won’t forget. The Blue Valley Inn prides itself on the personal attention it provides to every guest. The Blue Valley motto has always been 'A happy guest is our greatest treasure.'"
+        },
+        {
+          "text": "Attention all shoppers! The store will be closing in fifteen minutes. Please bring all your final purchases to the checkout counters at the front of the store. If you need any assistance carrying bags to your vehicle, please inform the cashier. Thank you for shopping with us today, and we hope to see you again soon.",
+          "sampleAnswer": "Attention all shoppers! The store will be closing in fifteen minutes. Please bring all your final purchases to the checkout counters at the front of the store. If you need any assistance carrying bags to your vehicle, please inform the cashier. Thank you for shopping with us today, and we hope to see you again soon."
+        }
+      ]
+    },
+    {
+      "part": 2,
+      "questions": [
+        {
+          "image": "https://i.ibb.co/example-speaking-1.jpg",
+          "description": "This is a picture taken at an outdoor café. In the foreground, a man and a woman are sitting at a small round table. The man is wearing a light blue shirt and is pointing at a menu. The woman is wearing a yellow dress and is smiling. In the background, a waiter is carrying a tray of drinks towards them.",
+          "sampleAnswer": "This is a picture taken at an outdoor café. In the foreground, a man and a woman are sitting at a small round table. The man is wearing a light blue shirt and is pointing at a menu. The woman is wearing a yellow dress and is smiling. In the background, a waiter is carrying a tray of drinks towards them."
+        },
+        {
+          "image": "https://i.ibb.co/example-speaking-2.jpg",
+          "description": "This picture shows a busy airport terminal. There are several passengers waiting near the boarding gate. Some people are sitting on the chairs and reading magazines, while others are standing and looking at the flight information display. Through the large window, a commercial airplane can be seen parked on the tarmac.",
+          "sampleAnswer": "This picture shows a busy airport terminal. There are several passengers waiting near the boarding gate. Some people are sitting on the chairs and reading magazines, while others are standing and looking at the flight information display. Through the large window, a commercial airplane can be seen parked on the tarmac."
+        }
+      ]
+    },
+    {
+      "part": 3,
+      "situation": "Imagine that a Canadian marketing firm is doing research in your country. You have agreed to participate in a telephone interview.",
+      "questions": [
+        {
+          "text": "Imagine that a Canadian marketing firm is doing research in your country. You have agreed to participate in a telephone interview about television viewing. How often do you watch television?",
+          "sampleAnswer": "I usually watch television every evening for about two hours after I finish my work and have dinner."
+        },
+        {
+          "text": "What kinds of programs do you usually watch?",
+          "sampleAnswer": "I mostly watch news programs to stay updated on current events, and occasionally I enjoy watching cooking shows and documentaries about nature."
+        },
+        {
+          "text": "Describe your favorite television program.",
+          "sampleAnswer": "My favorite television program is a documentary series called 'Planet Earth'. I love it because the cinematography is absolutely stunning, and it provides fascinating insights into the lives of animals and different ecosystems around the world. It is both educational and highly entertaining."
+        }
+      ]
+    },
+    {
+      "part": 4,
+      "referenceInfo": "Business Start-Up Conference Schedule\nMay 27\n\n9:00 A.M. - 10:00 A.M. : Registration and Morning Coffee\n10:00 A.M. - 11:30 A.M. : Keynote Speech: 'The Future of Startups' by Sarah Jenkins\n11:30 A.M. - 12:30 P.M. : Networking Lunch (Catered)\n12:30 P.M. - 2:00 P.M. : Workshop: Marketing Strategies on a Budget\n2:00 P.M. - 3:30 P.M. : Panel Discussion: Funding and Investments\n\nCost: $150 per person (includes lunch and materials)\nLocation: Grand River Hotel, Room 102",
+      "questions": [
+        {
+          "text": "Hello, I’m calling about a conference on May 27 I saw advertised in the newspaper. It’s about starting your own business. Could you tell me what time the conference starts and how long it will last?",
+          "sampleAnswer": "The conference starts with registration and morning coffee at 9:00 A.M., and the final session, the panel discussion, will conclude at 3:30 P.M."
+        },
+        {
+          "text": "How much does conference attendance cost?",
+          "sampleAnswer": "The attendance cost is $150 per person, and that price includes the networking lunch as well as all conference materials."
+        },
+        {
+          "text": "I may not be available for the full day. Could you give me information about the activities in the morning, before lunchtime?",
+          "sampleAnswer": "Certainly. In the morning, there is Registration and Morning Coffee from 9:00 A.M. to 10:00 A.M. Following that, from 10:00 A.M. to 11:30 A.M., there will be a Keynote Speech titled 'The Future of Startups' given by Sarah Jenkins."
+        }
+      ]
+    },
+    {
+      "part": 5,
+      "questions": [
+        {
+          "text": "Some people prefer to take a job that does not pay well but does provide a lot of time off from work. What is your opinion about taking a job with a low salary that has a lot of vacation time? Give reasons for your opinion.",
+          "sampleAnswer": "In my opinion, taking a job with a lower salary but more vacation time is highly beneficial. Firstly, having ample time off allows individuals to pursue personal interests, travel, and spend quality time with family, which greatly enhances overall well-being and life satisfaction. Secondly, frequent breaks from work help prevent burnout, meaning that when people do return to work, they are more energized and productive. While financial stability is important, I believe that mental health and personal fulfillment gained from extra free time are far more valuable in the long run."
+        }
+      ]
+    }
+  ],
+  "writing_data": [
+    {
+      "part": 1,
+      "questions": [
+        {
+          "image": "https://i.ibb.co/example-writing-1.jpg",
+          "description": "A man looking at a flight departure board at an airport terminal.",
+          "words": [
+            "airport terminal",
+            "so"
+          ],
+          "sampleAnswer": "The man arrived early at the airport terminal, so he had plenty of time to check the flight schedule."
+        },
+        {
+          "image": "https://i.ibb.co/example-writing-2.jpg",
+          "description": "A woman carrying heavy shopping bags.",
+          "words": [
+            "carry",
+            "heavy"
+          ],
+          "sampleAnswer": "The woman is carrying several heavy bags from the grocery store."
+        },
+        {
+          "image": "https://i.ibb.co/example-writing-3.jpg",
+          "description": "Two businessmen shaking hands in an office.",
+          "words": [
+            "shake",
+            "after"
+          ],
+          "sampleAnswer": "The two managers decided to shake hands after successfully negotiating the contract."
+        },
+        {
+          "image": "https://i.ibb.co/example-writing-4.jpg",
+          "description": "A group of people attending a presentation.",
+          "words": [
+            "listen",
+            "carefully"
+          ],
+          "sampleAnswer": "The audience is listening carefully to the speaker's presentation."
+        },
+        {
+          "image": "https://i.ibb.co/example-writing-5.jpg",
+          "description": "A construction worker wearing a hard hat.",
+          "words": [
+            "worker",
+            "wear"
+          ],
+          "sampleAnswer": "The construction worker must wear a safety helmet at all times on the site."
+        }
+      ]
+    },
+    {
+      "part": 2,
+      "questions": [
+        {
+          "text": "From: Dale City Welcome Committee\nTo: New Dale City Resident\nSubject: Welcome to your new home!\nSent: July 23, 4:32 P.M.\n\nWelcome! We would like to be the first to welcome you to Dale City. We know that there are many things to do when you move, from finding your way around town to setting up your utilities. Please contact us if you need any help at all.",
+          "direction": "Directions: Respond to the e-mail. Respond as if you have recently moved to a new city. In your e-mail to the committee, make at least TWO requests for information.",
+          "sampleAnswer": "Dear Dale City Welcome Committee,\n\nThank you so much for the warm welcome! I have just moved in and I am very excited to explore the area. \n\nI was wondering if you could provide me with a map of the local public transportation routes, as I will be commuting to work downtown. Additionally, could you please recommend some good local internet service providers?\n\nThank you for your assistance.\n\nSincerely,\nJohn Doe"
+        },
+        {
+          "text": "From: Customer Service Team\nTo: Online Shopper\nSubject: Order Delay Notification\nSent: August 10, 9:15 A.M.\n\nDear Customer, we are writing to inform you that your recent order (Order #12345) will be delayed due to severe weather conditions in our shipping facility's area. We apologize for the inconvenience and will update you once the package is dispatched.",
+          "direction": "Directions: Respond to the e-mail. Respond as if you are the customer waiting for the package. In your e-mail, ask TWO questions about the delay and request ONE alternative solution.",
+          "sampleAnswer": "Dear Customer Service,\n\nThank you for letting me know about the delay. \n\nCould you please estimate how many extra days it will take for the package to arrive? Also, is there any way I can track the status of the shipment during this delay? If the weather conditions continue to be a problem, I would like to request that my order be shipped to a different address where the weather is clear.\n\nBest regards,\nJane Doe"
+        }
+      ]
+    },
+    {
+      "part": 3,
+      "questions": [
+        {
+          "text": "There are many ways to find a job: newspaper advertisements, Internet job search websites, and personal recommendations. What do you think is the best way to find a job? Give reasons or examples to support your opinion. Typically, an effective essay will contain a minimum of 300 words.",
+          "sampleAnswer": "In today's highly competitive job market, there are numerous avenues available for job seekers, including newspaper advertisements, Internet job search websites, and personal recommendations. In my opinion, relying on personal recommendations is the most effective and reliable way to find a job.\n\nFirst and foremost, personal recommendations provide a level of trust that other methods cannot match. When an employee recommends a candidate, they are putting their own professional reputation on the line. Employers understand this and tend to trust referred candidates more than applicants from an anonymous online pool. For example, my brother secured his current position at a prestigious accounting firm not by submitting a resume online, but because a former colleague recommended him directly to the hiring manager. This existing trust significantly sped up the interview process.\n\nSecondly, networking and personal recommendations often give access to the 'hidden job market'. Many companies prefer to fill positions internally or through referrals before they ever publicly advertise the role on a website or in a newspaper. By building a strong professional network, a job seeker can learn about these exclusive opportunities early on. In contrast, by the time a job is posted on the Internet, hundreds or even thousands of people might have already applied, making the competition incredibly fierce.\n\nWhile Internet job search websites are undoubtedly useful for seeing a wide variety of open positions across different industries, they lack the personal touch that often secures the final job offer. Resumes can easily get lost in automated filtering systems, whereas a personal recommendation guarantees that a resume will actually be looked at by a human being.\n\nIn conclusion, although the Internet provides a vast array of job listings, personal recommendations remain the best way to find employment. They build immediate trust with employers, provide access to unadvertised positions, and help candidates stand out in a crowded applicant pool."
+        }
+      ]
+    }
+  ]
+}

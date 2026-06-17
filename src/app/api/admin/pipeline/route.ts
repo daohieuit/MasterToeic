@@ -119,70 +119,9 @@ async function downloadImage(url: string): Promise<Buffer> {
   return buffer;
 }
 
-// Helper to generate sample answers from description using Gemini API
-async function generateSampleAnswerFromDescription(
-  description: string,
-  questionType: 'describe_picture' | 'write_sentence_picture',
-  words: string[],
-  apiKey: string,
-  baseUrl: string,
-  model: string
-): Promise<string> {
-  const prompt = questionType === 'write_sentence_picture'
-    ? `You are a professional TOEIC Writing designer.
-Based on this image description: "${description}"
-Write ONE high-scoring sample sentence in English that contains BOTH of these words: ${JSON.stringify(words)}.
-Ensure the sentence is grammatically correct and logically describes the scene.
-Return ONLY the raw sample sentence. No explanations, no JSON wrapping, no quotes.`
-    : `You are a professional TOEIC Speaking coach.
-Based on this image description: "${description}"
-Write a high-scoring spoken description of the image in English suitable for a 45-second TOEIC Speaking Part 2 response (around 60-80 words).
-Return ONLY the raw spoken description. No explanations, no JSON wrapping, no quotes.`;
 
-  try {
-    const response = await fetch(`${baseUrl}/chat/completions`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        ...(apiKey ? { 'Authorization': `Bearer ${apiKey}` } : {})
-      },
-      body: JSON.stringify({
-        model: model,
-        messages: [{ role: 'user', content: prompt }]
-      })
-    });
 
-    if (!response.ok) {
-      throw new Error(`HTTP error ${response.status}`);
-    }
 
-    const data = await response.json();
-    return data.choices?.[0]?.message?.content?.trim() || "";
-  } catch (error: any) {
-    console.error("Failed to generate sample answer:", error.message);
-    return questionType === 'write_sentence_picture'
-      ? `A sample sentence using ${words.join(' and ')}.`
-      : `Based on the picture, ${description}`;
-  }
-}
-
-async function checkProxyStatus(proxyUrl: string): Promise<'online' | 'offline'> {
-  try {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 1200); // 1.2s timeout
-    
-    // Ping the proxy url
-    const res = await fetch(proxyUrl, {
-      method: 'GET',
-      signal: controller.signal
-    });
-    
-    clearTimeout(timeoutId);
-    return 'online';
-  } catch (err) {
-    return 'offline';
-  }
-}
 
 export async function GET(req: Request) {
   try {
@@ -213,15 +152,6 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
     }
 
-    // Extract proxy URL query if present to check health status
-    const { searchParams } = new URL(req.url);
-    const proxyUrl = searchParams.get('proxyUrl') || '';
-    let proxyStatus: 'online' | 'offline' | 'not_applicable' = 'not_applicable';
-
-    if (proxyUrl && (proxyUrl.includes('localhost') || proxyUrl.includes('127.0.0.1') || proxyUrl.includes('8081'))) {
-      proxyStatus = await checkProxyStatus(proxyUrl);
-    }
-
     const unusedPath = path.join(process.cwd(), 'image_pipeline', 'data', 'unused_images.json');
     let totalUnused = 0;
     if (fs.existsSync(unusedPath)) {
@@ -233,7 +163,7 @@ export async function GET(req: Request) {
       }
     }
 
-    return NextResponse.json({ totalUnused, proxyStatus });
+    return NextResponse.json({ totalUnused });
   } catch (error: any) {
     console.error('Server error in pipeline GET endpoint:', error);
     return NextResponse.json({ error: error.message || 'Internal Server Error' }, { status: 500 });
@@ -477,9 +407,6 @@ export async function POST(req: Request) {
 
     // Action: auto_fill_missing
     if (action === 'auto_fill_missing') {
-      const apiKey = req.headers.get('x-gemini-api-key') || process.env.GEMINI_API_KEY || '';
-      const baseUrl = req.headers.get('x-gemini-base-url') || process.env.GEMINI_BASE_URL || 'http://localhost:8081/v1';
-      const model = process.env.GEMINI_MODEL || 'gemini-3.5-flash';
 
       let unusedImages: any[] = [];
       let usedImages: any[] = [];
@@ -560,14 +487,7 @@ export async function POST(req: Request) {
                   if (drawn) {
                     q.image = drawn.url;
                     q.description = drawn.description;
-                    q.sampleAnswer = await generateSampleAnswerFromDescription(
-                      drawn.description,
-                      'describe_picture',
-                      [],
-                      apiKey,
-                      baseUrl,
-                      model
-                    );
+                    q.sampleAnswer = drawn.description;
                     modified = true;
                   }
                 }
@@ -588,14 +508,7 @@ export async function POST(req: Request) {
                     q.image = drawn.url;
                     q.description = drawn.description;
                     q.words = drawn.words || [];
-                    q.sampleAnswer = await generateSampleAnswerFromDescription(
-                      drawn.description,
-                      'write_sentence_picture',
-                      drawn.words || [],
-                      apiKey,
-                      baseUrl,
-                      model
-                    );
+                    q.sampleAnswer = drawn.description;
                     modified = true;
                   }
                 }

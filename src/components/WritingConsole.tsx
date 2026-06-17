@@ -1,7 +1,9 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Type, Edit3, Image as ImageIcon, Clock, BookOpen } from 'lucide-react';
+import { Type, Edit3, Image as ImageIcon, Clock, BookOpen, ArrowRight, ArrowLeft } from 'lucide-react';
+
+import { DEFAULT_WRITING_PARTS } from '@/utils/constants';
 
 interface Question {
   id: string;
@@ -9,14 +11,17 @@ interface Question {
   text?: string;
   image?: string;
   words?: string[];
-  prepTime: number;
-  respTime: number;
+  prepTime?: number;
+  respTime?: number;
+  direction?: string;
+  partTime?: number;
+  questions?: Question[];
 }
 
 interface WritingConsoleProps {
   question: Question;
   partTitle: string;
-  onNext: (answerText: string) => void;
+  onNext: (answerData: string | any[]) => void;
   timeMultiplier: number;
   language: 'en' | 'vi';
 }
@@ -28,24 +33,49 @@ export default function WritingConsole({
   timeMultiplier,
   language
 }: WritingConsoleProps) {
+  const isGroup = question.type === 'writing_part_1_group';
+  const groupQuestions = isGroup ? (question.questions || []) : [question];
+  
   // Set limits based on time multiplier (999 means infinite)
   const isInfinite = timeMultiplier > 100;
-  const duration = isInfinite ? 99999 : Math.round(question.respTime * timeMultiplier);
+  
+  // Resolve default writing times
+  const partMatch = partTitle.match(/part\s*(\d+)/i);
+  const partNum = partMatch ? parseInt(partMatch[1], 10) : 1;
+  const config = DEFAULT_WRITING_PARTS[partNum];
+  const defaultPartTime = config?.partTime ?? 480;
+  const defaultRespTime = config ? (typeof config.defaultRespTime === 'function' ? config.defaultRespTime(0) : config.defaultRespTime) : 600;
 
-  const [answer, setAnswer] = useState('');
+  const baseTime = isGroup 
+    ? (question.partTime !== undefined ? question.partTime : defaultPartTime) 
+    : (question.respTime !== undefined ? question.respTime : defaultRespTime);
+
+  const duration = isInfinite ? 99999 : Math.round(baseTime * timeMultiplier);
+
+  const [subIdx, setSubIdx] = useState(0);
+  const [answers, setAnswers] = useState<string[]>(Array(groupQuestions.length).fill(''));
   const [timeLeft, setTimeLeft] = useState(duration);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const handleNextRef = useRef<() => void>(() => {});
 
   handleNextRef.current = () => {
-    onNext(answer.trim() || '(No response provided)');
+    if (isGroup) {
+      const formattedAnswers = groupQuestions.map((q, idx) => ({
+        ...q,
+        answer: answers[idx].trim() || '(No response provided)'
+      }));
+      onNext(formattedAnswers);
+    } else {
+      onNext(answers[0].trim() || '(No response provided)');
+    }
   };
 
   // Reset when question changes
   useEffect(() => {
-    setAnswer('');
+    setSubIdx(0);
+    setAnswers(Array(groupQuestions.length).fill(''));
     setTimeLeft(duration);
-  }, [question, duration]);
+  }, [question, duration, groupQuestions.length]);
 
   // Timer Countdown Logic
   useEffect(() => {
@@ -65,7 +95,7 @@ export default function WritingConsole({
     };
   }, [timeLeft]);
 
-  const handleNext = () => {
+  const handleSubmit = () => {
     handleNextRef.current();
   };
 
@@ -85,7 +115,7 @@ export default function WritingConsole({
 
   const t = {
     vi: {
-      submit: 'Nộp bài & Tiếp tục',
+      submit: isGroup ? 'Nộp bài Part 1' : 'Nộp bài & Tiếp tục',
       timeRemaining: 'Thời gian làm bài',
       wordCount: 'Số từ',
       targetEssay: 'Yêu cầu: Tối thiểu 300 từ',
@@ -93,10 +123,12 @@ export default function WritingConsole({
       placeholderPicture: 'Viết một câu mô tả bức tranh sử dụng cả hai từ gợi ý ở trên...',
       placeholderEmail: 'Soạn thư điện tử trả lời yêu cầu tại đây...',
       placeholderEssay: 'Viết bài luận nêu ý kiến của bạn tại đây...',
-      wordsInfo: 'Tiêu chí chấm điểm: Sử dụng chính xác 2 từ gợi ý trong cùng 1 câu.'
+      wordsInfo: 'Tiêu chí chấm điểm: Sử dụng chính xác 2 từ gợi ý trong cùng 1 câu.',
+      nextQ: 'Câu tiếp theo',
+      prevQ: 'Câu trước'
     },
     en: {
-      submit: 'Submit & Next',
+      submit: isGroup ? 'Submit Part 1' : 'Submit & Next',
       timeRemaining: 'Time Remaining',
       wordCount: 'Word Count',
       targetEssay: 'Target: Minimum 300 words',
@@ -104,14 +136,17 @@ export default function WritingConsole({
       placeholderPicture: 'Write one sentence describing the picture using both words above...',
       placeholderEmail: 'Write your email response here...',
       placeholderEssay: 'Write your opinion essay here...',
-      wordsInfo: 'Grading Criteria: Use both keywords accurately in a single sentence.'
+      wordsInfo: 'Grading Criteria: Use both keywords accurately in a single sentence.',
+      nextQ: 'Next Question',
+      prevQ: 'Previous Question'
     }
   }['en']; // Force English in test mode to match TOEIC format
 
-  // Pick placeholder based on question type
+  const activeQ = groupQuestions[subIdx];
+
   const getPlaceholder = () => {
-    if (question.type === 'write_sentence_picture') return t.placeholderPicture;
-    if (question.type === 'respond_written_request') return t.placeholderEmail;
+    if (activeQ.type === 'write_sentence_picture') return t.placeholderPicture;
+    if (activeQ.type === 'respond_written_request') return t.placeholderEmail;
     return t.placeholderEssay;
   };
 
@@ -121,6 +156,15 @@ export default function WritingConsole({
       {/* Top Header */}
       <div className="writing-header">
         <h2 className="writing-title">{partTitle}</h2>
+        
+        {isGroup && (
+          <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+            <span style={{ fontSize: '0.85rem', fontWeight: 'bold', color: 'var(--text-secondary)' }}>
+              Question {subIdx + 1} of {groupQuestions.length}
+            </span>
+          </div>
+        )}
+
         <div className="writing-timer-group">
           <span className="writing-timer-label">{t.timeRemaining}:</span>
           <div 
@@ -136,21 +180,40 @@ export default function WritingConsole({
         
         {/* Left Side: Question Prompt */}
         <div className="writing-prompt-area no-scrollbar">
-          {question.image && (
+          
+          {/* Part 2 Direction */}
+          {activeQ.direction && (
+            <div 
+              style={{ 
+                background: 'var(--background-secondary)', 
+                border: '1px solid var(--border)', 
+                padding: '16px', 
+                fontSize: '0.95rem',
+                lineHeight: '1.6',
+                color: 'var(--text-secondary)',
+                fontStyle: 'italic',
+                marginBottom: '16px'
+              }}
+            >
+              <strong>Direction: </strong>{activeQ.direction}
+            </div>
+          )}
+
+          {activeQ.image && (
             <div className="writing-image-container">
               <img 
-                src={question.image} 
+                src={activeQ.image} 
                 alt="TOEIC Writing Scenario" 
                 className="writing-image"
               />
             </div>
           )}
 
-          {question.words && (
+          {activeQ.words && activeQ.words.length > 0 && (
             <div className="writing-required-words">
               <h4 style={{ fontSize: '0.85rem', fontWeight: 'bold', color: 'var(--text-secondary)', marginBottom: '8px' }}>{t.requiredWords}</h4>
               <div style={{ display: 'flex', gap: '12px', marginBottom: '8px' }}>
-                {question.words.map((w, idx) => (
+                {activeQ.words.map((w, idx) => (
                   <span 
                     key={idx} 
                     className="writing-words-badge"
@@ -165,14 +228,15 @@ export default function WritingConsole({
             </div>
           )}
 
-          {question.text && (
+          {activeQ.text && (
             <div 
               className="writing-prompt-text"
               style={{ 
-                fontFamily: question.type === 'respond_written_request' ? 'var(--font-mono)' : 'inherit'
+                fontFamily: activeQ.type === 'respond_written_request' ? 'var(--font-mono)' : 'inherit',
+                whiteSpace: 'pre-line'
               }}
             >
-              {question.text}
+              {activeQ.text}
             </div>
           )}
         </div>
@@ -181,17 +245,21 @@ export default function WritingConsole({
         <div className="writing-editor-area">
           <div className="writing-textarea-container">
             <textarea
-              value={answer}
-              onChange={(e) => setAnswer(e.target.value)}
+              value={answers[subIdx]}
+              onChange={(e) => {
+                const newAns = [...answers];
+                newAns[subIdx] = e.target.value;
+                setAnswers(newAns);
+              }}
               placeholder={getPlaceholder()}
               className="writing-textarea"
             />
             
             {/* Word Count Indicator for Essay */}
-            {question.type === 'opinion_essay' && (
+            {activeQ.type === 'opinion_essay' && (
               <div className="writing-word-count-badge">
-                <span>{t.wordCount}: {getWordCount(answer)}</span>
-                <span style={{ color: getWordCount(answer) >= 300 ? 'var(--success)' : 'var(--accent)' }}>
+                <span>{t.wordCount}: {getWordCount(answers[subIdx])}</span>
+                <span style={{ color: getWordCount(answers[subIdx]) >= 300 ? 'var(--success)' : 'var(--accent)' }}>
                   {t.targetEssay}
                 </span>
               </div>
@@ -202,10 +270,32 @@ export default function WritingConsole({
       </div>
 
       {/* Bottom Actions */}
-      <div className="writing-footer">
+      <div className="writing-footer" style={{ display: 'flex', justifyContent: isGroup ? 'space-between' : 'flex-end', alignItems: 'center' }}>
+        
+        {isGroup && (
+          <div style={{ display: 'flex', gap: '12px' }}>
+            <button 
+              className="btn-secondary" 
+              onClick={() => setSubIdx(Math.max(0, subIdx - 1))}
+              disabled={subIdx === 0}
+              style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 16px' }}
+            >
+              <ArrowLeft size={18} /> {t.prevQ}
+            </button>
+            <button 
+              className="btn-secondary" 
+              onClick={() => setSubIdx(Math.min(groupQuestions.length - 1, subIdx + 1))}
+              disabled={subIdx === groupQuestions.length - 1}
+              style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 16px' }}
+            >
+              {t.nextQ} <ArrowRight size={18} />
+            </button>
+          </div>
+        )}
+
         <button 
           className="btn-accent writing-submit-btn" 
-          onClick={handleNext}
+          onClick={handleSubmit}
         >
           {t.submit}
         </button>

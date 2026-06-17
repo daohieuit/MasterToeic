@@ -85,7 +85,6 @@ export default function Dashboard() {
             const mappedTests = tests.map(t => ({
               id: t.id,
               title: t.title,
-              description: t.description,
               speaking: t.speaking_data,
               writing: t.writing_data
             }));
@@ -111,7 +110,8 @@ export default function Dashboard() {
     };
 
     fetchHistoryAndTests();
-  }, [user, language]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: user?.id avoids re-render loops on object reference changes
+  }, [user?.id, language]);
 
 
 
@@ -209,13 +209,15 @@ export default function Dashboard() {
     }
   }[language];
 
-  // Combine standard and custom tests
-  const allTests = customTests.map(t => ({ ...t, type: 'custom' }));
+  // Combine standard and custom tests, sorted A-Z
+  const allTests = customTests
+    .map(t => ({ ...t, type: 'custom' }))
+    .sort((a: any, b: any) => (a.title || '').localeCompare(b.title || '', language === 'vi' ? 'vi' : 'en'));
 
   const filteredTests = allTests.filter((test) => {
     if (filter === 'all') return true;
-    const hasSpeaking = !!test.speaking;
-    const hasWriting = !!test.writing;
+    const hasSpeaking = Array.isArray(test.speaking) && test.speaking.length > 0;
+    const hasWriting = Array.isArray(test.writing) && test.writing.length > 0;
     if (filter === 'full') return hasSpeaking && hasWriting;
     if (filter === 'speaking') return hasSpeaking && !hasWriting;
     if (filter === 'writing') return hasWriting && !hasSpeaking;
@@ -301,8 +303,8 @@ export default function Dashboard() {
               
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '20px' }}>
                 {filteredTests.map((test) => {
-                  const hasSpeaking = !!test.speaking;
-                  const hasWriting = !!test.writing;
+                  const hasSpeaking = Array.isArray(test.speaking) && test.speaking.length > 0;
+                  const hasWriting = Array.isArray(test.writing) && test.writing.length > 0;
                   let testTypeLabel = '';
                   if (hasSpeaking && hasWriting) {
                     testTypeLabel = t.fullTestType;

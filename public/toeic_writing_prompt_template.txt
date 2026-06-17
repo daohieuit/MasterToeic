@@ -4,42 +4,41 @@ The generated questions must strictly adhere to the official TOEIC Writing struc
 
 Crucial Instructions:
 1. Return ONLY the raw JSON object. Do not wrap it in markdown block like ```json or ```.
-2. For image fields in writing part 1 questions, leave the "image" field as an empty string "".
-3. For writing part 1 questions (write_sentence_picture), leave the "words" field as an empty array [] (The system will automatically inject curated images and analyze them to generate matching words/descriptions using Vision AI).
+2. For all image fields (Writing Part 1), leave "image" as an empty string "". Leave "words" as an empty array []. The offline image pipeline will automatically pull images, descriptions, and keywords from local storage.
+3. For ALL questions, you MUST provide a high-quality, authentic, and detailed sample answer in the "sampleAnswer" field. For Part 1 (Write a Sentence Based on a Picture), since the image is blank, generate a standard sampleAnswer describing a typical TOEIC office/street/outdoor scene (which will also act as the picture description; the grading system will filter it later).
 4. Set the "id" and "title" fields to "auto_generated_by_system" (the system will automatically calculate the next sequence number and assign it).
+5. Do NOT include static timing attributes (prepTime, respTime, partTime) or instructions in the JSON. These are handled dynamically by the frontend code.
+6. The content MUST be realistic in length and detail. The essay must be at least 300 words. Emails must have proper greetings, requests, and closings.
+7. For Writing Part 2, each question MUST include a realistic "direction" starting exactly with "Directions: Respond to the e-mail. " and specifying the role and exact requirements matching the sampleAnswer.
+8. You MUST use the exact schema key: "writing_data". Do NOT use "writing".
+9. Escape all double quotes inside JSON string values as \" or replace them with single quotes ' to prevent JSON format errors. Never wrap URLs in markdown links.
 
 Format structure to follow:
 {
   "id": "auto_generated_by_system",
   "title": "auto_generated_by_system",
-  "writing": [
+  "writing_data": [
     {
       "part": 1,
-      "partTitle": "Part 1: Write a Sentence Based on a Picture",
-      "instructions": "In this part of the test, you will write ONE sentence that is based on the picture...",
       "questions": [
-        { "id": "wr_q1", "type": "write_sentence_picture", "image": "", "words": [], "prepTime": 0, "respTime": 480 },
-        { "id": "wr_q2", "type": "write_sentence_picture", "image": "", "words": [], "prepTime": 0, "respTime": 480 },
-        { "id": "wr_q3", "type": "write_sentence_picture", "image": "", "words": [], "prepTime": 0, "respTime": 480 },
-        { "id": "wr_q4", "type": "write_sentence_picture", "image": "", "words": [], "prepTime": 0, "respTime": 480 },
-        { "id": "wr_q5", "type": "write_sentence_picture", "image": "", "words": [], "prepTime": 0, "respTime": 480 }
+        { "image": "", "words": [], "sampleAnswer": "[A descriptive sentence logically connecting two hypothetical keywords to describe a typical TOEIC picture scene]" },
+        { "image": "", "words": [], "sampleAnswer": "[A descriptive sentence logically connecting two hypothetical keywords to describe a typical TOEIC picture scene]" },
+        { "image": "", "words": [], "sampleAnswer": "[A descriptive sentence logically connecting two hypothetical keywords to describe a typical TOEIC picture scene]" },
+        { "image": "", "words": [], "sampleAnswer": "[A descriptive sentence logically connecting two hypothetical keywords to describe a typical TOEIC picture scene]" },
+        { "image": "", "words": [], "sampleAnswer": "[A descriptive sentence logically connecting two hypothetical keywords to describe a typical TOEIC picture scene]" }
       ]
     },
     {
       "part": 2,
-      "partTitle": "Part 2: Respond to a Written Request",
-      "instructions": "In this part of the test, you will show how well you can write a response to an email...",
       "questions": [
-        { "id": "wr_q6", "type": "respond_written_request", "text": "From: [Name]\\nTo: [Name]\\nSubject: [Subject]\\n\\n[Email content asking for a resolution or suggestion]", "prepTime": 0, "respTime": 600 },
-        { "id": "wr_q7", "type": "respond_written_request", "text": "From: [Name]\\nTo: [Name]\\nSubject: [Subject]\\n\\n[Email content asking for suggestions or plans]", "prepTime": 0, "respTime": 600 }
+        { "direction": "Directions: Respond to the e-mail. In your e-mail, you must include TWO pieces of information and ONE question.", "text": "From: [Name]\nTo: [Name]\nSubject: [Subject]\n\n[A detailed email of 4-5 sentences asking for assistance, feedback, or scheduling]", "sampleAnswer": "[A sample formal email response of at least 50 words meeting all directions criteria, including greetings and closings]" },
+        { "direction": "Directions: Respond to the e-mail. In your e-mail, make at least TWO suggestions and ask ONE question.", "text": "From: [Name]\nTo: [Name]\nSubject: [Subject]\n\n[A detailed email of 4-5 sentences asking for recommendations or planning details]", "sampleAnswer": "[A sample formal email response of at least 50 words meeting all directions criteria, including greetings and closings]" }
       ]
     },
     {
       "part": 3,
-      "partTitle": "Part 3: Write an Opinion Essay",
-      "instructions": "In this part of the test, you will write an essay in response to a prompt...",
       "questions": [
-        { "id": "wr_q8", "type": "opinion_essay", "text": "Opinion essay prompt", "prepTime": 0, "respTime": 1800 }
+        { "text": "[A clear, debated prompt statement of 2-3 sentences asking whether the user agrees/disagrees or prefers an option, with reasons and examples. E.g. There are many ways to find a job... What do you think is the best way...]", "sampleAnswer": "[A high-quality sample essay of at least 300 words with introduction, body paragraphs, and conclusion]" }
       ]
     }
   ]

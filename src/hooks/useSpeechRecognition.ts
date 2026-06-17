@@ -23,6 +23,7 @@ export function useSpeechRecognition() {
 
     recognition.onstart = () => {
       setIsListening(true);
+      isListeningRef.current = true;
     };
 
     recognition.onresult = (event: any) => {
@@ -43,32 +44,42 @@ export function useSpeechRecognition() {
 
     recognition.onend = () => {
       setIsListening(false);
+      isListeningRef.current = false;
     };
 
     recognitionRef.current = recognition;
   }, []);
+  const isListeningRef = useRef(false);
+
 
   const startListening = useCallback(() => {
-    if (recognitionRef.current && !isListening) {
-      setTranscript('');
-      try {
-        recognitionRef.current.start();
-      } catch (err) {
-        console.error('Error starting recognition:', err);
-      }
+    if (!recognitionRef.current) return;
+    // Stop any existing session first to avoid "already started" error
+    if (isListeningRef.current) {
+      try { recognitionRef.current.abort(); } catch (e) {}
+      setIsListening(false);
+      isListeningRef.current = false;
     }
-  }, [isListening]);
+    setTranscript('');
+    try {
+      recognitionRef.current.start();
+      isListeningRef.current = true;
+    } catch (err) {
+      console.error('Error starting recognition:', err);
+    }
+  }, []);
 
   const stopListening = useCallback(() => {
-    if (recognitionRef.current && isListening) {
+    if (recognitionRef.current && isListeningRef.current) {
       try {
         recognitionRef.current.stop();
       } catch (err) {
         console.error('Error stopping recognition:', err);
       }
       setIsListening(false);
+      isListeningRef.current = false;
     }
-  }, [isListening]);
+  }, []);
 
   return {
     transcript,

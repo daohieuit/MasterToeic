@@ -7,22 +7,19 @@ import { supabase } from '@/utils/supabase';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
 import {
-  ArrowLeft,
   Search,
   Edit2,
   Trash2,
-  Save,
-  X,
-  Plus,
   FileText,
-  AlertTriangle,
-  ChevronRight,
-  Image as ImageIcon,
   BookOpen,
   HelpCircle,
-  Eye,
-  Settings,
-  AlertCircle
+  Image as ImageIcon,
+  ImageOff,
+  CheckCircle2,
+  AlertTriangle,
+  Loader2,
+  AlertCircle,
+  RefreshCw
 } from 'lucide-react';
 
 interface Question {
@@ -47,10 +44,217 @@ interface Part {
 interface TestData {
   id: string;
   title: string;
-  description: string;
   speaking: Part[];
   writing: Part[];
 }
+
+// Helper: Validate image URLs in test data
+const validateTestImages = (test: TestData, force: boolean = false): Promise<'ok' | 'missing' | 'broken'> => {
+  const cacheKey = 'toeic_sw_image_health_cache';
+  let cache: Record<string, { status: 'ok' | 'missing' | 'broken'; lastChecked: number }> = {};
+  try {
+    const savedCache = localStorage.getItem(cacheKey);
+    if (savedCache) cache = JSON.parse(savedCache);
+  } catch (e) {
+    console.error('Failed to parse image health cache:', e);
+  }
+
+  const cachedVal = cache[test.id];
+  const checkThreshold = 24 * 60 * 60 * 1000; // 24 hours
+  if (!force && cachedVal && (Date.now() - cachedVal.lastChecked < checkThreshold)) {
+    // If it was previously 'missing' or 'broken', we'll only use cache if it's less than 5 minutes old to be safe
+    if (cachedVal.status === 'ok' || (Date.now() - cachedVal.lastChecked < 5 * 60 * 1000)) {
+      return Promise.resolve(cachedVal.status);
+    }
+  }
+
+  const images: string[] = [];
+  
+  if (test.speaking && Array.isArray(test.speaking)) {
+    test.speaking.forEach((part: any) => {
+      if (part.part === 2 && Array.isArray(part.questions)) {
+        part.questions.forEach((q: any) => {
+          images.push(q.image || '');
+        });
+      }
+    });
+  }
+  
+  if (test.writing && Array.isArray(test.writing)) {
+    test.writing.forEach((part: any) => {
+      if (part.part === 1 && Array.isArray(part.questions)) {
+        part.questions.forEach((q: any) => {
+          images.push(q.image || '');
+        });
+      }
+    });
+  }
+
+  if (images.length === 0) {
+    const hasSpeakingPart2 = test.speaking && test.speaking.some((p: any) => p.part === 2);
+    const hasWritingPart1 = test.writing && test.writing.some((p: any) => p.part === 1);
+    const status = (!hasSpeakingPart2 && !hasWritingPart1) ? 'ok' : 'missing';
+    
+    try {
+      cache[test.id] = { status, lastChecked: Date.now() };
+      localStorage.setItem(cacheKey, JSON.stringify(cache));
+    } catch (e) {}
+    return Promise.resolve(status);
+  }
+
+  if (images.some(img => !img || img.trim() === '')) {
+    try {
+      cache[test.id] = { status: 'missing', lastChecked: Date.now() };
+      localStorage.setItem(cacheKey, JSON.stringify(cache));
+    } catch (e) {}
+    return Promise.resolve('missing');
+  }
+
+  return new Promise((resolve) => {
+    const saveToCacheAndResolve = (status: 'ok' | 'missing' | 'broken') => {
+      try {
+        cache[test.id] = { status, lastChecked: Date.now() };
+        localStorage.setItem(cacheKey, JSON.stringify(cache));
+      } catch (e) {
+        console.error('Failed to write image health cache:', e);
+      }
+      resolve(status);
+    };
+
+    let checkedCount = 0;
+    let hasBroken = false;
+    
+    images.forEach(url => {
+      if (!url.startsWith('http://') && !url.startsWith('https://') && !url.startsWith('/')) {
+        hasBroken = true;
+        checkedCount++;
+        if (checkedCount === images.length) saveToCacheAndResolve('broken');
+        return;
+      }
+
+      const img = new Image();
+      img.onload = () => {
+        checkedCount++;
+        if (checkedCount === images.length) {
+          saveToCacheAndResolve(hasBroken ? 'broken' : 'ok');
+        }
+      };
+      img.onerror = () => {
+        hasBroken = true;
+        checkedCount++;
+        if (checkedCount === images.length) {
+          saveToCacheAndResolve('broken');
+        }
+      };
+      img.src = url;
+    });
+  });
+};
+
+interface HealthCheckResult {
+  isHealthy: boolean;
+  issues: string[];
+}
+
+// Helper: Check test completeness and stability
+const checkTestHealth = (test: TestData, imageStatus: 'ok' | 'missing' | 'broken' | undefined): HealthCheckResult => {
+  const issues: string[] = [];
+
+  const hasSpeaking = test.speaking && test.speaking.length > 0;
+  const hasWriting = test.writing && test.writing.length > 0;
+
+  if (!hasSpeaking && !hasWriting) {
+    issues.push('Không có phần thi nào / No sections');
+    return { isHealthy: false, issues };
+  }
+
+  // Check Speaking Parts
+  if (hasSpeaking) {
+    test.speaking.forEach((part) => {
+      const partNum = part.part;
+      
+      // Situation check for Part 3
+      if (partNum === 3 && (!part.situation || part.situation.trim() === '')) {
+        issues.push('Part 3: Thiếu tình huống (situation)');
+      }
+
+      // ReferenceInfo check for Part 4
+      if (partNum === 4 && (!part.referenceInfo || part.referenceInfo.trim() === '')) {
+        issues.push('Part 4: Thiếu thông tin tham khảo (referenceInfo)');
+      }
+
+      if (!part.questions || part.questions.length === 0) {
+        issues.push(`Speaking Part ${partNum}: Không có câu hỏi`);
+      } else {
+        part.questions.forEach((q, idx) => {
+          const qLabel = `Speaking P${partNum} Q${idx + 1}`;
+          
+          if (partNum !== 2 && (!q.text || q.text.trim() === '')) {
+            issues.push(`${qLabel}: Thiếu đề bài (text)`);
+          }
+
+          if (!q.sampleAnswer || q.sampleAnswer.trim() === '') {
+            issues.push(`${qLabel}: Thiếu đáp án mẫu (sampleAnswer)`);
+          }
+
+          if (partNum === 2 && (!q.image || q.image.trim() === '')) {
+            issues.push(`${qLabel}: Thiếu hình ảnh`);
+          }
+        });
+      }
+    });
+  }
+
+  // Check Writing Parts
+  if (hasWriting) {
+    test.writing.forEach((part) => {
+      const partNum = part.part;
+
+      if (!part.questions || part.questions.length === 0) {
+        issues.push(`Writing Part ${partNum}: Không có câu hỏi`);
+      } else {
+        part.questions.forEach((q, idx) => {
+          const qLabel = `Writing P${partNum} Q${idx + 1}`;
+
+          // Part 1 doesn't always need q.text, but needs image and words
+          if (partNum === 1) {
+            if (!q.image || q.image.trim() === '') {
+              issues.push(`${qLabel}: Thiếu hình ảnh`);
+            }
+            if (!q.words || q.words.length === 0) {
+              issues.push(`${qLabel}: Thiếu từ khóa (words)`);
+            }
+          } else {
+            // Part 2 and 3
+            if (!q.text || q.text.trim() === '') {
+              issues.push(`${qLabel}: Thiếu đề bài (text)`);
+            }
+          }
+
+          if (partNum === 2 && (!q.direction || q.direction.trim() === '')) {
+            issues.push(`${qLabel}: Thiếu direction`);
+          }
+
+          if (!q.sampleAnswer || q.sampleAnswer.trim() === '') {
+            issues.push(`${qLabel}: Thiếu đáp án mẫu (sampleAnswer)`);
+          }
+        });
+      }
+    });
+  }
+
+  // Factor in imageStatus
+  if (imageStatus === 'broken') {
+    issues.push('Có ảnh bị lỗi liên kết');
+  } else if (imageStatus === 'missing') {
+    issues.push('Thiếu ảnh ở các câu hỏi yêu cầu ảnh');
+  }
+
+  return {
+    isHealthy: issues.length === 0,
+    issues
+  };
+};
 
 export default function ManageTestsPage() {
   const router = useRouter();
@@ -58,19 +262,46 @@ export default function ManageTestsPage() {
 
   const [tests, setTests] = useState<TestData[]>([]);
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [filter, setFilter] = useState<'all' | 'full' | 'speaking' | 'writing'>('all');
+  const [imageStatuses, setImageStatuses] = useState<Record<string, 'ok' | 'missing' | 'broken'>>({});
+  const [activeTooltip, setActiveTooltip] = useState<string | null>(null);
 
-  // Selected test & editing states
-  const [selectedTest, setSelectedTest] = useState<TestData | null>(null);
-  const [editTitle, setEditTitle] = useState('');
-  const [editDescription, setEditDescription] = useState('');
-  const [editSpeaking, setEditSpeaking] = useState<Part[]>([]);
-  const [editWriting, setEditWriting] = useState<Part[]>([]);
-  const [isDirty, setIsDirty] = useState(false);
+  // Validate images of all tests
+  const validateAllImages = useCallback(async (testList: TestData[], force: boolean = false) => {
+    const newStatuses: Record<string, 'ok' | 'missing' | 'broken'> = {};
+    
+    if (force) {
+      // Clear cache
+      localStorage.removeItem('toeic_sw_image_health_cache');
+      setImageStatuses({});
+    } else {
+      // Load from cache first for instant response
+      const cacheKey = 'toeic_sw_image_health_cache';
+      let cache: Record<string, { status: 'ok' | 'missing' | 'broken'; lastChecked: number }> = {};
+      try {
+        const savedCache = localStorage.getItem(cacheKey);
+        if (savedCache) {
+          cache = JSON.parse(savedCache);
+          testList.forEach(t => {
+            if (cache[t.id]) {
+              newStatuses[t.id] = cache[t.id].status;
+            }
+          });
+          setImageStatuses({ ...newStatuses });
+        }
+      } catch (e) {}
+    }
 
-  // Active editor navigation section: 'speaking_1', 'writing_1', etc.
-  const [activePartKey, setActivePartKey] = useState<string>('speaking_1');
+    // Async background validation
+    await Promise.all(
+      testList.map(async (test) => {
+        const status = await validateTestImages(test, force);
+        newStatuses[test.id] = status;
+      })
+    );
+    setImageStatuses({ ...newStatuses });
+  }, []);
 
   // Fetch all custom tests
   const fetchTests = useCallback(async () => {
@@ -79,7 +310,7 @@ export default function ManageTestsPage() {
       try {
         const { data, error } = await supabase
           .from('custom_tests')
-          .select('*')
+          .select('id, title, speaking_data, writing_data')
           .order('created_at', { ascending: false });
 
         if (error) throw error;
@@ -97,12 +328,13 @@ export default function ManageTestsPage() {
             return {
               id: t.id,
               title: t.title || '',
-              description: t.description || '',
               speaking: Array.isArray(sp) ? sp : [],
               writing: Array.isArray(wr) ? wr : []
             };
           });
-          setTests(mapped);
+          const sorted = mapped.sort((a, b) => a.title.localeCompare(b.title, language === 'vi' ? 'vi' : 'en'));
+          setTests(sorted);
+          validateAllImages(sorted);
         }
       } catch (err: any) {
         toast.error(language === 'vi' ? 'Không thể tải đề thi: ' + err.message : 'Failed to load tests: ' + err.message);
@@ -112,186 +344,30 @@ export default function ManageTestsPage() {
       const saved = localStorage.getItem('toeic_sw_custom_tests');
       if (saved) {
         try {
-          setTests(JSON.parse(saved));
+          const parsed = JSON.parse(saved);
+          const mapped: TestData[] = parsed.map((t: any) => ({
+            id: t.id,
+            title: t.title || '',
+            speaking: t.speaking || [],
+            writing: t.writing || []
+          }));
+          const sorted = mapped.sort((a, b) => a.title.localeCompare(b.title, language === 'vi' ? 'vi' : 'en'));
+          setTests(sorted);
+          validateAllImages(sorted);
         } catch (e) {
           console.error(e);
         }
       }
     }
     setLoading(false);
-  }, [user, language]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: user?.id avoids re-render loops on object reference changes
+  }, [user?.id, language, validateAllImages]);
 
   useEffect(() => {
     if (isAdmin) {
       fetchTests();
     }
   }, [isAdmin, fetchTests]);
-
-  // Handle beforeunload to warn user of unsaved changes
-  useEffect(() => {
-    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      if (isDirty) {
-        e.preventDefault();
-        e.returnValue = '';
-      }
-    };
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
-  }, [isDirty]);
-
-  // Open Edit Panel
-  const handleOpenEdit = (test: TestData) => {
-    setSelectedTest(test);
-    setEditTitle(test.title);
-    setEditDescription(test.description);
-    
-    // Normalize structured data to avoid UI crashes
-    const normalizedSpeaking = (test.speaking || []).map(p => ({
-      ...p,
-      questions: (p.questions || []).map(q => ({
-        ...q,
-        sampleAnswer: q.sampleAnswer || '',
-        text: q.text || '',
-        image: q.image || '',
-        description: q.description || '',
-        words: Array.isArray(q.words) ? q.words : []
-      }))
-    }));
-    
-    const normalizedWriting = (test.writing || []).map(p => ({
-      ...p,
-      questions: (p.questions || []).map(q => ({
-        ...q,
-        sampleAnswer: q.sampleAnswer || '',
-        text: q.text || '',
-        image: q.image || '',
-        description: q.description || '',
-        words: Array.isArray(q.words) ? q.words : []
-      }))
-    }));
-
-    setEditSpeaking(normalizedSpeaking);
-    setEditWriting(normalizedWriting);
-    setIsDirty(false);
-
-    // Default to the first available part
-    if (normalizedSpeaking.length > 0) {
-      setActivePartKey(`speaking_${normalizedSpeaking[0].part}`);
-    } else if (normalizedWriting.length > 0) {
-      setActivePartKey(`writing_${normalizedWriting[0].part}`);
-    } else {
-      setActivePartKey('');
-    }
-  };
-
-  // Close Edit Panel with Unsaved check
-  const handleCloseEdit = () => {
-    if (isDirty) {
-      const confirmClose = window.confirm(
-        language === 'vi' 
-          ? 'Bạn có thay đổi chưa lưu. Bạn có chắc chắn muốn đóng và hủy thay đổi không?' 
-          : 'You have unsaved changes. Are you sure you want to close and discard changes?'
-      );
-      if (!confirmClose) return;
-    }
-    setSelectedTest(null);
-    setIsDirty(false);
-  };
-
-  // Helper to update a speaking question field
-  const handleUpdateSpeakingQuestion = (partIdx: number, qIdx: number, field: string, value: any) => {
-    const updated = [...editSpeaking];
-    updated[partIdx].questions[qIdx] = {
-      ...updated[partIdx].questions[qIdx],
-      [field]: value
-    };
-    setEditSpeaking(updated);
-    setIsDirty(true);
-  };
-
-  // Helper to update a writing question field
-  const handleUpdateWritingQuestion = (partIdx: number, qIdx: number, field: string, value: any) => {
-    const updated = [...editWriting];
-    updated[partIdx].questions[qIdx] = {
-      ...updated[partIdx].questions[qIdx],
-      [field]: value
-    };
-    setEditWriting(updated);
-    setIsDirty(true);
-  };
-
-  // Helper to update a part header field (e.g. referenceInfo)
-  const handleUpdatePartField = (section: 'speaking' | 'writing', partIdx: number, field: string, value: any) => {
-    if (section === 'speaking') {
-      const updated = [...editSpeaking];
-      updated[partIdx] = {
-        ...updated[partIdx],
-        [field]: value
-      };
-      setEditSpeaking(updated);
-    } else {
-      const updated = [...editWriting];
-      updated[partIdx] = {
-        ...updated[partIdx],
-        [field]: value
-      };
-      setEditWriting(updated);
-    }
-    setIsDirty(true);
-  };
-
-  // Save changes to Supabase / LocalStorage
-  const handleSaveChanges = async () => {
-    if (!selectedTest) return;
-    setSaving(true);
-
-    if (user && supabase) {
-      try {
-        const { error } = await supabase
-          .from('custom_tests')
-          .update({
-            title: editTitle,
-            description: editDescription,
-            speaking_data: editSpeaking,
-            writing_data: editWriting
-          })
-          .eq('id', selectedTest.id);
-
-        if (error) throw error;
-
-        toast.success(language === 'vi' ? 'Đã lưu thay đổi thành công!' : 'Changes saved successfully!');
-        setIsDirty(false);
-        fetchTests();
-      } catch (err: any) {
-        toast.error(language === 'vi' ? 'Lỗi khi lưu: ' + err.message : 'Error saving: ' + err.message);
-      }
-    } else {
-      // LocalStorage update
-      const saved = localStorage.getItem('toeic_sw_custom_tests');
-      if (saved) {
-        try {
-          const list = JSON.parse(saved);
-          const idx = list.findIndex((t: any) => t.id === selectedTest.id);
-          if (idx !== -1) {
-            list[idx] = {
-              id: selectedTest.id,
-              title: editTitle,
-              description: editDescription,
-              speaking: editSpeaking,
-              writing: editWriting
-            };
-            localStorage.setItem('toeic_sw_custom_tests', JSON.stringify(list));
-            toast.success(language === 'vi' ? 'Đã lưu thay đổi cục bộ thành công!' : 'Changes saved locally!');
-            setIsDirty(false);
-            fetchTests();
-          }
-        } catch (e) {
-          toast.error('LocalStorage error');
-        }
-      }
-    }
-    setSaving(false);
-  };
 
   // Delete Test
   const handleDeleteTest = async (testId: string, title: string) => {
@@ -313,9 +389,6 @@ export default function ManageTestsPage() {
 
         toast.success(language === 'vi' ? 'Đã xóa đề thi thành công!' : 'Test deleted successfully!');
         fetchTests();
-        if (selectedTest?.id === testId) {
-          setSelectedTest(null);
-        }
       } catch (err: any) {
         toast.error(language === 'vi' ? 'Lỗi khi xóa: ' + err.message : 'Error deleting: ' + err.message);
       }
@@ -329,9 +402,6 @@ export default function ManageTestsPage() {
           localStorage.setItem('toeic_sw_custom_tests', JSON.stringify(filtered));
           toast.success(language === 'vi' ? 'Đã xóa đề thi cục bộ thành công!' : 'Test deleted locally!');
           fetchTests();
-          if (selectedTest?.id === testId) {
-            setSelectedTest(null);
-          }
         } catch (e) {
           toast.error('LocalStorage error');
         }
@@ -339,46 +409,76 @@ export default function ManageTestsPage() {
     }
   };
 
-  // Filtered tests
-  const filteredTests = tests.filter(test => 
-    test.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    test.description.toLowerCase().includes(searchQuery.toLowerCase())
-  );
-
-  // Parse active section and part number
-  const getActivePartDetails = () => {
-    if (!activePartKey) return { section: null, partNum: null, partIdx: -1, partData: null };
-    const [section, numStr] = activePartKey.split('_');
-    const partNum = parseInt(numStr, 10);
+  // Filtered tests (by section type and search query)
+  const filteredTests = tests.filter(test => {
+    const hasSpeaking = test.speaking && test.speaking.length > 0;
+    const hasWriting = test.writing && test.writing.length > 0;
     
-    if (section === 'speaking') {
-      const partIdx = editSpeaking.findIndex(p => p.part === partNum);
-      return { section, partNum, partIdx, partData: partIdx !== -1 ? editSpeaking[partIdx] : null };
-    } else {
-      const partIdx = editWriting.findIndex(p => p.part === partNum);
-      return { section, partNum, partIdx, partData: partIdx !== -1 ? editWriting[partIdx] : null };
-    }
-  };
-
-  const { section: activeSection, partNum: activePartNum, partIdx: activePartIdx, partData: activePartData } = getActivePartDetails();
+    if (filter === 'full' && !(hasSpeaking && hasWriting)) return false;
+    if (filter === 'speaking' && !(hasSpeaking && !hasWriting)) return false;
+    if (filter === 'writing' && !(hasWriting && !hasSpeaking)) return false;
+    
+    return (
+      test.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      test.id.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  });
 
   return (
     <div style={{ padding: '24px 5% 40px 5%', width: '100%', minHeight: 'calc(100vh - 64px)', display: 'flex', flexDirection: 'column', position: 'relative' }} className="fade-in">
-
-
+      
       {/* Main List Section */}
       <div className="card-sharp" style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '24px', background: 'var(--background-secondary)', border: '1px solid var(--border)', borderRadius: '0px' }}>
         
-        {/* Search Bar */}
-        <div style={{ display: 'flex', gap: '12px', alignItems: 'center', width: '100%', border: '1px solid var(--border)', padding: '8px 16px', background: 'var(--background)', borderRadius: '0px' }}>
-          <Search size={18} style={{ color: 'var(--text-secondary)' }} />
-          <input
-            type="text"
-            placeholder={language === 'vi' ? 'Tìm kiếm theo tên đề thi hoặc mô tả...' : 'Search by test title or description...'}
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            style={{ width: '100%', background: 'transparent', border: 'none', color: 'var(--text-primary)', fontSize: '0.95rem' }}
-          />
+        {/* Search Bar & Refresh */}
+        <div style={{ display: 'flex', gap: '12px', alignItems: 'center', width: '100%' }}>
+          <div style={{ display: 'flex', gap: '12px', alignItems: 'center', flex: 1, border: '1px solid var(--border)', padding: '8px 16px', background: 'var(--background)', borderRadius: '0px' }}>
+            <Search size={18} style={{ color: 'var(--text-secondary)' }} />
+            <input
+              type="text"
+              placeholder={language === 'vi' ? 'Tìm kiếm theo tên đề thi hoặc ID...' : 'Search by test title or ID...'}
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              style={{ width: '100%', background: 'transparent', border: 'none', color: 'var(--text-primary)', fontSize: '0.95rem' }}
+            />
+          </div>
+          <button 
+            className="btn-secondary"
+            onClick={() => validateAllImages(tests, true)}
+            style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 16px', borderRadius: '0px', height: '100%' }}
+            title={language === 'vi' ? 'Kiểm tra lại toàn bộ ảnh (Xóa cache)' : 'Re-check all images (Clear cache)'}
+          >
+            <RefreshCw size={18} /> <span className="desktop-only">{language === 'vi' ? 'Kiểm tra lại ảnh' : 'Recheck Images'}</span>
+          </button>
+        </div>
+
+        {/* Classification Tabs */}
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+          {(['all', 'full', 'speaking', 'writing'] as const).map((cat) => {
+            const label = {
+              all: language === 'vi' ? 'Tất cả' : 'All',
+              full: 'Full Test',
+              speaking: 'Speaking',
+              writing: 'Writing'
+            }[cat];
+            const active = filter === cat;
+            return (
+              <button
+                key={cat}
+                onClick={() => setFilter(cat)}
+                className={active ? 'btn-primary' : 'btn-secondary'}
+                style={{ 
+                  padding: '6px 16px', 
+                  fontSize: '0.8rem',
+                  background: active ? 'var(--text-primary)' : 'transparent',
+                  color: active ? 'var(--background)' : 'var(--text-primary)',
+                  borderRadius: '0px'
+                }}
+              >
+                {label}
+              </button>
+            );
+          })}
         </div>
 
         {/* Loading Spinner */}
@@ -414,8 +514,7 @@ export default function ManageTestsPage() {
                     justifyContent: 'space-between', 
                     gap: '16px',
                     borderRadius: '0px',
-                    borderColor: selectedTest?.id === test.id ? 'var(--accent)' : 'var(--border)',
-                    boxShadow: selectedTest?.id === test.id ? '0 0 0 1px var(--accent)' : 'none',
+                    borderColor: 'var(--border)',
                     transition: 'all 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
                     cursor: 'default'
                   }}
@@ -425,16 +524,125 @@ export default function ManageTestsPage() {
                   }}
                   onMouseLeave={(e) => {
                     e.currentTarget.style.transform = 'translateY(0)';
-                    e.currentTarget.style.borderColor = selectedTest?.id === test.id ? 'var(--accent)' : 'var(--border)';
+                    e.currentTarget.style.borderColor = 'var(--border)';
                   }}
                 >
-                  <div>
-                    <h3 style={{ fontSize: '1.15rem', color: 'var(--text-primary)', marginBottom: '6px', fontWeight: '700' }}>
-                      {test.title}
-                    </h3>
-                    <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: '1.5', minHeight: '36px', overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical' }}>
-                      {test.description || (language === 'vi' ? '(Chưa có mô tả)' : '(No description)')}
-                    </p>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '16px' }}>
+                    <div style={{ minWidth: 0 }}>
+                      <Link 
+                        href={`/admin/tests/edit/${test.id}`}
+                        style={{ textDecoration: 'none' }}
+                      >
+                        <h3 style={{ fontSize: '1.15rem', color: 'var(--text-primary)', marginBottom: '6px', fontWeight: '700', cursor: 'pointer' }} className="hover-accent">
+                          {test.title}
+                        </h3>
+                      </Link>
+                      <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', fontFamily: 'monospace' }}>ID: {test.id}</span>
+                    </div>
+
+                    {/* Top Right Quality Badges */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', alignItems: 'flex-end', flexShrink: 0, fontSize: '0.65rem', fontWeight: 'bold' }}>
+                      {/* Image Status Badge */}
+                      {(() => {
+                        const status = imageStatuses[test.id];
+                        if (status === 'ok') {
+                          return (
+                            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '3px', background: 'rgba(34, 197, 94, 0.2)', color: '#22c55e', padding: '2px 8px', borderRadius: '0px' }}>
+                              <CheckCircle2 size={10} /> <span>{language === 'vi' ? 'Đủ ảnh' : 'OK'}</span>
+                            </span>
+                          );
+                        } else if (status === 'missing') {
+                          return (
+                            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '3px', background: '#eab308', color: '#000', padding: '2px 8px', borderRadius: '0px' }}>
+                              <ImageOff size={10} /> <span>{language === 'vi' ? 'Thiếu ảnh' : 'Missing Img'}</span>
+                            </span>
+                          );
+                        } else if (status === 'broken') {
+                          return (
+                            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '3px', background: '#ef4444', color: '#fff', padding: '2px 8px', borderRadius: '0px' }}>
+                              <AlertTriangle size={10} /> <span>{language === 'vi' ? 'Lỗi ảnh' : 'Broken Img'}</span>
+                            </span>
+                          );
+                        } else {
+                          return (
+                            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '3px', background: 'var(--border)', color: 'var(--text-secondary)', padding: '2px 8px', borderRadius: '0px' }}>
+                              <Loader2 size={10} className="spin" /> <span>{language === 'vi' ? 'Kiểm tra ảnh...' : 'Checking...'}</span>
+                            </span>
+                          );
+                        }
+                      })()}
+
+                      {/* Completeness Badge */}
+                      {(() => {
+                        const imgStatus = imageStatuses[test.id];
+                        const health = checkTestHealth(test, imgStatus);
+                        if (health.isHealthy) {
+                          return (
+                            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '3px', background: 'rgba(34, 197, 94, 0.2)', color: '#22c55e', padding: '2px 8px', borderRadius: '0px' }}>
+                              <CheckCircle2 size={10} /> <span>{language === 'vi' ? 'Đề ổn' : 'Stable'}</span>
+                            </span>
+                          );
+                        } else {
+                          return (
+                            <span 
+                              style={{ 
+                                position: 'relative', 
+                                display: 'inline-flex', 
+                                alignItems: 'center', 
+                                gap: '3px', 
+                                background: 'rgba(217, 119, 6, 0.15)', 
+                                color: '#d97706', 
+                                padding: '2px 8px', 
+                                borderRadius: '0px',
+                                cursor: 'help' 
+                              }}
+                              onMouseEnter={() => setActiveTooltip(test.id)}
+                              onMouseLeave={() => setActiveTooltip(null)}
+                            >
+                              <AlertCircle size={10} /> 
+                              <span>
+                                {language === 'vi' 
+                                  ? `Chưa ổn (${health.issues.length})` 
+                                  : `Incomplete (${health.issues.length})`}
+                              </span>
+
+                              {/* Interactive premium tooltip */}
+                              {activeTooltip === test.id && (
+                                <div style={{
+                                  position: 'absolute',
+                                  bottom: '100%',
+                                  right: '0%',
+                                  marginBottom: '6px',
+                                  width: '280px',
+                                  backgroundColor: 'var(--background-secondary)',
+                                  border: '1px solid var(--border-focus)',
+                                  padding: '12px',
+                                  boxShadow: 'var(--shadow)',
+                                  zIndex: 100,
+                                  borderRadius: '0px',
+                                  fontSize: '0.75rem',
+                                  color: 'var(--text-primary)',
+                                  textAlign: 'left',
+                                  fontWeight: 'normal'
+                                }}>
+                                  <div style={{ fontWeight: 'bold', borderBottom: '1px solid var(--border)', paddingBottom: '4px', marginBottom: '6px', color: 'var(--accent)' }}>
+                                    {language === 'vi' ? 'Các phần chưa hoàn thành:' : 'Missing items:'}
+                                  </div>
+                                  <div style={{ maxHeight: '150px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                                    {health.issues.map((issue, idx) => (
+                                      <div key={idx} style={{ display: 'flex', alignItems: 'flex-start', gap: '4px' }}>
+                                        <span style={{ color: '#ef4444' }}>•</span>
+                                        <span>{issue}</span>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              )}
+                            </span>
+                          );
+                        }
+                      })()}
+                    </div>
                   </div>
 
                   {/* Badges/Stats */}
@@ -451,8 +659,8 @@ export default function ManageTestsPage() {
 
                   {/* Card Actions */}
                   <div style={{ display: 'flex', gap: '12px', borderTop: '1px solid var(--border)', paddingTop: '12px', marginTop: '4px' }}>
-                    <button 
-                      onClick={() => handleOpenEdit(test)}
+                    <Link
+                      href={`/admin/tests/edit/${test.id}`}
                       className="btn-primary" 
                       style={{ 
                         flex: 1, 
@@ -462,11 +670,15 @@ export default function ManageTestsPage() {
                         background: 'var(--accent)', 
                         borderColor: 'var(--accent)',
                         color: '#FFF',
-                        borderRadius: '0px'
+                        borderRadius: '0px',
+                        textDecoration: 'none',
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: '6px'
                       }}
                     >
-                      <Edit2 size={14} /> {language === 'vi' ? 'Chỉnh sửa' : 'Edit'}
-                    </button>
+                      <Edit2 size={14} /> <span>{language === 'vi' ? 'Chỉnh sửa' : 'Edit'}</span>
+                    </Link>
                     <button 
                       onClick={() => handleDeleteTest(test.id, test.title)}
                       className="btn-secondary" 
@@ -490,458 +702,6 @@ export default function ManageTestsPage() {
           </div>
         )}
       </div>
-
-      {/* Slide-out Editor Panel (IDE Split screen style, width 85vw, max-width 950px) */}
-      {selectedTest && (
-        <div 
-          onClick={handleCloseEdit} // Close on backdrop click
-          className="drawer-overlay" 
-          style={{ background: 'rgba(0, 0, 0, 0.6)', cursor: 'pointer' }}
-        >
-          <div 
-            onClick={(e) => e.stopPropagation()} // Prevent closing on panel click
-            className="drawer-panel"
-            style={{ 
-              maxWidth: '950px', 
-              width: '85vw', 
-              display: 'flex', 
-              flexDirection: 'column', 
-              cursor: 'default',
-              borderLeft: '2px solid var(--border)',
-              background: 'var(--background-secondary)',
-              position: 'relative',
-              borderRadius: '0px'
-            }}
-          >
-            {/* Panel Header */}
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)', paddingBottom: '16px', marginBottom: '20px' }}>
-              <div>
-                <span style={{ fontSize: '0.75rem', color: 'var(--accent)', textTransform: 'uppercase', fontWeight: 'bold', letterSpacing: '0.05em' }}>
-                  {language === 'vi' ? 'Bản Chỉnh sửa Đề thi (PC-First IDE)' : 'Exam Editor Dashboard (PC IDE)'}
-                </span>
-                <h2 style={{ fontSize: '1.3rem', fontWeight: 700, color: 'var(--text-primary)', marginTop: '4px' }}>
-                  {editTitle || selectedTest.title}
-                </h2>
-              </div>
-              <button 
-                onClick={handleCloseEdit}
-                style={{ background: 'transparent', border: 'none', color: 'var(--text-secondary)', padding: '6px', cursor: 'pointer' }}
-              >
-                <X size={22} />
-              </button>
-            </div>
-
-            {/* Test Metadata Box */}
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '16px', borderBottom: '1px solid var(--border)', paddingBottom: '16px', marginBottom: '16px' }}>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <label style={{ fontSize: '0.8rem', fontWeight: 'bold', color: 'var(--text-primary)' }}>
-                  {language === 'vi' ? 'Tiêu đề đề thi' : 'Test Title'}
-                </label>
-                <input
-                  type="text"
-                  value={editTitle}
-                  onChange={(e) => { setEditTitle(e.target.value); setIsDirty(true); }}
-                  style={{ width: '100%', padding: '8px 12px', border: '1px solid var(--border)', background: 'var(--background)', color: 'var(--text-primary)', fontSize: '0.9rem', borderRadius: '0px' }}
-                />
-              </div>
-
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                <label style={{ fontSize: '0.8rem', fontWeight: 'bold', color: 'var(--text-primary)' }}>
-                  {language === 'vi' ? 'Mô tả đề thi' : 'Test Description'}
-                </label>
-                <input
-                  type="text"
-                  value={editDescription}
-                  onChange={(e) => { setEditDescription(e.target.value); setIsDirty(true); }}
-                  style={{ width: '100%', padding: '8px 12px', border: '1px solid var(--border)', background: 'var(--background)', color: 'var(--text-primary)', fontSize: '0.9rem', borderRadius: '0px' }}
-                />
-              </div>
-            </div>
-
-            {/* IDE-Style Split Body */}
-            <div style={{ display: 'flex', flex: 1, minHeight: 0, gap: '20px', marginBottom: '16px' }}>
-              
-              {/* Left Column: Sidebar Navigation (240px) */}
-              <div 
-                style={{ 
-                  width: '240px', 
-                  borderRight: '1px solid var(--border)', 
-                  display: 'flex', 
-                  flexDirection: 'column', 
-                  gap: '8px', 
-                  paddingRight: '16px', 
-                  overflowY: 'auto' 
-                }}
-                className="no-scrollbar"
-              >
-                {/* Speaking Section Category Header */}
-                <div style={{ fontSize: '0.75rem', fontWeight: 'bold', color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <BookOpen size={12} />
-                  <span>Speaking Section</span>
-                </div>
-                {editSpeaking.map((part) => {
-                  const isCurrent = activePartKey === `speaking_${part.part}`;
-                  const answeredCount = part.questions.filter(q => q.sampleAnswer && q.sampleAnswer.trim() !== '').length;
-                  const totalCount = part.questions?.length || 0;
-                  
-                  return (
-                    <button
-                      key={`speaking_${part.part}`}
-                      onClick={() => setActivePartKey(`speaking_${part.part}`)}
-                      style={{
-                        width: '100%',
-                        padding: '10px 12px',
-                        textAlign: 'left',
-                        background: isCurrent ? 'var(--background)' : 'transparent',
-                        border: '1px solid',
-                        borderColor: isCurrent ? 'var(--accent)' : 'transparent',
-                        color: isCurrent ? 'var(--accent)' : 'var(--text-primary)',
-                        fontSize: '0.85rem',
-                        fontWeight: isCurrent ? '700' : '500',
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        borderRadius: '0px',
-                        cursor: 'pointer',
-                        transition: 'all 0.15s ease'
-                      }}
-                      onMouseEnter={(e) => {
-                        if (!isCurrent) e.currentTarget.style.background = 'var(--background)';
-                      }}
-                      onMouseLeave={(e) => {
-                        if (!isCurrent) e.currentTarget.style.background = 'transparent';
-                      }}
-                    >
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                        <span>Part {part.part}</span>
-                        <span style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', fontWeight: 'normal' }}>
-                          {part.partTitle.length > 20 ? part.partTitle.slice(0, 18) + '...' : part.partTitle}
-                        </span>
-                      </div>
-                      
-                      {/* Check if fully answered */}
-                      <span style={{ 
-                        fontSize: '0.7rem', 
-                        padding: '1px 5px', 
-                        background: answeredCount === totalCount ? 'rgba(34, 197, 94, 0.12)' : 'rgba(234, 179, 8, 0.12)', 
-                        color: answeredCount === totalCount ? '#22c55e' : '#eab308',
-                        fontWeight: 'bold'
-                      }}>
-                        {answeredCount}/{totalCount}
-                      </span>
-                    </button>
-                  );
-                })}
-
-                {/* Writing Section Category Header */}
-                <div style={{ fontSize: '0.75rem', fontWeight: 'bold', color: 'var(--accent)', textTransform: 'uppercase', letterSpacing: '0.08em', marginTop: '16px', marginBottom: '4px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <FileText size={12} />
-                  <span>Writing Section</span>
-                </div>
-                {editWriting.map((part) => {
-                  const isCurrent = activePartKey === `writing_${part.part}`;
-                  const answeredCount = part.questions.filter(q => q.sampleAnswer && q.sampleAnswer.trim() !== '').length;
-                  const totalCount = part.questions?.length || 0;
-                  
-                  return (
-                    <button
-                      key={`writing_${part.part}`}
-                      onClick={() => setActivePartKey(`writing_${part.part}`)}
-                      style={{
-                        width: '100%',
-                        padding: '10px 12px',
-                        textAlign: 'left',
-                        background: isCurrent ? 'var(--background)' : 'transparent',
-                        border: '1px solid',
-                        borderColor: isCurrent ? 'var(--accent)' : 'transparent',
-                        color: isCurrent ? 'var(--accent)' : 'var(--text-primary)',
-                        fontSize: '0.85rem',
-                        fontWeight: isCurrent ? '700' : '500',
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        alignItems: 'center',
-                        borderRadius: '0px',
-                        cursor: 'pointer',
-                        transition: 'all 0.15s ease'
-                      }}
-                      onMouseEnter={(e) => {
-                        if (!isCurrent) e.currentTarget.style.background = 'var(--background)';
-                      }}
-                      onMouseLeave={(e) => {
-                        if (!isCurrent) e.currentTarget.style.background = 'transparent';
-                      }}
-                    >
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                        <span>Part {part.part}</span>
-                        <span style={{ fontSize: '0.7rem', color: 'var(--text-secondary)', fontWeight: 'normal' }}>
-                          {part.partTitle.length > 20 ? part.partTitle.slice(0, 18) + '...' : part.partTitle}
-                        </span>
-                      </div>
-                      
-                      <span style={{ 
-                        fontSize: '0.7rem', 
-                        padding: '1px 5px', 
-                        background: answeredCount === totalCount ? 'rgba(34, 197, 94, 0.12)' : 'rgba(234, 179, 8, 0.12)', 
-                        color: answeredCount === totalCount ? '#22c55e' : '#eab308',
-                        fontWeight: 'bold'
-                      }}>
-                        {answeredCount}/{totalCount}
-                      </span>
-                    </button>
-                  );
-                })}
-              </div>
-
-              {/* Right Column: Editor Workspace (Focused details) */}
-              <div 
-                style={{ 
-                  flex: 1, 
-                  overflowY: 'auto', 
-                  paddingRight: '6px', 
-                  display: 'flex', 
-                  flexDirection: 'column', 
-                  gap: '20px' 
-                }}
-                className="fade-in"
-                key={activePartKey} // Triggers fade-in animation on part switch
-              >
-                {activePartData ? (
-                  <>
-                    {/* Part Headline Banner */}
-                    <div style={{ background: 'var(--background)', border: '1px solid var(--border)', padding: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderRadius: '0px' }}>
-                      <div>
-                        <span style={{ fontSize: '0.75rem', fontWeight: 'bold', color: 'var(--accent)', textTransform: 'uppercase' }}>
-                          {activeSection === 'speaking' ? 'Speaking Practice' : 'Writing Practice'} - Part {activePartNum}
-                        </span>
-                        <h3 style={{ fontSize: '1.1rem', fontWeight: 700, marginTop: '2px' }}>
-                          {activePartData.partTitle}
-                        </h3>
-                      </div>
-                    </div>
-
-                    {/* Part Table Info for Speaking Part 4 */}
-                    {activeSection === 'speaking' && activePartNum === 4 && (
-                      <div style={{ display: 'flex', flexDirection: 'column', gap: '6px', background: 'var(--background-secondary)', border: '1px solid var(--border)', padding: '16px', borderRadius: '0px' }}>
-                        <label style={{ fontSize: '0.85rem', fontWeight: 'bold', color: 'var(--accent)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                          <AlertCircle size={14} />
-                          <span>Reference Info (Table Data / Text Data)</span>
-                        </label>
-                        <p style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '4px' }}>
-                          {language === 'vi' ? 'Dữ liệu tham khảo dạng thô sử dụng cho các câu hỏi 8, 9, 10:' : 'Raw reference data for Questions 8, 9, 10:'}
-                        </p>
-                        <textarea
-                          value={activePartData.referenceInfo || ''}
-                          onChange={(e) => handleUpdatePartField('speaking', activePartIdx, 'referenceInfo', e.target.value)}
-                          rows={6}
-                          style={{ 
-                            width: '100%', 
-                            padding: '10px 14px', 
-                            border: '1px solid var(--border)', 
-                            background: 'var(--background)', 
-                            color: 'var(--text-primary)', 
-                            fontFamily: 'var(--font-mono)', 
-                            fontSize: '0.8rem',
-                            borderRadius: '0px'
-                          }}
-                        />
-                      </div>
-                    )}
-
-                    {/* Questions of this Part */}
-                    {(activePartData.questions || []).map((q, qIdx) => (
-                      <div 
-                        key={q.id || qIdx} 
-                        style={{ 
-                          padding: '20px', 
-                          background: 'var(--background-secondary)', 
-                          border: '1px solid var(--border)',
-                          display: 'flex',
-                          flexDirection: 'column',
-                          gap: '16px',
-                          borderRadius: '0px'
-                        }}
-                      >
-                        {/* Question title index */}
-                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid var(--border)', paddingBottom: '8px' }}>
-                          <span style={{ fontWeight: 700, fontSize: '0.9rem', color: 'var(--text-primary)' }}>
-                            Question {qIdx + 1}
-                          </span>
-                          <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', fontFamily: 'monospace' }}>
-                            ID: {q.id}
-                          </span>
-                        </div>
-
-                        {/* Question/Prompt input */}
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                          <label style={{ fontSize: '0.8rem', fontWeight: 'bold' }}>Question Text / Prompt</label>
-                          <textarea
-                            value={q.text || ''}
-                            onChange={(e) => {
-                              if (activeSection === 'speaking') {
-                                handleUpdateSpeakingQuestion(activePartIdx, qIdx, 'text', e.target.value);
-                              } else {
-                                handleUpdateWritingQuestion(activePartIdx, qIdx, 'text', e.target.value);
-                              }
-                            }}
-                            rows={2}
-                            style={{ width: '100%', padding: '10px 12px', border: '1px solid var(--border)', background: 'var(--background)', color: 'var(--text-primary)', fontSize: '0.9rem', borderRadius: '0px' }}
-                          />
-                        </div>
-
-                        {/* Speaking Part 2 Image / Writing Part 1 Image & Words */}
-                        {((activeSection === 'speaking' && activePartNum === 2) || (activeSection === 'writing' && activePartNum === 1)) && (
-                          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', background: 'var(--background)', padding: '16px', border: '1px solid var(--border)', borderRadius: '0px' }}>
-                            
-                            {/* Inputs side-by-side on PC */}
-                            <div style={{ display: 'grid', gridTemplateColumns: activeSection === 'writing' ? '1fr 1fr' : '1fr', gap: '16px' }}>
-                              <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                                <label style={{ fontSize: '0.8rem', fontWeight: 'bold' }}>Image URL</label>
-                                <input
-                                  type="text"
-                                  value={q.image || ''}
-                                  onChange={(e) => {
-                                    if (activeSection === 'speaking') {
-                                      handleUpdateSpeakingQuestion(activePartIdx, qIdx, 'image', e.target.value);
-                                    } else {
-                                      handleUpdateWritingQuestion(activePartIdx, qIdx, 'image', e.target.value);
-                                    }
-                                  }}
-                                  style={{ width: '100%', padding: '8px 12px', border: '1px solid var(--border)', background: 'var(--background-secondary)', color: 'var(--text-primary)', fontSize: '0.9rem', borderRadius: '0px' }}
-                                />
-                              </div>
-
-                              {activeSection === 'writing' && (
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                                  <label style={{ fontSize: '0.8rem', fontWeight: 'bold' }}>Required Words (comma separated)</label>
-                                  <input
-                                    type="text"
-                                    value={q.words ? q.words.join(', ') : ''}
-                                    onChange={(e) => {
-                                      const wordsArr = e.target.value.split(',').map(w => w.trim()).filter(w => w !== '');
-                                      handleUpdateWritingQuestion(activePartIdx, qIdx, 'words', wordsArr);
-                                    }}
-                                    placeholder="e.g. key, door"
-                                    style={{ width: '100%', padding: '8px 12px', border: '1px solid var(--border)', background: 'var(--background-secondary)', color: 'var(--text-primary)', fontSize: '0.9rem', borderRadius: '0px' }}
-                                  />
-                                </div>
-                              )}
-                            </div>
-
-                            {/* Image Description */}
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                              <label style={{ fontSize: '0.8rem', fontWeight: 'bold' }}>Image Description (for AI grading reference)</label>
-                              <textarea
-                                value={q.description || ''}
-                                onChange={(e) => {
-                                  if (activeSection === 'speaking') {
-                                    handleUpdateSpeakingQuestion(activePartIdx, qIdx, 'description', e.target.value);
-                                  } else {
-                                    handleUpdateWritingQuestion(activePartIdx, qIdx, 'description', e.target.value);
-                                  }
-                                }}
-                                rows={2}
-                                style={{ width: '100%', padding: '8px 12px', border: '1px solid var(--border)', background: 'var(--background-secondary)', color: 'var(--text-primary)', fontSize: '0.9rem', borderRadius: '0px' }}
-                              />
-                            </div>
-
-                            {/* Live Image Preview */}
-                            {q.image && (
-                              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', borderTop: '1px solid var(--border)', paddingTop: '12px' }}>
-                                <span style={{ fontSize: '0.75rem', fontWeight: 'bold', color: 'var(--text-secondary)' }}>Image Preview:</span>
-                                <div style={{ display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
-                                  <div style={{ width: '140px', height: '90px', position: 'relative', border: '1px solid var(--border)', background: '#000', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                                    <img src={q.image} alt="Preview" style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} />
-                                  </div>
-                                  <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '6px', justifyContent: 'center', minWidth: 0 }}>
-                                    <span style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
-                                      {q.image}
-                                    </span>
-                                    <a href={q.image} target="_blank" rel="noreferrer" className="btn-secondary" style={{ padding: '4px 8px', fontSize: '0.75rem', display: 'inline-flex', alignItems: 'center', gap: '4px', textDecoration: 'none', width: 'fit-content', borderRadius: '0px' }}>
-                                      <Eye size={12} /> View Large Image
-                                    </a>
-                                  </div>
-                                </div>
-                              </div>
-                            )}
-                          </div>
-                        )}
-
-                        {/* Sample Answer Textarea */}
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-                          <label style={{ fontSize: '0.8rem', fontWeight: 'bold', color: 'var(--success)' }}>Sample Answer</label>
-                          <textarea
-                            value={q.sampleAnswer || ''}
-                            onChange={(e) => {
-                              if (activeSection === 'speaking') {
-                                handleUpdateSpeakingQuestion(activePartIdx, qIdx, 'sampleAnswer', e.target.value);
-                              } else {
-                                handleUpdateWritingQuestion(activePartIdx, qIdx, 'sampleAnswer', e.target.value);
-                              }
-                            }}
-                            rows={5}
-                            style={{ 
-                              width: '100%', 
-                              padding: '10px 12px', 
-                              border: '1px solid var(--success)', 
-                              background: 'var(--background)', 
-                              color: 'var(--text-primary)', 
-                              fontSize: '0.9rem',
-                              borderRadius: '0px',
-                              lineHeight: '1.6'
-                            }}
-                            placeholder={language === 'vi' ? 'Nhập câu trả lời mẫu/đáp án mẫu cho câu hỏi này...' : 'Enter the sample answer or reference answer...'}
-                          />
-                        </div>
-
-                      </div>
-                    ))}
-                  </>
-                ) : (
-                  <div style={{ display: 'flex', flex: 1, justifyContent: 'center', alignItems: 'center', border: '1px dashed var(--border)', height: '200px' }}>
-                    <p style={{ color: 'var(--text-secondary)' }}>
-                      {language === 'vi' ? 'Không có phần thi nào được chọn.' : 'No section selected.'}
-                    </p>
-                  </div>
-                )}
-              </div>
-
-            </div>
-
-            {/* Panel Footer Actions */}
-            <div style={{ borderTop: '1px solid var(--border)', paddingTop: '16px', display: 'flex', gap: '12px', justifyContent: 'flex-end' }}>
-              <button 
-                onClick={handleCloseEdit}
-                className="btn-secondary"
-                style={{ padding: '10px 20px', borderRadius: '0px' }}
-              >
-                {language === 'vi' ? 'Hủy bỏ' : 'Cancel'}
-              </button>
-              <button 
-                onClick={handleSaveChanges}
-                disabled={saving || !isDirty}
-                className="btn-accent"
-                style={{ 
-                  padding: '10px 24px', 
-                  opacity: isDirty ? 1 : 0.6,
-                  cursor: isDirty ? 'pointer' : 'not-allowed',
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  borderRadius: '0px'
-                }}
-              >
-                <Save size={18} />
-                {saving 
-                  ? (language === 'vi' ? 'Đang lưu...' : 'Saving...') 
-                  : (language === 'vi' ? 'Lưu thay đổi' : 'Save Changes')
-                }
-              </button>
-            </div>
-
-          </div>
-        </div>
-      )}
     </div>
   );
 }

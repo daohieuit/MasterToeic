@@ -1,0 +1,2937 @@
+[
+  {
+    "id": "toeic_writing_test_1",
+    "speaking_data": null,
+    "writing_data": [
+      {
+        "part": 1,
+        "partTitle": "Part 1: Write a Sentence Based on a Picture",
+        "questions": [
+          {
+            "id": "wr_q1",
+            "type": "write_sentence_picture",
+            "image": "https://i.ibb.co/SwgbFYJT/d74c256888bc.webp",
+            "words": [
+              "shake hands",
+              "wheelchair"
+            ],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "The image shows an outdoor community scene in front of a house. On the left, a man in a blazer and baseball cap is shaking hands with an elderly man sitting in a wheelchair, who is covered with a light blue blanket. On the right, a man wearing a yellow 'Lakers' t-shirt smiles while holding an ice cream cone. In the background, another person is taking a photo with a smartphone, and an American flag is mounted on the house, creating a friendly and informal atmosphere.",
+            "sampleAnswer": "A man wearing a blazer and baseball cap bends down to shake hands with an elderly man sitting in a wheelchair."
+          },
+          {
+            "id": "wr_q2",
+            "type": "write_sentence_picture",
+            "image": "https://i.ibb.co/gby9ptgk/4fb0f1cb4585.webp",
+            "words": [
+              "salute",
+              "uniform"
+            ],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "The image features King Charles III and Queen Camilla seated together in an open carriage during a formal event. The King is in a red military uniform with various medals pinned to his chest and is raising his white-gloved hand in a salute. Queen Camilla is seated beside him, wearing a matching red outfit and a dark hat, smiling at the crowd. Other attendants in red uniforms stand in the background.",
+            "sampleAnswer": "King Charles III is wearing a red military uniform as he raises his white-gloved hand in a formal salute to the crowd from the carriage."
+          },
+          {
+            "id": "wr_q3",
+            "type": "write_sentence_picture",
+            "image": "https://i.ibb.co/kVVGgQZY/6f7b42728852.webp",
+            "words": [
+              "smile",
+              "talk"
+            ],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "The image shows singer Taylor Swift smiling and talking with a group of women in a crowded indoor setting. She is wearing a blue t-shirt with orange lettering that reads 'STEVIE KNICKS', and another woman next to her wears a matching blue shirt that reads 'NICKOLE KIDMAN'. In the background, other individuals are visible, including a man in a plaid suit blazer.",
+            "sampleAnswer": "While wearing a blue t-shirt with orange lettering, singer Taylor Swift is seen with a warm smile as she stops to talk with a group of women in the crowded indoor setting."
+          },
+          {
+            "id": "wr_q4",
+            "type": "write_sentence_picture",
+            "image": "https://i.ibb.co/svGPYgs6/f225c94bc607.webp",
+            "words": [
+              "clapping",
+              "platform"
+            ],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "The image captures a public event where several individuals are gathered on a raised platform, positioned beneath a large sign. In the center, a man in a dark suit and red tie is seen clapping with his head slightly raised, indicating applause or attention towards something off-frame. To his left, a young woman with blonde hair also looks upwards intently, while several other men in formal wear stand beside them. A large \"LEXUS\" logo is prominently displayed in the background, with vibrant blue and orange light reflections crisscrossing the scene, suggesting dynamic stage lighting or glass. The setting appears to be an indoor venue, possibly a convention center or arena.",
+            "sampleAnswer": "Several individuals standing on the raised platform are clapping while looking upward during the public event."
+          },
+          {
+            "id": "wr_q5",
+            "type": "write_sentence_picture",
+            "image": "https://i.ibb.co/svpN8bHr/f90861ef5218.webp",
+            "words": [
+              "speak",
+              "podium"
+            ],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "The image shows a man speaking at a podium during an outdoor evening event under decorative string lights. He is wearing a dark suit and tie, adjustments a red and white sports scarf around his neck while speaking into a microphone. A woman in a black blazer stands on the left clapping, and another man stands on the right in a blue jacket against a brick wall.",
+            "sampleAnswer": "While a man wearing a sports scarf speaks into a microphone at the podium, an outdoor evening event takes place under decorative string lights."
+          }
+        ],
+        "instructions": "In this part of the test, you will write ONE sentence that is based on the picture. With each picture, you will be given two words or phrases. You must use these words or phrases in your sentence. You can change the forms of the words and you can use the words in any order. Your sentences will be scored on the appropriate use of grammar and the relevance of the sentence to the picture.",
+        "partTime": 480
+      },
+      {
+        "part": 2,
+        "partTitle": "Part 2: Respond to a Written Request",
+        "questions": [
+          {
+            "id": "wr_q6",
+            "text": "From: Karen Vance (kvance@apexcorp.com)\nTo: Project Team\nSubject: Rescheduling Project Update Meeting\n\nDear Team,\n\nDue to an urgent, unexpected client emergency, I need to postpone our project update meeting originally scheduled for tomorrow morning at 10:00 AM.\n\nPlease reply with your suggestions for rescheduling. Let me know when you are available later this week and what specific progress updates you will have ready to share at that time.\n\nBest regards,\n\nKaren Vance\nProject Manager\nApex Corp",
+            "type": "respond_written_request",
+            "prepTime": 0,
+            "respTime": 600
+          },
+          {
+            "id": "wr_q7",
+            "text": "From: HR Department (hr@globalconsulting.com)\nTo: All Employees\nSubject: Feedback on Proposed Hybrid Work Policy\n\nDear Staff,\n\nAs we finalize our new hybrid work policy for the upcoming quarter, we are gathering feedback regarding employee preferences. We want to balance team collaboration with individual flexibility.\n\nPlease reply to this email outlining your preferred arrangement (number of days in the office versus remote work) and explain how this setup will support your overall productivity.\n\nSincerely,\n\nHuman Resources Department\nGlobal Consulting",
+            "type": "respond_written_request",
+            "prepTime": 0,
+            "respTime": 600
+          }
+        ],
+        "instructions": "In this part of the test, you will show how well you can write a response to an email. Your response will be scored on the quality and variety of your sentences, vocabulary, and organization. You will have 10 minutes to read and answer each email."
+      },
+      {
+        "part": 3,
+        "partTitle": "Part 3: Write an Opinion Essay",
+        "questions": [
+          {
+            "id": "wr_q8",
+            "text": "Some companies believe that providing regular professional development training is the most effective way to retain valuable employees. Others believe that offering regular financial bonuses and promotions is more effective. Which of these two approaches do you believe is more successful for long-term employee retention? Give specific reasons and examples to support your position.",
+            "type": "opinion_essay",
+            "prepTime": 0,
+            "respTime": 1800
+          }
+        ],
+        "instructions": "In this part of the test, you will write an essay in response to a prompt that asks you to state, explain, and support your opinion on an issue. Typically, an effective essay will contain a minimum of 300 words. Your essay will be scored on whether your opinion is supported with reasons and/or examples, and on the quality and variety of your sentences, vocabulary, and organization."
+      }
+    ]
+  },
+  {
+    "id": "toeic_sw_test_3",
+    "speaking_data": [
+      {
+        "part": 1,
+        "partTitle": "Part 1: Read a Text Aloud",
+        "questions": [
+          {
+            "id": "sp_q1",
+            "text": "Good morning, everyone, and welcome to the Annual Corporate Leadership Seminar. We are thrilled to have so many professionals gathered here today to develop their management skills. Over the next three days, you will have the opportunity to attend a variety of workshops, participate in group discussions, and listen to presentations from industry experts. Please remember to wear your name tags at all times and keep your mobile phones on silent. Let's get started with our first keynote speaker, Mr. Robert Lawson.",
+            "type": "read_aloud",
+            "prepTime": 45,
+            "respTime": 45
+          },
+          {
+            "id": "sp_q2",
+            "text": "Attention all staff members. The human resources department has just released a new set of online compliance training modules. These courses cover essential topics such as workplace safety, data protection, and our updated communication policies. You must complete all three modules by the end of the month. To access the training portal, please log in to the company intranet using your employee ID and password. If you experience any technical difficulties, do not hesitate to contact the IT helpdesk for assistance.",
+            "type": "read_aloud",
+            "prepTime": 45,
+            "respTime": 45
+          }
+        ],
+        "instructions": "In this part of the test, you will read aloud the text on the screen. You will have 45 seconds to prepare. Then you will have 45 seconds to read the text aloud."
+      },
+      {
+        "part": 2,
+        "partTitle": "Part 2: Describe a Picture",
+        "questions": [
+          {
+            "id": "sp_q3",
+            "type": "describe_picture",
+            "image": "https://i.ibb.co/jvj9VC2B/f91b5af74c45.webp",
+            "prepTime": 45,
+            "respTime": 45,
+            "description": "The image shows three individuals posing closely and smiling at a formal gathering or awards ceremony. A man on the left wears a dark blue velvet tuxedo with a bow tie, a woman in the center is in a bright pink strap dress, and a younger man on the right wears a white suit jacket. They are standing near a dinner table equipped with glasses and plates, amid a crowded room filled with other guests.",
+            "sampleAnswer": "I can search for images, but can't create any for you at the moment. You might be signed out or image creation may not be available in your location yet."
+          },
+          {
+            "id": "sp_q4",
+            "type": "describe_picture",
+            "image": "https://i.ibb.co/5XrcfrL5/2ac371aaf7a2.webp",
+            "prepTime": 45,
+            "respTime": 45,
+            "description": "The image shows a classical orchestra performing on a dimly lit stage during a concert. A conductor stands on an elevated platform on the left, raising a baton to direct the musicians who are seated with violins and cellos. Each musician has a music stand with illuminated sheet music in front of them, creating a focused atmosphere against the dark background.",
+            "sampleAnswer": "This image shows a classical orchestra performing on a dimly lit stage during a concert. In the foreground on the left, a conductor stands on an elevated platform, raising a baton to direct the musicians. The orchestra members are seated across the stage, playing violins and cellos. Each musician has a music stand with illuminated sheet music, which creates a focused, dramatic atmosphere against the dark background. Overall, it captures a highly professional and intense musical performance."
+          }
+        ],
+        "instructions": "In this part of the test, you will describe the picture on your screen in as much detail as you can. You will have 45 seconds to prepare your response. Then you will have 45 seconds to speak about the picture."
+      },
+      {
+        "part": 3,
+        "partTitle": "Part 3: Respond to Questions",
+        "questions": [
+          {
+            "id": "sp_q5",
+            "text": "When was the last time you attended a professional training course, and what was the topic?",
+            "type": "respond_to_questions",
+            "prepTime": 3,
+            "respTime": 15
+          },
+          {
+            "id": "sp_q6",
+            "text": "Do you prefer taking training courses online or in-person? Why?",
+            "type": "respond_to_questions",
+            "prepTime": 3,
+            "respTime": 15
+          },
+          {
+            "id": "sp_q7",
+            "text": "What do you think are the main benefits for a company that provides free professional development training to its employees?",
+            "type": "respond_to_questions",
+            "prepTime": 3,
+            "respTime": 30
+          }
+        ],
+        "instructions": "In this part of the test, you will answer three questions. For each question, begin responding immediately after you hear a beep. No preparation time is provided. You will have 15 seconds to respond to Questions 5 and 6, and 30 seconds to respond to Question 7."
+      },
+      {
+        "part": 4,
+        "partTitle": "Part 4: Respond to Questions Using Information Provided",
+        "questions": [
+          {
+            "id": "sp_q8",
+            "text": "What time does the workshop begin, and where is it being held?",
+            "type": "respond_using_info",
+            "prepTime": 3,
+            "respTime": 15
+          },
+          {
+            "id": "sp_q9",
+            "text": "I have a scheduled phone call at 1:00 PM. I heard the catered lunch starts at 1:30 PM, is that right?",
+            "type": "respond_using_info",
+            "prepTime": 3,
+            "respTime": 15
+          },
+          {
+            "id": "sp_q10",
+            "text": "I really enjoyed reading Dr. Susan Miller's recent book, and I want to attend all of her sessions. Could you give me the details of the sessions she will be leading?",
+            "type": "respond_using_info",
+            "prepTime": 3,
+            "respTime": 30
+          }
+        ],
+        "instructions": "In this part of the test, you will answer three questions based on the schedule or information provided. You will have 45 seconds to read the information before the questions begin. For each question, begin responding immediately after you hear a beep. No additional preparation time is provided. You will have 15 seconds to respond to Questions 8 and 9, and 30 seconds to respond to Question 10.",
+        "referenceInfo": "Annual Leadership Training Workshop\nDate: November 12\nLocation: Room 4B, Westin Conference Center\n\n9:00 AM - 10:00 AM: Effective Communication by Dr. Susan Miller\n10:00 AM - 11:30 AM: Conflict Resolution by James Clark\n11:30 AM - 12:30 PM: Motivating Your Team by Dr. Susan Miller\n12:30 PM - 1:30 PM: Catered Lunch (Main Dining Hall)\n1:30 PM - 3:00 PM: Time Management Strategies by Alice Wong\n3:00 PM - 4:00 PM: Q&A and Certificate Distribution"
+      },
+      {
+        "part": 5,
+        "partTitle": "Part 5: Express an Opinion",
+        "questions": [
+          {
+            "id": "sp_q11",
+            "text": "Do you agree or disagree with the following statement? 'Employees should be required to complete a certain number of professional development training hours every year.' Support your opinion with specific reasons and examples.",
+            "type": "express_opinion",
+            "prepTime": 45,
+            "respTime": 60
+          }
+        ],
+        "instructions": "In this part of the test, you will give your opinion about a specific topic. Be sure to say as much as you can in the time allowed. You will have 45 seconds to prepare. Then you will have 60 seconds to speak."
+      }
+    ],
+    "writing_data": [
+      {
+        "part": 1,
+        "partTitle": "Part 1: Write a Sentence Based on a Picture",
+        "questions": [
+          {
+            "id": "wr_q1",
+            "type": "write_sentence_picture",
+            "image": "https://i.ibb.co/WNZwRhw2/38e92bfb7e82.webp",
+            "words": [
+              "workshop",
+              "repair"
+            ],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "The image, which can be referenced as image_53e326.jpg, shows an indoor community workshop or repair event. In the center, a man wearing a vest is examining a floral-patterned lamp base, while an older woman sits beside him, watching intently. The room is filled with several folding tables where other participants are working on various projects, including furniture repair. In the background, there is a person standing in a dark hoodie, and decorative stained-glass-style screens are visible, creating a busy and collaborative environment.",
+            "sampleAnswer": "An experienced technician at the indoor community workshop carefully examines a lamp base to repair it while the owner watches intently."
+          },
+          {
+            "id": "wr_q2",
+            "type": "write_sentence_picture",
+            "image": "https://i.ibb.co/C565Y64s/d2d58df2b2b6.webp",
+            "words": [
+              "guitar",
+              "sing"
+            ],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "The image features musician Keith Urban performing on a stage under a blue spotlight. He is sitting down, singing into a microphone on a stand while playing a yellow electric guitar. He is dressed in a black t-shirt that reveals prominent tattoos on his arms, and torn jeans, creating a focused performance scene.",
+            "sampleAnswer": "While sitting under a blue spotlight, Keith Urban plays his yellow electric guitar and sings into a microphone."
+          },
+          {
+            "id": "wr_q3",
+            "type": "write_sentence_picture",
+            "image": "https://i.ibb.co/vfYmGJP/8631412521a7.webp",
+            "words": [
+              "crowd",
+              "street"
+            ],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "The image displays a large crowd of people gathered on a busy city street, indicating a significant event or public gathering. In the immediate foreground, a young man in a black New York Knicks t-shirt walks past, while to his right, a woman in a white Knicks top and cap holds a smartphone. Throughout the frame, many individuals, including men, women, and children, are wearing apparel associated with the New York Knicks, such as jerseys, t-shirts, and caps. In the background, modern city buildings with windows and a red 'Panda Express' sign are visible. Street infrastructure like a traffic light, a pole, and a 'West 31st St' sign further establish the urban setting.",
+            "sampleAnswer": "A large crowd of enthusiastic basketball fans wearing New York Knicks apparel has gathered on the busy city street."
+          },
+          {
+            "id": "wr_q4",
+            "type": "write_sentence_picture",
+            "image": "https://i.ibb.co/qFx38F2m/bf1841f984fd.webp",
+            "words": [
+              "perform",
+              "stage"
+            ],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "The image depicts a rock band performing live on a large outdoor stage built with geometric golden panels. The lead singer in a red coat stands with one arm raised high, while a guitarist, a drummer, and a bass player perform alongside him. In the foreground, an elaborate, feather-like costume piece obscures part of the view, and a massive crowd fills the stadium seats in the background.",
+            "sampleAnswer": "The rock band continues to perform energetically as the lead singer raises his arm high on the large outdoor stage."
+          },
+          {
+            "id": "wr_q5",
+            "type": "write_sentence_picture",
+            "image": "https://i.ibb.co/vx4KBrzZ/145a3ee4562f.webp",
+            "words": [
+              "walk",
+              "outdoor"
+            ],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "The image captures a group of people walking through an outdoor food truck venue on a sunny day. A man in a blue blazer and white trousers walks in the center alongside a woman in a blue t-shirt and jeans who is pointing to her left. Other visitors and a black van with graphic branding are visible on the right, while food trucks line the background area.",
+            "sampleAnswer": "A man in a blue blazer and a woman in a blue t-shirt walk together through the outdoor food truck venue on a sunny day."
+          }
+        ],
+        "instructions": "In this part of the test, you will write ONE sentence that is based on the picture. With each picture, you will be given two words or phrases. You must use both of them in your sentence. You may change the forms of the words and you may use the words in any order. You will have 8 minutes to complete this part of the test.",
+        "partTime": 480
+      },
+      {
+        "part": 2,
+        "partTitle": "Part 2: Respond to a Written Request",
+        "questions": [
+          {
+            "id": "wr_q6",
+            "text": "From: HR Department\nTo: All Employees\nSubject: Feedback on Recent Software Training\n\nDear Staff,\n\nThank you for participating in last week's mandatory software training session. We are always looking to improve our training programs. Please reply to this email and provide your feedback. Specifically, include two things you liked about the training, and suggest one way we could improve future sessions.",
+            "type": "respond_written_request",
+            "prepTime": 0,
+            "respTime": 600
+          },
+          {
+            "id": "wr_q7",
+            "text": "From: Thomas Jenkins, Department Manager\nTo: Project Team\nSubject: Upcoming Training Needs\n\nHello Team,\n\nAs we prepare the budget for the next quarter, I want to allocate some funds for team development and training. Please let me know what kind of training you think would be most beneficial for our group right now. In your reply, suggest at least two specific topics we should learn about and state whether you prefer an online or in-person format.",
+            "type": "respond_written_request",
+            "prepTime": 0,
+            "respTime": 600
+          }
+        ],
+        "instructions": "In this part of the test, you will show how well you can write a response to an email. Your response will be scored on the quality and variety of your sentences, vocabulary, and organization. You will have 10 minutes to read and answer each email."
+      },
+      {
+        "part": 3,
+        "partTitle": "Part 3: Write an Opinion Essay",
+        "questions": [
+          {
+            "id": "wr_q8",
+            "text": "Some businesses prefer to hire new employees who already possess the exact skills needed for the job. Other businesses prefer to hire workers with little experience and provide comprehensive training on the job. Which approach do you think is better for a company's long-term success? Support your answer with specific reasons and examples.",
+            "type": "opinion_essay",
+            "prepTime": 0,
+            "respTime": 1800
+          }
+        ],
+        "instructions": "In this part of the test, you will write an essay in response to a prompt. You will have 30 minutes to plan, write, and revise your essay. Typically, an effective essay will contain a minimum of 300 words."
+      }
+    ]
+  },
+  {
+    "id": "toeic_sw_test_4",
+    "speaking_data": [
+      {
+        "part": 1,
+        "partTitle": "Part 1: Read a Text Aloud",
+        "questions": [
+          {
+            "id": "sp_q1",
+            "text": "Our company is organizing a special training workshop for all new employees next week. The session will cover important topics including customer service standards, safety procedures, and effective communication skills. Participants are encouraged to prepare questions in advance. This workshop is designed to help everyone integrate smoothly into their roles and contribute successfully to team goals.",
+            "type": "read_aloud",
+            "prepTime": 45,
+            "respTime": 45
+          },
+          {
+            "id": "sp_q2",
+            "text": "The product launch has been rescheduled due to necessary improvements in the final design. The marketing department has prepared detailed promotional materials that will be distributed after the new date is confirmed. All staff involved in the project should update their calendars and remain flexible to accommodate any additional changes in the coming days.",
+            "type": "read_aloud",
+            "prepTime": 45,
+            "respTime": 45
+          }
+        ],
+        "instructions": "In this part of the test, you will read aloud the text on the screen. You will have 45 seconds to prepare and 45 seconds to read the text aloud."
+      },
+      {
+        "part": 2,
+        "partTitle": "Part 2: Describe a Picture",
+        "questions": [
+          {
+            "id": "sp_q3",
+            "type": "describe_picture",
+            "image": "https://i.ibb.co/xK3YGrKW/14d4130f2a4b.webp",
+            "prepTime": 45,
+            "respTime": 45,
+            "description": "The image shows a middle-aged man smiling warmly at the camera in an outdoor setting. He has a short beard, a shaved head, and is wearing a white graphic t-shirt with text on it. In the background, there is a body of water resembling a reflecting pool, lined with green trees under an overcast sky. A few distant figures can be seen walking near the water's edge.",
+            "sampleAnswer": "Are you signed in? I can search for images, but can't seem to create any for you right now. It's also possible that image creation isn't available in your location yet."
+          },
+          {
+            "id": "sp_q4",
+            "type": "describe_picture",
+            "image": "https://i.ibb.co/mFvRn54H/df7dffc76706.webp",
+            "prepTime": 45,
+            "respTime": 45,
+            "description": "The image captures a crowd of passionate sports fans cheering at an outdoor night event. In the center, a young man wearing a white New York basketball jersey is shouting with a wide-open mouth and his arms raised high. Other fans around him are also cheering and holding up inflatable sticks, with a brightly lit building facade visible in the distant background.",
+            "sampleAnswer": "This is a picture taken at an outdoor night sports event. In the center, a young man wearing a white New York basketball jersey is shouting with his mouth wide open and his arms raised high, looking very passionate. Around him, a crowd of other fans is also cheering excitedly, with some holding up inflatable sticks. In the distant background, a brightly lit building facade is visible under the dark sky. Overall, the scene captures an energetic and thrilling atmosphere."
+          }
+        ],
+        "instructions": "In this part of the test, you will describe the picture on your screen. You will have 45 seconds to prepare and 45 seconds to speak about the picture."
+      },
+      {
+        "part": 3,
+        "partTitle": "Part 3: Respond to Questions",
+        "questions": [
+          {
+            "id": "sp_q5",
+            "text": "How do you usually prepare for an important business presentation?",
+            "type": "respond_to_questions",
+            "prepTime": 3,
+            "respTime": 15
+          },
+          {
+            "id": "sp_q6",
+            "text": "What are some advantages of working in a team environment?",
+            "type": "respond_to_questions",
+            "prepTime": 3,
+            "respTime": 15
+          },
+          {
+            "id": "sp_q7",
+            "text": "Talk about a time when you had to adapt to a sudden change in your work schedule or plans.",
+            "type": "respond_to_questions",
+            "prepTime": 3,
+            "respTime": 30
+          }
+        ],
+        "instructions": "In this part of the test, you will answer three questions about a topic. You will have a short time to prepare before each response."
+      },
+      {
+        "part": 4,
+        "partTitle": "Part 4: Respond to Questions Using Information Provided",
+        "questions": [
+          {
+            "id": "sp_q8",
+            "text": "What time does the first session start on April 10, and who is presenting?",
+            "type": "respond_using_info",
+            "prepTime": 3,
+            "respTime": 15
+          },
+          {
+            "id": "sp_q9",
+            "text": "I heard the leadership skills workshop is in the afternoon on April 11. Is that information correct?",
+            "type": "respond_using_info",
+            "prepTime": 3,
+            "respTime": 15
+          },
+          {
+            "id": "sp_q10",
+            "text": "Which sessions is Anna Morales responsible for, and on which days?",
+            "type": "respond_using_info",
+            "prepTime": 3,
+            "respTime": 30
+          }
+        ],
+        "instructions": "In this part of the test, you will answer three questions based on the information provided. You will have a short time to prepare before each response.",
+        "referenceInfo": "Annual Staff Training Seminar Schedule\nDate: April 10-12\nLocation: Training Center, Building A\n\nDay 1: Customer Relations - April 10, 8:30 AM - 10:00 AM, Speaker: Anna Morales\nDay 1: Software Tools - April 10, 10:30 AM - 12:00 PM, Speaker: Kevin Park\nDay 2: Leadership Skills - April 11, 9:00 AM - 10:30 AM, Speaker: Rachel Bennett\nDay 2: Health and Safety - April 11, 1:30 PM - 3:00 PM, Speaker: James Wong\nDay 3: Goal Setting - April 12, 8:45 AM - 10:15 AM, Speaker: Anna Morales"
+      },
+      {
+        "part": 5,
+        "partTitle": "Part 5: Express an Opinion",
+        "questions": [
+          {
+            "id": "sp_q11",
+            "text": "Many companies now offer remote work options to their employees. Do you think this is a positive development for both workers and businesses? Give reasons and examples to support your opinion.",
+            "type": "express_opinion",
+            "prepTime": 45,
+            "respTime": 60
+          }
+        ],
+        "instructions": "In this part of the test, you will give your opinion about a specific topic. You will have 45 seconds to prepare and 60 seconds to speak."
+      }
+    ],
+    "writing_data": [
+      {
+        "part": 1,
+        "partTitle": "Part 1: Write a Sentence Based on a Picture",
+        "questions": [
+          {
+            "id": "wr_q1",
+            "type": "write_sentence_picture",
+            "image": "https://i.ibb.co/whMwzF0c/cf5cf20e6720.webp",
+            "words": [
+              "kick",
+              "ball"
+            ],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "The image displays a man practicing soccer skills in an outdoor courtyard with a weathered concrete wall. He is wearing a black track jacket with yellow stripes over a graphic t-shirt and black pants, balancing a white soccer ball on his extended right foot. The ground consists of stone tiles interspersed with patches of green grass and small weeds.",
+            "sampleAnswer": "The soccer player demonstrates impressive control as he prepares to kick the ball with his right foot."
+          },
+          {
+            "id": "wr_q2",
+            "type": "write_sentence_picture",
+            "image": "https://i.ibb.co/wNxSSJvz/14974c3ec21a.webp",
+            "words": [
+              "spectators",
+              "stadium"
+            ],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "The image, which can be referenced as image_538cca.jpg, depicts an energetic crowd of spectators at a stadium, likely during a sporting event. Many people are wearing yellow and green jerseys, showing support for their team, and some are holding up their smartphones to capture photos or videos. A prominent feature is a hand-drawn sign held by a fan that reads 'Raphinha Uma Foto Por Favor' alongside the Brazilian flag. The atmosphere is lively and enthusiastic, with fans cheering and interacting in the packed stands.",
+            "sampleAnswer": "Enthusiastic spectators packed into the stadium, many wearing team jerseys and holding up smartphones to capture the lively atmosphere."
+          },
+          {
+            "id": "wr_q3",
+            "type": "write_sentence_picture",
+            "image": "https://i.ibb.co/rL4dc9G/3c27793f5912.webp",
+            "words": [
+              "sit",
+              "dinner"
+            ],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "The image captures a formal indoor dining event with guests seated around a banquet table covered with a burgundy tablecloth. In the foreground, a man in a dark striped suit and a woman in a white feathery top are seated next to each other, looking directly at the camera. The table is set with numerous wine glasses, plates, and water bottles, while other guests converse in the background.",
+            "sampleAnswer": "A man and a woman sit next to each other at the banquet table while enjoying a formal dinner event with other guests."
+          },
+          {
+            "id": "wr_q4",
+            "type": "write_sentence_picture",
+            "image": "https://i.ibb.co/0R3RCX89/13d92877c4a0.webp",
+            "words": [
+              "police",
+              "security"
+            ],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "The image captures a busy city street scene involving law enforcement and pedestrians. In the foreground, an NYPD counterterrorism officer is seen from behind, while their reflection is prominently displayed in a large glass surface, creating a symmetrical visual effect. Beyond the glass, several pedestrians, including people wearing basketball jerseys, are walking past metal security scanners on the sidewalk. The background shows urban city buildings and traffic lights, suggesting a high-security environment in a metropolitan area.",
+            "sampleAnswer": "The NYPD counterterrorism police officer stood guard near the entrance while pedestrians passed through the metal security scanners on the busy city sidewalk."
+          },
+          {
+            "id": "wr_q5",
+            "type": "write_sentence_picture",
+            "image": "https://i.ibb.co/5X7b83Rh/4f3431f06334.webp",
+            "words": [
+              "filmmaker",
+              "camera"
+            ],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "The image captures a professional film crew shooting outdoors on a sunny day. In the foreground, a filmmaker wearing a cap is looking through the viewfinder of a large Panavision motion picture camera mounted on a tripod. Next to him, another crew member watches the scene closely while standing nearby. The camera is equipped with a long lens and various technical accessories. In the background, there is a grassy field with a wooden fence and trees, all illuminated by the warm, natural light of the setting sun.",
+            "sampleAnswer": "While looking through the viewfinder of a large Panavision motion picture camera, the professional filmmaker captures a scene in the warm natural light of the setting sun."
+          }
+        ],
+        "instructions": "In this part of the test, you will write ONE sentence that is based on the picture. You must use the two words or phrases provided.",
+        "partTime": 480
+      },
+      {
+        "part": 2,
+        "partTitle": "Part 2: Respond to a Written Request",
+        "questions": [
+          {
+            "id": "wr_q6",
+            "text": "From: Training Coordinator\nTo: Department Heads\nSubject: Feedback on Upcoming Training Seminar\n\nDear Colleagues,\n\nWe are finalizing the agenda for the staff training seminar next month. Please provide your suggestions for additional topics or any adjustments to the current schedule. Your input will help us create a more relevant and useful program for all participants.\n\nThank you,\nMaria Lopez",
+            "type": "respond_written_request",
+            "prepTime": 0,
+            "respTime": 600
+          },
+          {
+            "id": "wr_q7",
+            "text": "From: Office Manager\nTo: All Employees\nSubject: Planning the Next Team Building Event\n\nHi Team,\n\nWe would like to organize a team building activity in the coming weeks. Reply with your ideas for suitable dates, preferred activities, and any other suggestions that could make the event enjoyable and productive.\n\nRegards,\nThomas Reed",
+            "type": "respond_written_request",
+            "prepTime": 0,
+            "respTime": 600
+          }
+        ],
+        "instructions": "In this part of the test, you will show how well you can write a response to an email. Your response should be at least 100 words long."
+      },
+      {
+        "part": 3,
+        "partTitle": "Part 3: Write an Opinion Essay",
+        "questions": [
+          {
+            "id": "wr_q8",
+            "text": "Some people believe that regular staff training programs are essential for company success, while others argue that on-the-job experience is more valuable. Which view do you support? Provide specific reasons and examples in your essay.",
+            "type": "opinion_essay",
+            "prepTime": 0,
+            "respTime": 1800
+          }
+        ],
+        "instructions": "In this part of the test, you will write an essay in response to a prompt. Your essay should be at least 300 words long."
+      }
+    ]
+  },
+  {
+    "id": "toeic_sw_test_1",
+    "speaking_data": [
+      {
+        "part": 1,
+        "partTitle": "Part 1: Read a Text Aloud",
+        "questions": [
+          {
+            "id": "sp_q1",
+            "text": "Attention all team members. I would like to inform you that our upcoming quarterly meeting, originally scheduled for this Thursday, has been postponed. Due to unexpected delays with the Falcon Project, the management team needs more time to review the finalized reports. The meeting will now take place next Monday at ten o'clock in the main conference room. We apologize for any inconvenience this may cause and appreciate your flexibility. Please ensure all your preliminary data is submitted by Friday afternoon.",
+            "type": "read_aloud",
+            "prepTime": 45,
+            "respTime": 45
+          },
+          {
+            "id": "sp_q2",
+            "text": "Welcome to today's strategy session. As you know, we are currently facing some tight deadlines regarding the software rollout. Our goal today is to brainstorm efficient solutions to overcome the recent developmental delays. We will start by reviewing the feedback from the beta testing phase. After that, each department head will present their revised timelines. I encourage everyone to share their ideas openly, as cross-collaboration is the key to getting this project back on track before the end of the month.",
+            "type": "read_aloud",
+            "prepTime": 45,
+            "respTime": 45
+          }
+        ],
+        "instructions": "In this part of the test, you will read aloud the text on the screen. You will have 45 seconds to prepare. Then you will have 45 seconds to read the text aloud."
+      },
+      {
+        "part": 2,
+        "partTitle": "Part 2: Describe a Picture",
+        "questions": [
+          {
+            "id": "sp_q3",
+            "type": "describe_picture",
+            "image": "https://i.ibb.co/99Mx65Jw/787f9f2cc28f.webp",
+            "prepTime": 45,
+            "respTime": 45,
+            "description": "The image features two women standing together on a stage in front of a microphone. The woman on the left is wearing a sleeveless black dress and a large necklace, while the woman on the right is dressed in an elaborate, bright pink ruffled gown with a high collar. The background consists of a large, circular golden set piece under theatrical stage lighting.",
+            "sampleAnswer": "This picture shows two women standing together on a stage in front of a microphone. On the left, a woman is wearing a sleeveless black dress paired with a large necklace. Next to her, the other woman is dressed in an elaborate, bright pink ruffled gown with a high collar. In the background, there is a large, circular golden set piece illuminated under theatrical stage lighting. Overall, it looks like a formal event or a musical performance."
+          },
+          {
+            "id": "sp_q4",
+            "type": "describe_picture",
+            "image": "https://i.ibb.co/tMrV9Wqf/f01f7a75573e.webp",
+            "prepTime": 45,
+            "respTime": 45,
+            "description": "The image captures a construction scene where workers are positioned on scaffolding against a large building wall. Four men are visible, all wearing white hard hats, bright yellow safety vests, and safety harnesses, indicating adherence to safety protocols. One worker on the upper platform is giving a 'thumbs up' gesture, while others are standing or leaning on the scaffolding. They appear to be involved in the installation or removal of prominent signage. Large, dark letters forming parts of words like \"TRUMP AND\" and \"ENTER FOR THE\" are affixed to the white wall, with the metal scaffolding structure crisscrossing in front of them.",
+            "sampleAnswer": "This image shows a busy construction scene outside a large building. In the center, four construction workers are positioned on metal scaffolding against a white wall. They are all wearing white hard hats, bright yellow safety vests, and safety harnesses for protection. Interestingly, one worker on the upper platform is giving a thumbs-up gesture to the camera. They appear to be installing or removing large, dark lettering on the wall, which spells out words like \"TRUMP\" and \"ENTER.\" Overall, it looks like a typical day of outdoor signage installation with a strong focus on safety."
+          }
+        ],
+        "instructions": "In this part of the test, you will describe the picture on your screen in as much detail as you can. You will have 45 seconds to prepare your response. Then you will have 45 seconds to speak about the picture."
+      },
+      {
+        "part": 3,
+        "partTitle": "Part 3: Respond to Questions",
+        "questions": [
+          {
+            "id": "sp_q5",
+            "text": "How often do you attend project update meetings in your office, and how long do they usually last?",
+            "type": "respond_to_questions",
+            "prepTime": 3,
+            "respTime": 15
+          },
+          {
+            "id": "sp_q6",
+            "text": "If a project you are working on gets delayed, who is the first person you inform?",
+            "type": "respond_to_questions",
+            "prepTime": 3,
+            "respTime": 15
+          },
+          {
+            "id": "sp_q7",
+            "text": "What do you think is the most effective way to keep a team motivated when a project is behind schedule?",
+            "type": "respond_to_questions",
+            "prepTime": 3,
+            "respTime": 30
+          }
+        ],
+        "instructions": "In this part of the test, you will answer three questions. For each question, begin responding immediately after you hear a beep. No preparation time is provided. You will have 15 seconds to respond to Questions 5 and 6, and 30 seconds to respond to Question 7."
+      },
+      {
+        "part": 4,
+        "partTitle": "Part 4: Respond to Questions Using Information Provided",
+        "questions": [
+          {
+            "id": "sp_q8",
+            "text": "What time does the meeting start, and who is giving the first presentation?",
+            "type": "respond_using_info",
+            "prepTime": 3,
+            "respTime": 15
+          },
+          {
+            "id": "sp_q9",
+            "text": "I need to make an urgent phone call around noon. I heard that the lunch break starts at 1:00 PM. Is that correct?",
+            "type": "respond_using_info",
+            "prepTime": 3,
+            "respTime": 15
+          },
+          {
+            "id": "sp_q10",
+            "text": "I am very interested in the topics Sarah Jenkins will cover. Can you give me the details of all the sessions she is leading?",
+            "type": "respond_using_info",
+            "prepTime": 3,
+            "respTime": 30
+          }
+        ],
+        "instructions": "In this part of the test, you will answer three questions based on the information provided. You will have 45 seconds to read the information before the questions begin. For each question, begin responding immediately after you hear a beep. No additional preparation time is provided. You will have 15 seconds to respond to Questions 8 and 9, and 30 seconds to respond to Question 10.",
+        "referenceInfo": "Project Alpha Status Update Meeting\nDate: October 15\nLocation: Room 302\n\n9:00 AM - 9:45 AM: Project Overview by Sarah Jenkins\n9:45 AM - 10:30 AM: Budget Analysis by David Lee\n10:30 AM - 11:15 AM: Technical Delays and Solutions by Sarah Jenkins\n11:15 AM - 12:00 PM: Client Communication Strategy by Mark Davis\n12:00 PM - 1:00 PM: Lunch Break (Catered in the lounge)\n1:00 PM - 2:00 PM: Q&A and Final Action Items by Sarah Jenkins"
+      },
+      {
+        "part": 5,
+        "partTitle": "Part 5: Express an Opinion",
+        "questions": [
+          {
+            "id": "sp_q11",
+            "text": "Some professionals believe that having fewer, shorter meetings is the best way to prevent project delays. Do you agree or disagree with this statement? Support your opinion with specific reasons and examples.",
+            "type": "express_opinion",
+            "prepTime": 45,
+            "respTime": 60
+          }
+        ],
+        "instructions": "In this part of the test, you will give your opinion about a specific topic. Be sure to say as much as you can in the time allowed. You will have 45 seconds to prepare. Then you will have 60 seconds to speak."
+      }
+    ],
+    "writing_data": [
+      {
+        "part": 1,
+        "partTitle": "Part 1: Write a Sentence Based on a Picture",
+        "questions": [
+          {
+            "id": "wr_q1",
+            "type": "write_sentence_picture",
+            "image": "https://i.ibb.co/rKxZvGwv/e8cf9af14270.webp",
+            "words": [
+              "lie",
+              "street"
+            ],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "The image captures a scene on a city street where a man is lying down on a piece of cardboard next to a large green dumpster. He is wearing a plaid shirt over a white t-shirt, khaki pants, and brown shoes, with a white sign clipped to his shirt that reads 'IGNORE'. In the background, a silver sedan with its headlights turned on is driving down the wet asphalt road near some green bushes.",
+            "sampleAnswer": "A man wearing a sign that says \"IGNORE\" is seen to lie on a piece of cardboard on the city street while a silver sedan drives past in the background."
+          },
+          {
+            "id": "wr_q2",
+            "type": "write_sentence_picture",
+            "image": "https://i.ibb.co/gMJzPHs2/f7275f6a550a.webp",
+            "words": [
+              "stadium",
+              "pitch"
+            ],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "The image displays a large, modern soccer stadium featuring a pristine green pitch and numerous rows of multi-colored empty spectator seats. On the well-maintained field, several individuals are visible; a group wearing yellow shirts and dark pants appears to be staff or ground crew, with one person kneeling near the center. Further to the left, another smaller group in light-colored uniforms can be seen walking across the pitch. The tiered stands, predominantly red and grey with some green and brown sections, are almost entirely vacant, suggesting a time before or after an event. Large banners promoting 'FIFA WORLD CUP 2026' and 'MEXICO CITY' are prominently displayed around the upper sections of the stadium, along with various sponsor advertisements lining the perimeter of the field.",
+            "sampleAnswer": "While staff members gather on the pristine green pitch, the massive stadium remains almost entirely vacant ahead of the upcoming FIFA World Cup 2026 match."
+          },
+          {
+            "id": "wr_q3",
+            "type": "write_sentence_picture",
+            "image": "https://i.ibb.co/v674r9vG/741c04aa406b.webp",
+            "words": [
+              "celebration",
+              "podium"
+            ],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "The image displays a large group of people gathered for a celebratory event, likely at a stock exchange or corporate launch. A man in the center foreground, wearing a dark suit, is smiling widely and holding up a black, intricate object, while people around him are cheering enthusiastically. To his left, a woman with blonde hair is clapping, and to his right, another woman with long blonde hair is raising her fist in excitement, with many others in the background mirroring their joyful expressions and gestures. In front of the jubilant crowd is a white podium clearly marked with the blue \"Nasdaq\" logo. The background features a large screen with the word \"SPACE\" prominently displayed, suggesting a connection to a space-related company or industry milestone.",
+            "sampleAnswer": "The crowd erupted in a joyful celebration as the executive stood behind the Nasdaq podium to mark the company's historic milestone."
+          },
+          {
+            "id": "wr_q4",
+            "type": "write_sentence_picture",
+            "image": "https://i.ibb.co/M56vS481/cdfd456d5caf.webp",
+            "words": [
+              "holding hands",
+              "uniforms"
+            ],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "The image shows a tense scene where a man and a woman are walking together, surrounded by several individuals in dark uniforms. The woman, with long reddish-brown hair, is wearing a mustard yellow V-neck sweater and a long dark coat, holding a black bag in one hand and the man's hand with the other. The man, with dark curly hair and a serious expression, is dressed in a dark jacket over a lighter top and cargo pants, holding her hand firmly. Both central figures appear concerned, looking either forward or slightly to the side amidst the uniformed personnel. The background is dark and blurred, suggesting a large, somewhat industrial or plain setting with dim lighting.",
+            "sampleAnswer": "While walking through the crowd of individuals dressed in dark uniforms, the concerned couple was holding hands tightly."
+          },
+          {
+            "id": "wr_q5",
+            "type": "write_sentence_picture",
+            "image": "https://i.ibb.co/VY0dKLgH/066971a44212.webp",
+            "words": [
+              "crowd",
+              "cheer"
+            ],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "The image depicts a massive, energetic crowd at an outdoor evening event or concert. In the foreground, a man in a blue sports t-shirt is shouting excitedly with both fists raised in the air, while a person next to him holds up a smartphone to record the event. The background is filled with a dense crowd of people with their hands raised under bright stadium lighting and green trees.",
+            "sampleAnswer": "The massive crowd under the stadium lights began to cheer enthusiastically as the man in the blue sports t-shirt raised his fists in excitement."
+          }
+        ],
+        "instructions": "In this part of the test, you will write ONE sentence that is based on the picture. With each picture, you will be given two words or phrases. You must use both of them in your sentence. You may change the forms of the words and you may use the words in any order. You will have 8 minutes to complete this part of the test.",
+        "partTime": 480
+      },
+      {
+        "part": 2,
+        "partTitle": "Part 2: Respond to a Written Request",
+        "questions": [
+          {
+            "id": "wr_q6",
+            "text": "From: Robert Chen\nTo: Project Team\nSubject: Website Redesign Delay\n\nHi everyone,\n\nAs you may have noticed, we are currently two weeks behind schedule on the corporate website redesign. The client is asking for an update on our progress. Please reply to this email with two suggestions on how we can speed up our workflow, and one piece of information you think we should share with the client regarding the delay.",
+            "type": "respond_written_request",
+            "prepTime": 0,
+            "respTime": 600
+          },
+          {
+            "id": "wr_q7",
+            "text": "From: Amanda Smith\nTo: Department Staff\nSubject: Monthly Office Meeting\n\nHello all,\n\nIt is time to plan our monthly office meeting for next week. Since we have several new projects starting and a few ongoing delays, I want to make sure we cover everything important. Please let me know what day of the week works best for you, and suggest at least two specific topics we should include on the agenda.",
+            "type": "respond_written_request",
+            "prepTime": 0,
+            "respTime": 600
+          }
+        ],
+        "instructions": "In this part of the test, you will show how well you can write a response to an email. Your response will be scored on the quality and variety of your sentences, vocabulary, and organization. You will have 10 minutes to read and answer each email."
+      },
+      {
+        "part": 3,
+        "partTitle": "Part 3: Write an Opinion Essay",
+        "questions": [
+          {
+            "id": "wr_q8",
+            "text": "Some companies enforce very strict deadlines for their projects, while others believe that flexible deadlines lead to higher quality work. In your opinion, which approach is better for a company's success? Support your answer with specific reasons and examples.",
+            "type": "opinion_essay",
+            "prepTime": 0,
+            "respTime": 1800
+          }
+        ],
+        "instructions": "In this part of the test, you will write an essay in response to a prompt. You will have 30 minutes to plan, write, and revise your essay. Typically, an effective essay will contain a minimum of 300 words."
+      }
+    ]
+  },
+  {
+    "id": "toeic_speaking_test_1",
+    "speaking_data": [
+      {
+        "part": 1,
+        "partTitle": "Part 1: Read a Text Aloud",
+        "questions": [
+          {
+            "id": "sp_q1",
+            "text": "Thank you for attending today's quarterly staff meeting. Before we begin our updates, I want to formally welcome our new marketing director, Sarah Jenkins. Sarah brings over ten years of valuable experience in digital advertising to our firm. This afternoon, she will outline our strategy for the upcoming summer campaign. Please ensure your mobile phones are switched to silent mode during her presentation. Afterward, we will open the floor for your questions and suggestions.",
+            "type": "read_aloud",
+            "prepTime": 45,
+            "respTime": 45
+          },
+          {
+            "id": "sp_q2",
+            "text": "Attention all passengers waiting for Flight 402 to Chicago. Due to severe weather and low visibility near the destination airport, our departure has been delayed by approximately forty-five minutes. We sincerely apologize for this unexpected inconvenience. Gate agents are currently distributing complimentary beverage vouchers at the main desk. Please monitor the departures board frequently for updated scheduling information, and listen for further announcements regarding boarding times.",
+            "type": "read_aloud",
+            "prepTime": 45,
+            "respTime": 45
+          }
+        ],
+        "instructions": "In this part of the test, you will read aloud the text on the screen. You will have 45 seconds to read the text silently and prepare. Then, you will have 45 seconds to read the text aloud."
+      },
+      {
+        "part": 2,
+        "partTitle": "Part 2: Describe a Picture",
+        "questions": [
+          {
+            "id": "sp_q3",
+            "type": "describe_picture",
+            "image": "https://i.ibb.co/9HzsZ2XJ/73f2945661b5.webp",
+            "prepTime": 45,
+            "respTime": 45,
+            "description": "The image shows a busy office environment, likely a financial trading floor, where three men are intensely focused on their work. In the foreground, a young man wearing a black headset is looking at his computer screens while operating a keyboard. Behind him, two older men wearing glasses are also attentively monitoring the data, with one man dressed in a dark vest and the other in a blue jacket. Their workstations are equipped with multiple large monitors displaying complex charts and financial data. Various office items such as a computer mouse, a pen, and some paper notes are scattered on the desk in front of the young man.",
+            "sampleAnswer": "This picture shows a busy office environment, likely a financial trading floor. In the foreground, a young man wearing a headset is intensely focused on his computer screens while typing. Behind him, two older men wearing glasses are also attentively monitoring the data; one is in a dark vest and the other is in a blue jacket. Their workstations are packed with multiple large monitors displaying complex charts, and some papers and pens are scattered on the desk. Overall, everyone seems highly concentrated on their work."
+          },
+          {
+            "id": "sp_q4",
+            "type": "describe_picture",
+            "image": "https://i.ibb.co/r2RMRGfN/94c27b08d084.webp",
+            "prepTime": 45,
+            "respTime": 45,
+            "description": "The image captures a professional event taking place on a brightly lit stage in front of a large display. On the left, a woman wearing a dark jacket and a brown skirt is smiling while shaking hands with a man. On the right, the man, dressed in a dark suit jacket, light shirt, and glasses, is also smiling warmly as he returns the handshake. In the background, a massive digital screen prominently features the word \"ANTHROPIC\" in large white letters against a vibrant blue backdrop with abstract mountain graphics.",
+            "sampleAnswer": "This picture shows a professional event taking place on a brightly lit stage. In the foreground, a woman wearing a dark jacket and a brown skirt is smiling while shaking hands with a man on the right. The man, dressed in a dark suit jacket and glasses, is also smiling warmly. In the background, there is a massive digital screen that prominently features the word \"ANTHROPIC\" against a vibrant blue backdrop with abstract mountain graphics. Overall, it looks like a successful business conference."
+          }
+        ],
+        "instructions": "In this part of the test, you will describe the picture on your screen in as much detail as you can. You will have 45 seconds to prepare your response. Then, you will have 45 seconds to speak about the picture."
+      },
+      {
+        "part": 3,
+        "partTitle": "Part 3: Respond to Questions",
+        "questions": [
+          {
+            "id": "sp_q5",
+            "text": "How often do you go to a gym or a fitness center, and who do you usually go with?",
+            "type": "respond_to_questions",
+            "prepTime": 3,
+            "respTime": 15
+          },
+          {
+            "id": "sp_q6",
+            "text": "Is there a fitness center located near your home or workplace? How long does it take to get there?",
+            "type": "respond_to_questions",
+            "prepTime": 3,
+            "respTime": 15
+          },
+          {
+            "id": "sp_q7",
+            "text": "When choosing a fitness center to join, which of the following factors is most important to you: the monthly membership fee, the variety of exercise equipment, or the operating hours? Why?",
+            "type": "respond_to_questions",
+            "prepTime": 3,
+            "respTime": 30
+          }
+        ],
+        "instructions": "In this part of the test, you will answer three questions. You will have 15 seconds to respond to Question 5 and Question 6, and 30 seconds to respond to Question 7. There is no preparation time."
+      },
+      {
+        "part": 4,
+        "partTitle": "Part 4: Respond to Questions Using Information Provided",
+        "questions": [
+          {
+            "id": "sp_q8",
+            "text": "What time does the conference start, and who is giving the opening remarks?",
+            "type": "respond_using_info",
+            "prepTime": 3,
+            "respTime": 15
+          },
+          {
+            "id": "sp_q9",
+            "text": "I want to plan my day around lunch. I was told that we have to go out to find a restaurant for lunch on our own. Is that correct?",
+            "type": "respond_using_info",
+            "prepTime": 3,
+            "respTime": 15
+          },
+          {
+            "id": "sp_q10",
+            "text": "I am very interested in attending the sessions led by Elena Rostova. Could you please give me all the details about the sessions she will be leading?",
+            "type": "respond_using_info",
+            "prepTime": 3,
+            "respTime": 30
+          }
+        ],
+        "instructions": "In this part of the test, you will answer three questions based on the schedule or information provided on your screen. You will have 45 seconds to read the information before the questions begin. You will have 15 seconds to respond to Question 8 and Question 9, and 30 seconds to respond to Question 10. There is no preparation time.",
+        "referenceInfo": "Apex Technology Annual Leadership Conference\nDate: October 14\nLocation: Grand Ballroom, Westside Hotel\n\nSchedule of Events:\n09:00 AM - 09:30 AM | Opening Remarks and Year in Review - Mark Grayson, CEO\n09:30 AM - 10:45 AM | Workshop: Effective Remote Team Management - Elena Rostova, HR Director\n10:45 AM - 11:00 AM | Morning Coffee Break\n11:00 AM - 12:15 PM | Presentation: Artificial Intelligence in Project Tracking - David Kim, IT Lead\n12:15 PM - 01:30 PM | Catered Networking Lunch (Provided for all attendees)\n01:30 PM - 03:00 PM | Workshop: Budget Allocation and Forecasting - Elena Rostova, HR Director\n03:00 PM - 04:00 PM | Panel Discussion: Future Growth Strategies - Executive Board Members"
+      },
+      {
+        "part": 5,
+        "partTitle": "Part 5: Express an Opinion",
+        "questions": [
+          {
+            "id": "sp_q11",
+            "text": "Do you agree or disagree with the following statement? Companies should allow employees to work from home a few days a week rather than requiring them to be in the office every day. Support your opinion with specific reasons and examples.",
+            "type": "express_opinion",
+            "prepTime": 45,
+            "respTime": 60
+          }
+        ],
+        "instructions": "In this part of the test, you will give your opinion about a specific topic. You will have 45 seconds to prepare your response. Then, you will have 60 seconds to speak."
+      }
+    ],
+    "writing_data": null
+  },
+  {
+    "id": "toeic_writing_test_2",
+    "speaking_data": null,
+    "writing_data": [
+      {
+        "part": 1,
+        "partTitle": "Part 1: Write a Sentence Based on a Picture",
+        "questions": [
+          {
+            "id": "wr_q1",
+            "type": "write_sentence_picture",
+            "image": "https://i.ibb.co/JRw2s0F6/621227f313ef.webp",
+            "words": [
+              "pose",
+              "event"
+            ],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "The image, which can be referenced as image_53e740.jpg, captures three people posing together on a red carpet at a Songwriters Hall of Fame event. In the center, a woman with styled hair wears a black strapless dress adorned with floral patterns. On her left, a young man with curly hair is dressed in a sharp black suit with a white shirt and tie. On the woman's right, a man wearing a black hat, dark sunglasses, and a suit stands beside her. They are positioned in front of a white backdrop featuring the Songwriters Hall of Fame logo repeated across the wall.",
+            "sampleAnswer": "Three individuals pose together on the red carpet while attending a prestigious Songwriters Hall of Fame event."
+          },
+          {
+            "id": "wr_q2",
+            "type": "write_sentence_picture",
+            "image": "https://i.ibb.co/S4rZ3vJ6/7a46821059c7.webp",
+            "words": [
+              "landmark",
+              "fan"
+            ],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "The image features a side-profile view of a woman holding a decorative black hand fan, with the iconic Elizabeth Tower (Big Ben) standing tall in the background against a clear, bright blue sky. The woman, wearing glasses and a light-colored top, is looking towards the landmark, partially obscuring the view with her fan. The composition creates a clear contrast between the historic architecture of London and the casual tourist experience. The scene is brightly lit, emphasizing the distinct silhouette of the tower and the intricate pattern of the hand fan.",
+            "sampleAnswer": "A woman wearing glasses looks toward the historic London landmark while holding a decorative black hand fan against the bright blue sky."
+          },
+          {
+            "id": "wr_q3",
+            "type": "write_sentence_picture",
+            "image": "https://i.ibb.co/vvxbrPPx/290141f313d4.webp",
+            "words": [
+              "woman",
+              "light"
+            ],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "The image captures a dramatic scene from a movie featuring a group of people inside a dimly lit house. In the center, a woman in an orange sweater holds out a glowing metallic object that emits a bright white light. Several men with serious expressions stand behind her, looking toward the light source against a blue wall decorated with a floral painting.",
+            "sampleAnswer": "The woman in the orange sweater holds out a glowing metallic object that fills the dimly lit room with a bright white light."
+          },
+          {
+            "id": "wr_q4",
+            "type": "write_sentence_picture",
+            "image": "https://i.ibb.co/nsK7PWcM/367502bd25fa.webp",
+            "words": [
+              "award",
+              "stage"
+            ],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "The image, which can be referenced as image_538165.jpg, depicts a group of individuals on a stage during an awards ceremony, likely the Tony Awards. In the center, a woman in a vibrant red strapless gown is speaking into a microphone. Beside her, an older woman in a white ensemble with floral details holds a small award statuette. Other participants are visible surrounding them, dressed in formal attire, including a woman in a green dress on the far left and another in a grey draped outfit on the right. The setting is formal with dark background lighting, characteristic of a high-profile theater or entertainment event.",
+            "sampleAnswer": "A woman in a vibrant red gown speaks into the microphone while standing on the stage during the formal award ceremony."
+          },
+          {
+            "id": "wr_q5",
+            "type": "write_sentence_picture",
+            "image": "https://i.ibb.co/nsm1Qjf8/03a7aaf11682.webp",
+            "words": [
+              "repair",
+              "table"
+            ],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "The image depicts two individuals working diligently at a long table during an indoor workshop or repair session. A man on the left is focused on a small electronic circuit piece, while a woman on the right uses a tool to repair a black remote control. The table is scattered with tools, cables, and audio equipment, with colorful mosaic-style partitions standing in the background.",
+            "sampleAnswer": "While sitting at the long table, the two individuals focus intently on the repair of various electronic devices."
+          }
+        ],
+        "instructions": "In this part of the test, you will write ONE sentence that is based on the picture. You must use the two words or phrases provided.",
+        "partTime": 480
+      },
+      {
+        "part": 2,
+        "partTitle": "Part 2: Respond to a Written Request",
+        "questions": [
+          {
+            "id": "wr_q6",
+            "text": "From: Project Supervisor\nTo: Team Members\nSubject: Dealing with Project Delay\n\nHello Team,\n\nWe are experiencing a delay in the current project phase. Please reply with your ideas on how to minimize the impact and get back on schedule. Include any suggestions for reallocating tasks or requesting extra support.\n\nThank you,\nVictor Morales",
+            "type": "respond_written_request",
+            "prepTime": 0,
+            "respTime": 600
+          },
+          {
+            "id": "wr_q7",
+            "text": "From: Department Head\nTo: All Staff\nSubject: Agenda for Next Office Meeting\n\nDear Colleagues,\n\nWe are scheduling an office meeting to discuss recent challenges. Please send any topics you would like included, particularly ideas for handling project delays and improving team collaboration.\n\nRegards,\nPatricia Nguyen",
+            "type": "respond_written_request",
+            "prepTime": 0,
+            "respTime": 600
+          }
+        ],
+        "instructions": "In this part of the test, you will show how well you can write a response to an email. Your response should be at least 100 words long."
+      },
+      {
+        "part": 3,
+        "partTitle": "Part 3: Write an Opinion Essay",
+        "questions": [
+          {
+            "id": "wr_q8",
+            "text": "Some people think that project delays are always harmful to a company, while others believe they can sometimes lead to better results. Which opinion do you agree with more? Use specific reasons and examples to support your view.",
+            "type": "opinion_essay",
+            "prepTime": 0,
+            "respTime": 1800
+          }
+        ],
+        "instructions": "In this part of the test, you will write an essay in response to a prompt. Your essay should be at least 300 words long."
+      }
+    ]
+  },
+  {
+    "id": "toeic_writing_test_3",
+    "speaking_data": null,
+    "writing_data": [
+      {
+        "part": 1,
+        "partTitle": "Part 1: Write a Sentence Based on a Picture",
+        "questions": [
+          {
+            "id": "wr_q1",
+            "type": "write_sentence_picture",
+            "image": "https://i.ibb.co/RGjpjHKC/5fb977be7cbb.webp",
+            "words": [
+              "laugh",
+              "crowd"
+            ],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "The image captures a joyful public gathering on a city street with a well-known sports figure, Jeremy Lin, laughing in a bright blue sweater. He is surrounded by a crowd of excited fans who are shouting and holding up smartphones to take pictures. A media reporter is seen thrusting a microphone into the crowd, with city buildings and a yellow school bus visible in the background.",
+            "sampleAnswer": "Jeremy Lin wears a bright blue sweater and begins to laugh as an excited crowd of fans surrounds him to take pictures with their smartphones."
+          },
+          {
+            "id": "wr_q2",
+            "type": "write_sentence_picture",
+            "image": "https://i.ibb.co/Kjw7T1z3/d8ec9e0c8be4.webp",
+            "words": [
+              "pose",
+              "ship"
+            ],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "The black and white image shows a historical photograph of a man and a woman posing together on the deck of a ship. The woman is dressed in a dark fashionable suit with a large bow and is sitting on a railing, smiling broadly. The man stands next to her wearing a double-breasted suit and a striped tie, with ship equipment and structures visible in the background.",
+            "sampleAnswer": "A man and a woman pose for a photograph on the deck of a ship."
+          },
+          {
+            "id": "wr_q3",
+            "type": "write_sentence_picture",
+            "image": "https://i.ibb.co/60WZRH6m/c6261ebaa3fb.webp",
+            "words": [
+              "resistance band",
+              "exercise"
+            ],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "The image captures a woman engaged in an indoor exercise activity, using a resistance band. She appears to be middle-aged or older, dressed in a grey long-sleeved top beneath a dark sleeveless garment. Both of her arms are raised and extended, pulling a green resistance band taut, indicating a focused effort during her workout. She wears a green bracelet on her left wrist and a black beaded bracelet on her right. The background features a simple, light-colored wall with a distinctive purple stripe running horizontally, possibly in a gymnasium or community hall.",
+            "sampleAnswer": "The middle-aged woman is using a green resistance band to perform an upper-body exercise inside a gym."
+          },
+          {
+            "id": "wr_q4",
+            "type": "write_sentence_picture",
+            "image": "https://i.ibb.co/chSMxgn8/9323855af30b.webp",
+            "words": [
+              "crowd",
+              "barricade"
+            ],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "The image shows a large crowd of sports fans gathered on a city street outside Pennsylvania Station. Several people are wearing blue and orange sports jerseys, and a female police officer is seen talking to a young man near a metal barricade. In the background, tall city buildings stretch down the street under an overcast sky, alongside a white van and a traffic light.",
+            "sampleAnswer": "A large crowd of sports fans gathered outside Pennsylvania Station, where a female police officer stood talking to a young man near a metal barricade."
+          },
+          {
+            "id": "wr_q5",
+            "type": "write_sentence_picture",
+            "image": "https://i.ibb.co/xK4pxF4n/40cca46b3352.webp",
+            "words": [
+              "forecast",
+              "weather"
+            ],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "The image features a woman presenting a weather forecast in a television studio. She is standing in front of a large digital screen displaying a regional map with weather patterns, including low-pressure symbols and colorful radar imagery indicating precipitation levels. The woman, dressed in a bright red sleeveless dress, looks professionally at the camera as she delivers the report. The background screen clearly labels the presentation as the 'Kansas City Forecast,' and the overall setting is a high-tech studio environment designed for broadcasting news and weather updates.",
+            "sampleAnswer": "The woman in the red dress is presenting a local weather forecast using a large digital screen that displays regional radar imagery."
+          }
+        ],
+        "instructions": "In this part of the test, you will write ONE sentence that is based on the picture. You must use the two words or phrases provided.",
+        "partTime": 480
+      },
+      {
+        "part": 2,
+        "partTitle": "Part 2: Respond to a Written Request",
+        "questions": [
+          {
+            "id": "wr_q6",
+            "text": "From: Project Coordinator\nTo: Development Team\nSubject: Recovering from Project Delay\n\nTeam,\n\nDue to the recent delay in our key deliverables, we need immediate input on recovery options. Please reply with practical suggestions for catching up on the timeline, including any adjustments to current tasks or requests for additional support.\n\nRegards,\nMichelle Kwon",
+            "type": "respond_written_request",
+            "prepTime": 0,
+            "respTime": 600
+          },
+          {
+            "id": "wr_q7",
+            "text": "From: Office Administrator\nTo: All Employees\nSubject: Input for Upcoming Office Meeting\n\nHello Everyone,\n\nWe are preparing the agenda for the next office meeting focused on project challenges. Please share any topics or suggestions you have, especially regarding managing delays and enhancing team communication.\n\nThank you,\nRichard Patel",
+            "type": "respond_written_request",
+            "prepTime": 0,
+            "respTime": 600
+          }
+        ],
+        "instructions": "In this part of the test, you will show how well you can write a response to an email. Your response should be at least 100 words long."
+      },
+      {
+        "part": 3,
+        "partTitle": "Part 3: Write an Opinion Essay",
+        "questions": [
+          {
+            "id": "wr_q8",
+            "text": "Project delays are a common challenge in the workplace. Some believe that regular office meetings are the best way to handle them, while others prefer individual problem-solving. Which approach do you think is more effective? Provide reasons and examples to support your opinion.",
+            "type": "opinion_essay",
+            "prepTime": 0,
+            "respTime": 1800
+          }
+        ],
+        "instructions": "In this part of the test, you will write an essay in response to a prompt. Your essay should be at least 300 words long."
+      }
+    ]
+  },
+  {
+    "id": "toeic_writing_test_4",
+    "speaking_data": null,
+    "writing_data": [
+      {
+        "part": 1,
+        "partTitle": "Part 1: Write a Sentence Based on a Picture",
+        "questions": [
+          {
+            "id": "wr_q1",
+            "type": "write_sentence_picture",
+            "image": "https://i.ibb.co/9HQz5BzC/5a216933e7e9.webp",
+            "words": [
+              "conversation",
+              "concern"
+            ],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "The image features an indoor scene where two older individuals are engaged in a serious conversation with someone whose back is turned to the camera. The woman, wearing a bright orange sweater, a cream blazer, and a colorful patterned scarf, appears to be speaking intensely. Beside her, a man in a green jacket and plaid shirt listens with a look of concern, his hand resting near his chin. The room is decorated with a lamp and framed artwork on the wall, and the focus is on the emotional interaction between the three people.",
+            "sampleAnswer": "The two older individuals appear to be engaged in a serious conversation, with the man's expression reflecting deep concern as he listens intently."
+          },
+          {
+            "id": "wr_q2",
+            "type": "write_sentence_picture",
+            "image": "https://i.ibb.co/hR4BXdt4/33cd47d982cf.webp",
+            "words": [
+              "cage",
+              "lawn"
+            ],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "The image depicts an outdoor sports setup with a mixed martial arts octagon cage constructed on a lawn. In the foreground, a man from behind stands with both index fingers pointed upward, wearing a black t-shirt with a graphic print. The White House building is clearly visible in the background under a blue sky, flanked by green trees and an American flag flying on a pole.",
+            "sampleAnswer": "A mixed martial arts cage has been constructed on the lawn in front of the White House."
+          },
+          {
+            "id": "wr_q3",
+            "type": "write_sentence_picture",
+            "image": "https://i.ibb.co/V0MhYbC3/a06931f838dd.webp",
+            "words": [
+              "art gallery",
+              "visitors"
+            ],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "The image presents a lively indoor scene, likely an art gallery or exhibition, bustling with people. In the foreground on the left, a person is taking a photo of the artwork with a smartphone, while other visitors are seen strolling through the room or standing in groups further back. A prominent feature is a long series of large, colorful abstract paintings mounted along the left wall, adding a vibrant splash of color to the space. The room itself is spacious, featuring a polished wooden parquet floor and high white ceilings. Two ornate crystal chandeliers hang from the ceiling, complementing the natural light streaming in from several tall windows on the right wall, which also features two distinctive oval windows above.",
+            "sampleAnswer": "Numerous visitors are strolling through the spacious art gallery to admire the vibrant abstract paintings mounted along the wall."
+          },
+          {
+            "id": "wr_q4",
+            "type": "write_sentence_picture",
+            "image": "https://i.ibb.co/5gFSDjXv/b415344e00d0.webp",
+            "words": [
+              "gala",
+              "posing"
+            ],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "The image captures five individuals, three men and two women, posing together at a formal event or gala. On the far left, a woman in a black sleeveless dress stands next to older man with a white beard, both smiling. The center shows a younger man in a suit and red tie, flanked by a younger woman in a blazer and a man in a suit jacket and plaid shirt on the right, who looks towards the right. They are all standing in front of a white backdrop adorned with multiple logos and texts like 'CHAPLIN AWARD GALA' and 'FILM SOCIETY LINCOLN CENTER'. The clear lighting suggests a professional photo opportunity at an awards ceremony.",
+            "sampleAnswer": "Five individuals are smiling and posing together in front of a white backdrop at a formal gala."
+          },
+          {
+            "id": "wr_q5",
+            "type": "write_sentence_picture",
+            "image": "https://i.ibb.co/dJ2tXvKM/191bcf12f980.webp",
+            "words": [
+              "ocean",
+              "ship"
+            ],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "The image depicts a scenic ocean view with several people wading and swimming in the calm water in the foreground. Two individuals are seen paddleboarding further out, while multiple large cargo ships and industrial vessels line the distant horizon under a hazy sky. The water reflects the bright sunlight, creating a tranquil recreation scene.",
+            "sampleAnswer": "A sample sentence using ocean and ship."
+          }
+        ],
+        "instructions": "In this part of the test, you will write ONE sentence that is based on the picture. You must use the two words or phrases provided.",
+        "partTime": 480
+      },
+      {
+        "part": 2,
+        "partTitle": "Part 2: Respond to a Written Request",
+        "questions": [
+          {
+            "id": "wr_q6",
+            "text": "From: Project Manager\nTo: All Team Members\nSubject: Action Plan for Project Delay\n\nDear Team,\n\nThe ongoing delay has impacted our deadlines. I need your input on effective ways to accelerate progress in the coming weeks. Please suggest specific actions, such as overtime options, task prioritization, or external assistance that could help us recover.\n\nBest,\nSteven Park",
+            "type": "respond_written_request",
+            "prepTime": 0,
+            "respTime": 600
+          },
+          {
+            "id": "wr_q7",
+            "text": "From: HR Manager\nTo: Department Staff\nSubject: Suggestions for Office Meeting Topics\n\nHello,\n\nWe are organizing an office meeting to address current challenges. Reply with your ideas for discussion items, especially those related to handling project delays, improving workflows, and team support during difficult periods.\n\nThank you,\nLisa Chen",
+            "type": "respond_written_request",
+            "prepTime": 0,
+            "respTime": 600
+          }
+        ],
+        "instructions": "In this part of the test, you will show how well you can write a response to an email. Your response should be at least 100 words long."
+      },
+      {
+        "part": 3,
+        "partTitle": "Part 3: Write an Opinion Essay",
+        "questions": [
+          {
+            "id": "wr_q8",
+            "text": "When projects are delayed, some companies organize frequent office meetings to solve problems, while others rely on written reports and individual efforts. Which method do you believe is more effective for resolving delays? Give specific reasons and examples to support your opinion.",
+            "type": "opinion_essay",
+            "prepTime": 0,
+            "respTime": 1800
+          }
+        ],
+        "instructions": "In this part of the test, you will write an essay in response to a prompt. Your essay should be at least 300 words long."
+      }
+    ]
+  },
+  {
+    "id": "toeic_writing_test_9",
+    "speaking_data": null,
+    "writing_data": [
+      {
+        "part": 1,
+        "partTitle": "Part 1: Write a Sentence Based on a Picture",
+        "questions": [
+          {
+            "id": "wr_q1",
+            "type": "write_sentence_picture",
+            "image": "https://i.ibb.co/9m6Cy5S3/97edffed86ef.webp",
+            "words": [
+              "model",
+              "car"
+            ],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "The image displays an indoor automobile exhibition featuring a modern, dark red car on a circular platform. On the left, a male model wearing a white suit with gold embellishments is standing and resting his hand on the hood of the vehicle. On the right, a female model dressed in a white and yellow dress is posing elegantly beside the car. Behind the red vehicle and the models, there is a large backdrop showing a picture of a white electric car plugged into a charging station.",
+            "sampleAnswer": "While a male model poses with his hand resting on the hood of the dark red car, a female model stands elegantly on the other side of the platform."
+          },
+          {
+            "id": "wr_q2",
+            "type": "write_sentence_picture",
+            "image": "",
+            "words": [],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "",
+            "sampleAnswer": ""
+          },
+          {
+            "id": "wr_q3",
+            "type": "write_sentence_picture",
+            "image": "",
+            "words": [],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "",
+            "sampleAnswer": ""
+          },
+          {
+            "id": "wr_q4",
+            "type": "write_sentence_picture",
+            "image": "",
+            "words": [],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "",
+            "sampleAnswer": ""
+          },
+          {
+            "id": "wr_q5",
+            "type": "write_sentence_picture",
+            "image": "",
+            "words": [],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "",
+            "sampleAnswer": ""
+          }
+        ],
+        "instructions": "In this part of the test, you will write ONE sentence that is based on the picture. You must use the two words or phrases provided.",
+        "partTime": 480
+      },
+      {
+        "part": 2,
+        "partTitle": "Part 2: Respond to a Written Request",
+        "questions": [
+          {
+            "id": "wr_q6",
+            "text": "From: Project Leader\nTo: Team Members\nSubject: Ideas to Address Project Delay\n\nDear Team,\n\nWe are dealing with a significant delay in our current project. Please reply with your suggestions on how to minimize the impact and accelerate completion. Include any thoughts on resource needs or process improvements.\n\nThank you,\nJulia Ramirez",
+            "type": "respond_written_request",
+            "prepTime": 0,
+            "respTime": 600
+          },
+          {
+            "id": "wr_q7",
+            "text": "From: HR Director\nTo: All Staff\nSubject: Suggestions for Office Meeting Agenda\n\nHello Everyone,\n\nWe are planning the next office meeting. Please provide your input on key discussion topics, especially those related to managing project delays and enhancing team collaboration.\n\nBest regards,\nThomas Lee",
+            "type": "respond_written_request",
+            "prepTime": 0,
+            "respTime": 600
+          }
+        ],
+        "instructions": "In this part of the test, you will show how well you can write a response to an email. Your response should be at least 100 words long."
+      },
+      {
+        "part": 3,
+        "partTitle": "Part 3: Write an Opinion Essay",
+        "questions": [
+          {
+            "id": "wr_q8",
+            "text": "When a project is delayed, holding regular office meetings can help teams stay informed and solve issues more effectively. To what extent do you agree or disagree with this statement? Support your opinion with specific reasons and examples.",
+            "type": "opinion_essay",
+            "prepTime": 0,
+            "respTime": 1800
+          }
+        ],
+        "instructions": "In this part of the test, you will write an essay in response to a prompt. Your essay should be at least 300 words long."
+      }
+    ]
+  },
+  {
+    "id": "toeic_writing_test_6",
+    "speaking_data": null,
+    "writing_data": [
+      {
+        "part": 1,
+        "partTitle": "Part 1: Write a Sentence Based on a Picture",
+        "questions": [
+          {
+            "id": "wr_q1",
+            "type": "write_sentence_picture",
+            "image": "https://i.ibb.co/TDYH3Khx/328ad6c57c6c.webp",
+            "words": [
+              "celebrate",
+              "stadium"
+            ],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "The image features two soccer players in red and white striped jerseys celebrating a goal inside a packed stadium. One player with an afro hairstyle is piggybacking on his teammate's back, shouting with his fist raised high in victory. The background is filled with rows of blurred spectators watching from the stadium stands under bright daytime lighting.",
+            "sampleAnswer": "A sample sentence using celebrate and stadium."
+          },
+          {
+            "id": "wr_q2",
+            "type": "write_sentence_picture",
+            "image": "https://i.ibb.co/Zppg2qWq/7a4a2428c21f.webp",
+            "words": [
+              "cheer",
+              "jersey"
+            ],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "The image captures an outdoor night scene with a crowd of enthusiastic fans cheering during a sports event. Many people are wearing blue New York sports jerseys, shouting with excitement, and holding their hands up, while one man in the foreground takes a selfie with his phone. The background is softly lit by streetlights and features building facades surrounded by trees.",
+            "sampleAnswer": "A sample sentence using cheer and jersey."
+          },
+          {
+            "id": "wr_q3",
+            "type": "write_sentence_picture",
+            "image": "https://i.ibb.co/1YSpNBZr/2b855b0d23f5.webp",
+            "words": [
+              "pigeon",
+              "feed"
+            ],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "The image captures a young boy with glasses smiling as a pigeon perches on his outstretched arm in a public square. Next to him, a girl in a blue sports jersey looks down, while numerous other pigeons are scattered across the stone pavement around them. In the background, blurred figures of people walk through an outdoor market area lined with shops.",
+            "sampleAnswer": "A sample sentence using pigeon and feed."
+          },
+          {
+            "id": "wr_q4",
+            "type": "write_sentence_picture",
+            "image": "https://i.ibb.co/DPSnnK81/ecdc0b8e6dbc.webp",
+            "words": [
+              "suit",
+              "speak"
+            ],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "The image, which can be referenced as image_537e25.jpg, captures a formal setting where a man in a blue suit and red patterned tie is the central focus, speaking to others. He appears to be in an official environment, possibly a government building or boardroom, surrounded by several other individuals who are slightly out of focus in the foreground and background. The lighting is soft and professional, highlighting the man's expression as he engages in conversation with the group around him.",
+            "sampleAnswer": "A sample sentence using suit and speak."
+          },
+          {
+            "id": "wr_q5",
+            "type": "write_sentence_picture",
+            "image": "https://i.ibb.co/fz21N1gM/c48d09225440.webp",
+            "words": [
+              "walking",
+              "cane"
+            ],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "The image captures a man and a woman walking together on a paved road outdoors on a sunny day. The man, wearing a light grey polo shirt and a cap, is holding a white mobility cane, indicating he is visually impaired. The woman beside him is dressed in a black blouse with intricate blue embroidery and dark trousers, and she is smiling as they walk side-by-side. In the background, there is a concrete wall, some green foliage, and a parked car, creating an everyday scene of two people enjoying a walk together.",
+            "sampleAnswer": "A sample sentence using walking and cane."
+          }
+        ],
+        "instructions": "In this part of the test, you will write ONE sentence that is based on the picture. You must use the two words or phrases provided.",
+        "partTime": 480
+      },
+      {
+        "part": 2,
+        "partTitle": "Part 2: Respond to a Written Request",
+        "questions": [
+          {
+            "id": "wr_q6",
+            "text": "From: Site Manager\nTo: Construction Team\nSubject: Resolving the Current Project Delay\n\nTeam,\n\nThe project delay is affecting our overall timeline. Please share your suggestions for solutions, including ways to speed up specific tasks or reassign responsibilities to get us back on track as soon as possible.\n\nThank you,\nGeorge Ramirez",
+            "type": "respond_written_request",
+            "prepTime": 0,
+            "respTime": 600
+          },
+          {
+            "id": "wr_q7",
+            "text": "From: Meeting Organizer\nTo: All Participants\nSubject: Topics for Next Office Meeting\n\nHello,\n\nWe are planning the next office meeting to discuss ongoing issues. Please reply with your ideas for agenda items, especially suggestions on preventing future delays and improving communication during challenging projects.\n\nBest regards,\nElena Sokolov",
+            "type": "respond_written_request",
+            "prepTime": 0,
+            "respTime": 600
+          }
+        ],
+        "instructions": "In this part of the test, you will show how well you can write a response to an email. Your response should be at least 100 words long."
+      },
+      {
+        "part": 3,
+        "partTitle": "Part 3: Write an Opinion Essay",
+        "questions": [
+          {
+            "id": "wr_q8",
+            "text": "Project delays often require companies to hold extra office meetings. Do you think these meetings are helpful in solving problems or do they create more issues? Support your opinion with specific reasons and examples.",
+            "type": "opinion_essay",
+            "prepTime": 0,
+            "respTime": 1800
+          }
+        ],
+        "instructions": "In this part of the test, you will write an essay in response to a prompt. Your essay should be at least 300 words long."
+      }
+    ]
+  },
+  {
+    "id": "toeic_writing_test_7",
+    "speaking_data": null,
+    "writing_data": [
+      {
+        "part": 1,
+        "partTitle": "Part 1: Write a Sentence Based on a Picture",
+        "questions": [
+          {
+            "id": "wr_q1",
+            "type": "write_sentence_picture",
+            "image": "https://i.ibb.co/3mWHs7Lh/998792381905.webp",
+            "words": [
+              "selfie",
+              "event"
+            ],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "The image captures a candid moment during an event where two women are posing for a selfie together. The woman on the left, dressed in a golden-yellow sleeveless top, leans in close, while the woman on the right, wearing a black lace dress, holds up a white smartphone to take the picture. They are surrounded by other guests in formal attire, suggesting they are attending a high-profile awards ceremony or public function. The bright blue background and the focus on the two women highlight their friendly interaction amidst a busy, professional environment.",
+            "sampleAnswer": "A sample sentence using selfie and event."
+          },
+          {
+            "id": "wr_q2",
+            "type": "write_sentence_picture",
+            "image": "https://i.ibb.co/sdwfJhVL/951e308515dd.webp",
+            "words": [
+              "men",
+              "smile"
+            ],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "The image, which can be referenced as image_53e2c3.jpg, features two men posing together outdoors in front of a backdrop of green trees. On the left, an older man with a shaved head wears a white t-shirt and light blue shorts while holding his fist up. Next to him on the right, a younger man with a beard is also wearing a white t-shirt, paired with camouflage-patterned shorts. Both individuals are smiling towards the camera, and the scene is captured in natural daylight.",
+            "sampleAnswer": "A sample sentence using men and smile."
+          },
+          {
+            "id": "wr_q3",
+            "type": "write_sentence_picture",
+            "image": "https://i.ibb.co/W4Xgpy8g/8ec4942c253a.webp",
+            "words": [
+              "exercise",
+              "dumbbells"
+            ],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "The image captures a close-up side profile of an older woman participating in a fitness exercise. She is wearing glasses and a dark-colored shirt, and she is focused on lifting two small, colored dumbbells, one pink and one purple, held in her hands. The lighting is soft, highlighting her profile and the action of her arms as she performs the movement. The background is blurred, keeping the focus entirely on the woman and her exercise equipment.",
+            "sampleAnswer": "A sample sentence using exercise and dumbbells."
+          },
+          {
+            "id": "wr_q4",
+            "type": "write_sentence_picture",
+            "image": "https://i.ibb.co/v6BR9LtD/50625afb6f0a.webp",
+            "words": [
+              "talk",
+              "discuss"
+            ],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "The image captures a close-up conversation among a group of professionally dressed individuals outdoors. A man in the center with a mustache is speaking animatedly with his hands raised, while another man in a dark suit and blue tie listens intently on the left. A woman with long brown hair is seen from the back in the foreground, with a modern building facade visible in the background.",
+            "sampleAnswer": "A sample sentence using talk and discuss."
+          },
+          {
+            "id": "wr_q5",
+            "type": "write_sentence_picture",
+            "image": "https://i.ibb.co/d43T822G/5a9104952344.webp",
+            "words": [
+              "award",
+              "ceremony"
+            ],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "The image captures a formal award ceremony taking place indoors, featuring two men. On the right, a man in a dark suit, white shirt, and patterned tie is seen carefully placing a red-ribboned medal around the neck of an older man standing to his left. The older man, wearing glasses, a dark suit, light blue shirt, and red tie, is smiling broadly and bowing his head in a gesture of humility or acceptance. Behind the older man, a large American flag is prominently displayed. The entire background is adorned with ornate golden drapes, suggesting a prestigious and official setting.",
+            "sampleAnswer": "A sample sentence using award and ceremony."
+          }
+        ],
+        "instructions": "In this part of the test, you will write ONE sentence that is based on the picture. You must use the two words or phrases provided.",
+        "partTime": 480
+      },
+      {
+        "part": 2,
+        "partTitle": "Part 2: Respond to a Written Request",
+        "questions": [
+          {
+            "id": "wr_q6",
+            "text": "From: Senior Supervisor\nTo: Project Staff\nSubject: Solutions for Ongoing Delay\n\nDear Team,\n\nWe are currently facing a delay in the project deliverables. I would appreciate your detailed suggestions on how to resolve this issue quickly. Please include any ideas for adjusting workloads or securing additional support.\n\nRegards,\nAnna Petrova",
+            "type": "respond_written_request",
+            "prepTime": 0,
+            "respTime": 600
+          },
+          {
+            "id": "wr_q7",
+            "text": "From: Administrative Assistant\nTo: All Department Members\nSubject: Agenda Items for Office Meeting\n\nHello Everyone,\n\nThe next office meeting will focus on current project issues. Please reply with your proposed topics, particularly any related to overcoming delays and strengthening team coordination.\n\nThank you,\nMichael Santos",
+            "type": "respond_written_request",
+            "prepTime": 0,
+            "respTime": 600
+          }
+        ],
+        "instructions": "In this part of the test, you will show how well you can write a response to an email. Your response should be at least 100 words long."
+      },
+      {
+        "part": 3,
+        "partTitle": "Part 3: Write an Opinion Essay",
+        "questions": [
+          {
+            "id": "wr_q8",
+            "text": "Some companies respond to project delays by scheduling more office meetings, while others emphasize individual accountability. In your opinion, which is the better approach? Support your view with specific reasons and examples.",
+            "type": "opinion_essay",
+            "prepTime": 0,
+            "respTime": 1800
+          }
+        ],
+        "instructions": "In this part of the test, you will write an essay in response to a prompt. Your essay should be at least 300 words long."
+      }
+    ]
+  },
+  {
+    "id": "toeic_writing_test_8",
+    "speaking_data": null,
+    "writing_data": [
+      {
+        "part": 1,
+        "partTitle": "Part 1: Write a Sentence Based on a Picture",
+        "questions": [
+          {
+            "id": "wr_q1",
+            "type": "write_sentence_picture",
+            "image": "https://i.ibb.co/3yr4rsbT/812084598eb2.webp",
+            "words": [
+              "performer",
+              "jacket"
+            ],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "The image, which can be referenced as image_53e681.jpg, shows a central figure smiling while dressed in a vibrant red jacket with metallic accents over a graphic t-shirt featuring piano keys. He is surrounded by other individuals in what appears to be a studio or performance setting. To his right, a man wears a bandana and sunglasses, while another person is partially visible on the left. The scene is set against a dark background with soft lighting highlighting the central subject's expression and attire.",
+            "sampleAnswer": "A sample sentence using performer and jacket."
+          },
+          {
+            "id": "wr_q2",
+            "type": "write_sentence_picture",
+            "image": "https://i.ibb.co/zhWvNK99/4ad621cb5371.webp",
+            "words": [
+              "pose",
+              "wall"
+            ],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "The image features two men posing side-by-side against a worn, textured concrete wall outdoors. The man on the left is wearing a blue hoodie, gray sweatpants, and yellow sneakers, leaning against the wall. The man on the right is wearing a black and yellow track jacket over a black graphic t-shirt and black jeans, standing straight on a paved ground with green weeds.",
+            "sampleAnswer": "A sample sentence using pose and wall."
+          },
+          {
+            "id": "wr_q3",
+            "type": "write_sentence_picture",
+            "image": "https://i.ibb.co/LhpCrHK8/d04844499058.webp",
+            "words": [
+              "exercise",
+              "chair"
+            ],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "The image shows a large group of senior citizens participating in a fitness class inside a gymnasium. The participants are arranged in rows next to gray chairs, performing a stretching exercise with their arms extended forward. An instructor in the foreground is seen from behind, guiding the class on a polished wooden floor featuring basketball court markings and various colorful fitness balls.",
+            "sampleAnswer": "A sample sentence using exercise and chair."
+          },
+          {
+            "id": "wr_q4",
+            "type": "write_sentence_picture",
+            "image": "https://i.ibb.co/Rk3VssQ4/fe88a7dbcca4.webp",
+            "words": [
+              "fighter",
+              "microphone"
+            ],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "The image features a professional fighter speaking into a microphone during a press conference. He is wearing a bandana patterned with the American flag, dark sunglasses, and a matching patterned glove, actively gesturing while he talks. The background consists of a branded backdrop with logos, indicating an official UFC media event. The fighter’s appearance and focused expression suggest he is engaged in an intense discussion or promotional interview.",
+            "sampleAnswer": "A sample sentence using fighter and microphone."
+          },
+          {
+            "id": "wr_q5",
+            "type": "write_sentence_picture",
+            "image": "https://i.ibb.co/fYXfR7bs/562b68de6053.webp",
+            "words": [
+              "conductor",
+              "orchestra"
+            ],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "This image captures an orchestra performance or rehearsal in a dimly lit concert hall, with a male conductor actively leading the musicians. The conductor, dressed in a formal tuxedo and white shirt, stands on a raised platform with his right hand raised, guiding the ensemble. In front of him, orchestra members are seated, playing various instruments, with some clearly visible playing violins and other string instruments. Each musician has an illuminated music stand to read their sheet music. The background is dark, emphasizing the stage and performers, while some heads of other participants or audience members are visible in the foreground.",
+            "sampleAnswer": "A sample sentence using conductor and orchestra."
+          }
+        ],
+        "instructions": "In this part of the test, you will write ONE sentence that is based on the picture. You must use the two words or phrases provided.",
+        "partTime": 480
+      },
+      {
+        "part": 2,
+        "partTitle": "Part 2: Respond to a Written Request",
+        "questions": [
+          {
+            "id": "wr_q6",
+            "text": "From: Project Director\nTo: All Team Members\nSubject: Recovering from Recent Delay\n\nDear Team,\n\nWe have encountered an unexpected delay in the project. Please reply with your practical suggestions on how we can catch up with the schedule. Include any ideas regarding task reallocation, extended hours, or additional resources that might help.\n\nBest regards,\nKaren Mitchell",
+            "type": "respond_written_request",
+            "prepTime": 0,
+            "respTime": 600
+          },
+          {
+            "id": "wr_q7",
+            "text": "From: Office Coordinator\nTo: Department Staff\nSubject: Agenda for Upcoming Office Meeting\n\nHello Everyone,\n\nWe are preparing for the next office meeting. Please send your suggestions for important topics, especially those concerning project delays and strategies for better team coordination in the future.\n\nThank you,\nBrian Thompson",
+            "type": "respond_written_request",
+            "prepTime": 0,
+            "respTime": 600
+          }
+        ],
+        "instructions": "In this part of the test, you will show how well you can write a response to an email. Your response should be at least 100 words long."
+      },
+      {
+        "part": 3,
+        "partTitle": "Part 3: Write an Opinion Essay",
+        "questions": [
+          {
+            "id": "wr_q8",
+            "text": "When a project is delayed, some people believe that holding frequent office meetings is the most effective way to solve the problem. Others think that too many meetings waste time. What is your opinion? Use specific reasons and examples to support your view.",
+            "type": "opinion_essay",
+            "prepTime": 0,
+            "respTime": 1800
+          }
+        ],
+        "instructions": "In this part of the test, you will write an essay in response to a prompt. Your essay should be at least 300 words long."
+      }
+    ]
+  },
+  {
+    "id": "toeic_writing_test_11",
+    "speaking_data": null,
+    "writing_data": [
+      {
+        "part": 1,
+        "partTitle": "Part 1: Write a Sentence Based on a Picture",
+        "questions": [
+          {
+            "id": "wr_q1",
+            "type": "write_sentence_picture",
+            "image": "",
+            "words": [],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "",
+            "sampleAnswer": ""
+          },
+          {
+            "id": "wr_q2",
+            "type": "write_sentence_picture",
+            "image": "",
+            "words": [],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "",
+            "sampleAnswer": ""
+          },
+          {
+            "id": "wr_q3",
+            "type": "write_sentence_picture",
+            "image": "",
+            "words": [],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "",
+            "sampleAnswer": ""
+          },
+          {
+            "id": "wr_q4",
+            "type": "write_sentence_picture",
+            "image": "",
+            "words": [],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "",
+            "sampleAnswer": ""
+          },
+          {
+            "id": "wr_q5",
+            "type": "write_sentence_picture",
+            "image": "",
+            "words": [],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "",
+            "sampleAnswer": ""
+          }
+        ],
+        "instructions": "In this part of the test, you will write ONE sentence that is based on the picture. Your sentence must contain the two words or phrases that are listed below the picture. You can change the forms of the words and use the words in any order. You will have a total of 8 minutes to write five sentences.",
+        "partTime": 480
+      },
+      {
+        "part": 2,
+        "partTitle": "Part 2: Respond to a Written Request",
+        "questions": [
+          {
+            "id": "wr_q6",
+            "text": "From: Arthur Pendelton, Facilities Manager\nTo: All Department Heads\nSubject: Office Renovations and Temporary Relocation\n\nDear Team Leaders,\n\nAs previously announced, the renovation of the third-floor office space will begin next Monday. During the two-week construction period, your team members will need to work remotely or relocate to the temporary desks on the fifth floor. \n\nPlease respond to this email by Wednesday with your team's preferred arrangement. In your response, make sure to ask at least two questions about the fifth-floor amenities or logistics, and give one suggestion for how we can minimize disruption to your daily operations.\n\nBest regards,\nArthur Pendelton\nFacilities Department",
+            "type": "respond_written_request",
+            "prepTime": 0,
+            "respTime": 600
+          },
+          {
+            "id": "wr_q7",
+            "text": "From: Rebecca Vance, Director of Human Resources\nTo: Corporate Staff\nSubject: Annual Professional Development Seminar\n\nDear Colleagues,\n\nWe are currently planning our annual Professional Development Seminar, scheduled for next month. To ensure the event provides maximum value, we would like to tailor the workshop topics to meet your current career growth goals.\n\nPlease reply to this email with your preferences. In your response, please suggest two specific skills or topics you would like covered during the workshops, and propose one scheduling option (e.g., a single full-day session or multiple half-day sessions) that would best fit your workload.\n\nThank you for your input,\nRebecca Vance\nHuman Resources Division",
+            "type": "respond_written_request",
+            "prepTime": 0,
+            "respTime": 600
+          }
+        ],
+        "instructions": "In this part of the test, you will show how well you can write a response to an email. You will have 10 minutes to read and reply to each email. Your response will be scored on the quality and variety of your sentences, vocabulary, and organization."
+      },
+      {
+        "part": 3,
+        "partTitle": "Part 3: Write an Opinion Essay",
+        "questions": [
+          {
+            "id": "wr_q8",
+            "text": "Some companies offer their employees a flexible four-day workweek with longer daily hours, while others maintain the traditional five-day workweek with standard hours. Which work schedule do you think is more beneficial for both employers and employees? Support your opinion with specific reasons and examples.",
+            "type": "opinion_essay",
+            "prepTime": 0,
+            "respTime": 1800
+          }
+        ],
+        "instructions": "In this part of the test, you will write an essay in response to a prompt that asks you to state, explain, and support your opinion on a specific topic. Typically, an effective essay will contain a minimum of 300 words. You will have 30 minutes to plan and write your essay."
+      }
+    ]
+  },
+  {
+    "id": "toeic_sw_test_5",
+    "speaking_data": [
+      {
+        "part": 1,
+        "partTitle": "Part 1: Read a Text Aloud",
+        "questions": [
+          {
+            "id": "sp_q1",
+            "text": "The important client meeting scheduled for tomorrow morning has been postponed because of the ongoing project delay. Department leaders will meet this afternoon to discuss revised timelines and resource allocation. Everyone is asked to review the latest progress reports and come prepared with solutions. We apologize for any inconvenience this change may cause and appreciate your continued support.",
+            "type": "read_aloud",
+            "prepTime": 45,
+            "respTime": 45
+          },
+          {
+            "id": "sp_q2",
+            "text": "Due to unexpected supply issues, the construction phase of our new office building will be delayed by at least ten days. The project manager has assured us that alternative suppliers have been contacted. All teams should adjust their work plans accordingly and focus on completing preparatory tasks in the meantime. Regular updates will be provided via email.",
+            "type": "read_aloud",
+            "prepTime": 45,
+            "respTime": 45
+          }
+        ],
+        "instructions": "In this part of the test, you will read aloud the text on the screen. You will have 45 seconds to prepare and 45 seconds to read the text aloud."
+      },
+      {
+        "part": 2,
+        "partTitle": "Part 2: Describe a Picture",
+        "questions": [
+          {
+            "id": "sp_q3",
+            "type": "describe_picture",
+            "image": "https://i.ibb.co/SDLbBFRy/f3ba75330b63.webp",
+            "prepTime": 45,
+            "respTime": 45,
+            "description": "The image shows two people standing in front of a white wall inside what appears to be a government or institutional building. The wall features four framed portraits, including Donald Trump and J.D. Vance, alongside engraved text on the right side. In the foreground, a man with a backpack stands looking toward a security guard or receptionist seated behind a white counter.",
+            "sampleAnswer": "Based on the picture, The image shows two people standing in front of a white wall inside what appears to be a government or institutional building. The wall features four framed portraits, including Donald Trump and J.D. Vance, alongside engraved text on the right side. In the foreground, a man with a backpack stands looking toward a security guard or receptionist seated behind a white counter."
+          },
+          {
+            "id": "sp_q4",
+            "type": "describe_picture",
+            "image": "https://i.ibb.co/jvZLcVSk/32762082fd7a.webp",
+            "prepTime": 45,
+            "respTime": 45,
+            "description": "The image shows an elderly man standing inside a spacious art gallery room. He is wearing a dark suit with a red tie and holding a walking cane, leaning cross-legged in front of a massive landscape painting that depicts a row of colorful trees and red buildings. The gallery features polished wooden flooring and white walls with small vents near the base.",
+            "sampleAnswer": "Based on the picture, The image shows an elderly man standing inside a spacious art gallery room. He is wearing a dark suit with a red tie and holding a walking cane, leaning cross-legged in front of a massive landscape painting that depicts a row of colorful trees and red buildings. The gallery features polished wooden flooring and white walls with small vents near the base."
+          }
+        ],
+        "instructions": "In this part of the test, you will describe the picture on your screen. You will have 45 seconds to prepare and 45 seconds to speak about the picture."
+      },
+      {
+        "part": 3,
+        "partTitle": "Part 3: Respond to Questions",
+        "questions": [
+          {
+            "id": "sp_q5",
+            "text": "How do you feel when a work project is delayed?",
+            "type": "respond_to_questions",
+            "prepTime": 3,
+            "respTime": 15
+          },
+          {
+            "id": "sp_q6",
+            "text": "What strategies do you use to manage time effectively in a busy office?",
+            "type": "respond_to_questions",
+            "prepTime": 3,
+            "respTime": 15
+          },
+          {
+            "id": "sp_q7",
+            "text": "Describe a situation where you had to reschedule an important meeting and how you handled it.",
+            "type": "respond_to_questions",
+            "prepTime": 3,
+            "respTime": 30
+          }
+        ],
+        "instructions": "In this part of the test, you will answer three questions about a topic. You will have a short time to prepare before each response."
+      },
+      {
+        "part": 4,
+        "partTitle": "Part 4: Respond to Questions Using Information Provided",
+        "questions": [
+          {
+            "id": "sp_q8",
+            "text": "What is the topic of the first session on June 20 and who is the speaker?",
+            "type": "respond_using_info",
+            "prepTime": 3,
+            "respTime": 15
+          },
+          {
+            "id": "sp_q9",
+            "text": "I heard the stakeholder update session is scheduled for the morning on June 21. Is that accurate?",
+            "type": "respond_using_info",
+            "prepTime": 3,
+            "respTime": 15
+          },
+          {
+            "id": "sp_q10",
+            "text": "Which sessions will Robert Hayes lead, and what are the main topics?",
+            "type": "respond_using_info",
+            "prepTime": 3,
+            "respTime": 30
+          }
+        ],
+        "instructions": "In this part of the test, you will answer three questions based on the information provided. You will have 45 seconds to read the information before the questions begin. For each question, begin responding immediately after you hear a beep. No additional preparation time is provided. You will have 15 seconds to respond to Questions 8 and 9, and 30 seconds to respond to Question 10.",
+        "referenceInfo": "Project Recovery Meeting Schedule\nDate: June 20-22\nLocation: Virtual Conference Room\n\nSession 1: Delay Analysis - June 20, 10:00 AM - 11:15 AM, Speaker: Robert Hayes\nSession 2: Resource Reallocation - June 20, 1:30 PM - 2:45 PM, Speaker: Linda Chen\nSession 3: Revised Timeline - June 21, 9:00 AM - 10:30 AM, Speaker: Marcus Rivera\nSession 4: Stakeholder Update - June 21, 3:00 PM - 4:15 PM, Speaker: Robert Hayes\nSession 5: Risk Mitigation - June 22, 11:00 AM - 12:30 PM, Speaker: Sophia Patel"
+      },
+      {
+        "part": 5,
+        "partTitle": "Part 5: Express an Opinion",
+        "questions": [
+          {
+            "id": "sp_q11",
+            "text": "When a project is delayed, some managers prefer to hold more frequent meetings while others choose to focus on individual tasks. Which approach do you think is more effective? Explain your opinion with reasons and examples.",
+            "type": "express_opinion",
+            "prepTime": 45,
+            "respTime": 60
+          }
+        ],
+        "instructions": "In this part of the test, you will give your opinion about a specific topic. You will have 45 seconds to prepare and 60 seconds to speak."
+      }
+    ],
+    "writing_data": [
+      {
+        "part": 1,
+        "partTitle": "Part 1: Write a Sentence Based on a Picture",
+        "questions": [
+          {
+            "id": "wr_q1",
+            "type": "write_sentence_picture",
+            "image": "https://i.ibb.co/bh27tV0/38f8563c0e4a.webp",
+            "words": [
+              "trio",
+              "pose"
+            ],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "The image features three people posing together against a plain blue background, likely at a professional photo call or publicity event. In the center, a man with glasses wears a dark olive-green jacket over a blue shirt, looking directly at the camera. On his left, a man with a mustache and a bright smile wears a white cardigan and a gold chain, while on the right, a blonde woman with earrings rests her arm on the man's shoulder. The composition is intimate and professional, highlighting the trio in a relaxed yet formal setting.",
+            "sampleAnswer": "A sample sentence using trio and pose."
+          },
+          {
+            "id": "wr_q2",
+            "type": "write_sentence_picture",
+            "image": "https://i.ibb.co/rR76tWtb/5af7bb641bc4.webp",
+            "words": [
+              "room",
+              "costume"
+            ],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "The black and white photograph captures a man and a woman in costume inside a dressing room setting. The man is wearing a dark, textured period jacket with decorative buttons and is looking fondly at the woman who is seated in an ornate dress and necklace. The background includes a vanity counter with bottles, a mirror, and a simple white wall.",
+            "sampleAnswer": "A sample sentence using room and costume."
+          },
+          {
+            "id": "wr_q3",
+            "type": "write_sentence_picture",
+            "image": "https://i.ibb.co/XZD9nPJR/e564254baf22.webp",
+            "words": [
+              "sign",
+              "crane"
+            ],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "The image shows an outdoor desert scene next to a business named 'Little A'Le'Inn'. A woman with dark hair tied back is standing in the foreground, looking at a large, metallic, saucer-shaped object suspended from a crane hook. Next to her is a large white sign displaying an alien head graphic and text welcoming earthlings, with dry hills and a cloudy sky in the background.",
+            "sampleAnswer": "A sample sentence using sign and crane."
+          },
+          {
+            "id": "wr_q4",
+            "type": "write_sentence_picture",
+            "image": "https://i.ibb.co/zWWTwCvd/993cef9d45d0.webp",
+            "words": [
+              "spectators",
+              "basketball"
+            ],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "The image captures a group of spectators sitting courtside at a professional basketball game. On the far left, a man in a black t-shirt and glasses sits next to three women wearing identical royal blue t-shirts with orange lettering, while a fourth woman on the far right also wears a similar blue shirt. They are all watching the game intently from their front-row seats in a packed arena. In the foreground, a referee is partially visible, and the overall atmosphere reflects a high-profile public event with various celebrities in attendance.",
+            "sampleAnswer": "A sample sentence using spectators and basketball."
+          },
+          {
+            "id": "wr_q5",
+            "type": "write_sentence_picture",
+            "image": "https://i.ibb.co/FkJKh1mP/a530a334b546.webp",
+            "words": [
+              "woman",
+              "photograph"
+            ],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "The image depicts a gallery visitor observing and photographing a large, impressionistic painting displayed on a stark white wall. On the left, a woman is seen from behind, holding a smartphone to capture the details of the artwork. The painting itself is a heavily textured oil piece, portraying an interior scene that appears to be a cluttered office or study, featuring a desk, a chair, and a flag. A prominent, modern circular chandelier hangs from the ceiling within the painted room, adding to its distinct character. In the foreground, a red velvet rope on polished stanchions separates viewers from the artwork, while a decorative wall sconce is visible on the far left.",
+            "sampleAnswer": "A sample sentence using woman and photograph."
+          }
+        ],
+        "instructions": "In this part of the test, you will write ONE sentence that is based on the picture. You must use the two words or phrases provided.",
+        "partTime": 480
+      },
+      {
+        "part": 2,
+        "partTitle": "Part 2: Respond to a Written Request",
+        "questions": [
+          {
+            "id": "wr_q6",
+            "text": "From: Project Director\nTo: All Team Members\nSubject: Addressing the Current Project Delay\n\nTeam,\n\nAs you know, we are facing a significant delay in the current project. I would like each of you to send me your suggestions on how we can recover lost time and meet the client's revised deadline. Please include any resource needs or potential obstacles you foresee.\n\nThank you,\nDavid Thompson",
+            "type": "respond_written_request",
+            "prepTime": 0,
+            "respTime": 600
+          },
+          {
+            "id": "wr_q7",
+            "text": "From: Operations Manager\nTo: Department Staff\nSubject: Ideas for Upcoming Office Coordination Meeting\n\nHello,\n\nWe are preparing for the next office coordination meeting next week. Please reply with any agenda items you would like to discuss, especially related to improving communication during project delays or better resource planning.\n\nBest,\nKaren Ellis",
+            "type": "respond_written_request",
+            "prepTime": 0,
+            "respTime": 600
+          }
+        ],
+        "instructions": "In this part of the test, you will show how well you can write a response to an email. Your response should be at least 100 words long."
+      },
+      {
+        "part": 3,
+        "partTitle": "Part 3: Write an Opinion Essay",
+        "questions": [
+          {
+            "id": "wr_q8",
+            "text": "Delays in business projects can cause significant problems, but they can also lead to better final outcomes. Do you agree or disagree with this statement? Support your opinion with specific reasons and examples.",
+            "type": "opinion_essay",
+            "prepTime": 0,
+            "respTime": 1800
+          }
+        ],
+        "instructions": "In this part of the test, you will write an essay in response to a prompt. Your essay should be at least 300 words long."
+      }
+    ]
+  },
+  {
+    "id": "toeic_sw_test_7",
+    "speaking_data": [
+      {
+        "part": 1,
+        "partTitle": "Part 1: Read a Text Aloud",
+        "questions": [
+          {
+            "id": "sp_q1",
+            "text": "Management has decided to postpone the office expansion project due to budget constraints caused by the supply chain delay. A special task force has been formed to explore cost-saving measures and alternative suppliers. Employees working on the affected floors should prepare for temporary relocation next month. Thank you for your understanding as we strive to minimize disruption to daily operations.",
+            "type": "read_aloud",
+            "prepTime": 45,
+            "respTime": 45
+          },
+          {
+            "id": "sp_q2",
+            "text": "Please note that tomorrow's department meeting regarding the delayed software implementation has been moved to 3 PM in Conference Room C. All team leads must bring their updated progress reports and proposed solutions. This meeting is crucial for aligning our strategies and ensuring we meet the client's expectations despite the setbacks.",
+            "type": "read_aloud",
+            "prepTime": 45,
+            "respTime": 45
+          }
+        ],
+        "instructions": "In this part of the test, you will read aloud the text on the screen. You will have 45 seconds to prepare and 45 seconds to read the text aloud."
+      },
+      {
+        "part": 2,
+        "partTitle": "Part 2: Describe a Picture",
+        "questions": [
+          {
+            "id": "sp_q3",
+            "type": "describe_picture",
+            "image": "https://i.ibb.co/S7vknRrF/d98bca00480a.webp",
+            "prepTime": 45,
+            "respTime": 45,
+            "description": "The image features an older man in a formal setting, holding documents and looking directly at the viewer. He is dressed in a dark suit, a light pink shirt, and a patterned dark tie, with a small American flag pin on his lapel. His gray hair is neatly styled, and he wears glasses, conveying a serious and focused expression. In his hands, he holds several sheets of white paper, suggesting he might be preparing to speak or present information. The background is slightly blurred, showing what appears to be a sophisticated indoor environment with a traditional grandfather clock on the left and another person partially visible in the distance on the right.",
+            "sampleAnswer": "Based on the picture, The image features an older man in a formal setting, holding documents and looking directly at the viewer. He is dressed in a dark suit, a light pink shirt, and a patterned dark tie, with a small American flag pin on his lapel. His gray hair is neatly styled, and he wears glasses, conveying a serious and focused expression. In his hands, he holds several sheets of white paper, suggesting he might be preparing to speak or present information. The background is slightly blurred, showing what appears to be a sophisticated indoor environment with a traditional grandfather clock on the left and another person partially visible in the distance on the right."
+          },
+          {
+            "id": "sp_q4",
+            "type": "describe_picture",
+            "image": "https://i.ibb.co/Mx8CwHXR/ecbb54d94804.webp",
+            "prepTime": 45,
+            "respTime": 45,
+            "description": "This image shows two elderly individuals engaged in a repair activity at a table, likely within a workshop or community setting. On the left, an older woman with gray hair, dressed in a blue fleece jacket, sits attentively with her hands clasped, observing the ongoing work. Opposite her, an older man with white hair, wearing a 'Repair Cafe' t-shirt and suspenders, is meticulously working on repairing a small wooden device with intricate wiring. A comprehensive open toolbox filled with various hand tools is positioned between them, while numerous other tools like pliers, tape, and a spray can are spread across the table. In the background, a vibrant mural is visible behind the woman, and a white draped area with stacked items can be seen behind the man.",
+            "sampleAnswer": "Based on the picture, This image shows two elderly individuals engaged in a repair activity at a table, likely within a workshop or community setting. On the left, an older woman with gray hair, dressed in a blue fleece jacket, sits attentively with her hands clasped, observing the ongoing work. Opposite her, an older man with white hair, wearing a 'Repair Cafe' t-shirt and suspenders, is meticulously working on repairing a small wooden device with intricate wiring. A comprehensive open toolbox filled with various hand tools is positioned between them, while numerous other tools like pliers, tape, and a spray can are spread across the table. In the background, a vibrant mural is visible behind the woman, and a white draped area with stacked items can be seen behind the man."
+          }
+        ],
+        "instructions": "In this part of the test, you will describe the picture on your screen. You will have 45 seconds to prepare and 45 seconds to speak about the picture."
+      },
+      {
+        "part": 3,
+        "partTitle": "Part 3: Respond to Questions",
+        "questions": [
+          {
+            "id": "sp_q5",
+            "text": "How does a project delay usually affect your work?",
+            "type": "respond_to_questions",
+            "prepTime": 3,
+            "respTime": 15
+          },
+          {
+            "id": "sp_q6",
+            "text": "What communication methods do you prefer for discussing office issues?",
+            "type": "respond_to_questions",
+            "prepTime": 3,
+            "respTime": 15
+          },
+          {
+            "id": "sp_q7",
+            "text": "Talk about a time when an office meeting helped solve a problem related to a delayed task.",
+            "type": "respond_to_questions",
+            "prepTime": 3,
+            "respTime": 30
+          }
+        ],
+        "instructions": "In this part of the test, you will answer three questions about a topic. You will have a short time to prepare before each response."
+      },
+      {
+        "part": 4,
+        "partTitle": "Part 4: Respond to Questions Using Information Provided",
+        "questions": [
+          {
+            "id": "sp_q8",
+            "text": "At what time does the impact assessment session start on August 8?",
+            "type": "respond_using_info",
+            "prepTime": 3,
+            "respTime": 15
+          },
+          {
+            "id": "sp_q9",
+            "text": "I heard the client negotiation prep is scheduled for the morning of August 9. Is this correct?",
+            "type": "respond_using_info",
+            "prepTime": 3,
+            "respTime": 15
+          },
+          {
+            "id": "sp_q10",
+            "text": "Who leads the sessions on mitigation planning and action plan finalization, and on which dates?",
+            "type": "respond_using_info",
+            "prepTime": 3,
+            "respTime": 30
+          }
+        ],
+        "instructions": "In this part of the test, you will answer three questions based on the information provided. You will have a short time to prepare before each response.",
+        "referenceInfo": "Delayed Project Coordination Meetings\nDate: August 8-10\nLocation: Hybrid - Main Office & Online\n\nSession 1: Impact Assessment - August 8, 8:30 AM - 9:45 AM, Speaker: Nicole Tran\nSession 2: Mitigation Planning - August 8, 11:00 AM - 12:30 PM, Speaker: Carlos Mendoza\nSession 3: Resource Review - August 9, 10:00 AM - 11:30 AM, Speaker: Nicole Tran\nSession 4: Client Negotiation Prep - August 9, 2:00 PM - 3:15 PM, Speaker: Laura Bennett\nSession 5: Action Plan Finalization - August 10, 9:00 AM - 10:30 AM, Speaker: Carlos Mendoza"
+      },
+      {
+        "part": 5,
+        "partTitle": "Part 5: Express an Opinion",
+        "questions": [
+          {
+            "id": "sp_q11",
+            "text": "Holding frequent office meetings during a project delay can help teams stay aligned, but it may also reduce productivity. What is your opinion on this? Support your answer with reasons and examples.",
+            "type": "express_opinion",
+            "prepTime": 45,
+            "respTime": 60
+          }
+        ],
+        "instructions": "In this part of the test, you will give your opinion about a specific topic. You will have 45 seconds to prepare and 60 seconds to speak."
+      }
+    ],
+    "writing_data": [
+      {
+        "part": 1,
+        "partTitle": "Part 1: Write a Sentence Based on a Picture",
+        "questions": [
+          {
+            "id": "wr_q1",
+            "type": "write_sentence_picture",
+            "image": "https://i.ibb.co/XkyYrJGh/e58d7bd9c910.webp",
+            "words": [
+              "walk",
+              "mural"
+            ],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "The image shows a woman walking past a large wall mural depicting the Statue of Liberty in blue and red paint. The woman is wearing sunglasses, a white shirt, a black shawl, and dark trousers, and she is carrying a plastic cup with a green straw. The mural behind her has been partially defaced with black spray paint graffiti under a clear, bright sky.",
+            "sampleAnswer": "A sample sentence using walk and mural."
+          },
+          {
+            "id": "wr_q2",
+            "type": "write_sentence_picture",
+            "image": "https://i.ibb.co/rGwDzS9H/1decab90f4e0.webp",
+            "words": [
+              "billboard",
+              "stroller"
+            ],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "The image captures a lively street scene in a city, prominently featuring a large billboard. In the foreground, a woman wearing casual clothes and a backpack is walking on the sidewalk, pushing a baby stroller with a patterned cover. The billboard advertises \"Sarajevsko\" beer, displaying a bottle, a cartoon character, and the English slogan \"I AM FROM BOSNIA TAKE ME TO AMERICA.\" Behind the woman and the billboard, a busy road is visible with several cars in motion and buildings lining the street on the left. On the right side of the road, another person walks along a sidewalk lined with tall green trees, contributing to the urban environment.",
+            "sampleAnswer": "A sample sentence using billboard and stroller."
+          },
+          {
+            "id": "wr_q3",
+            "type": "write_sentence_picture",
+            "image": "https://i.ibb.co/zVcX92Y8/b7fe50f0c5c6.webp",
+            "words": [
+              "couple",
+              "painting"
+            ],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "The image, which can be referenced as image_539127.jpg, features an older couple standing in front of a large, realistic painting. The couple, a man in a tan suit with a red tie and a woman in a black outfit with a red scarf, pose together while smiling at the viewer. The painting behind them depicts a man sitting on a chair with a white cat on his lap, set against a backdrop of a window with green shutters overlooking a garden. On the floor near the painting, there is a vintage telephone and a decorative lamp. The overall composition blends the physical subjects in the foreground with the artistic imagery of the backdrop.",
+            "sampleAnswer": "A sample sentence using couple and painting."
+          },
+          {
+            "id": "wr_q4",
+            "type": "write_sentence_picture",
+            "image": "https://i.ibb.co/RGqRLfBx/ab18d6f6d07f.webp",
+            "words": [
+              "painting",
+              "man"
+            ],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "The image features an elderly man standing beside a large, colorful painting in what appears to be an art gallery or exhibition space. The man, wearing glasses and a white flat cap, is dressed in a grey suit with a red tie and a patterned pocket square, looking directly ahead with his left hand in his pocket. The artwork itself is a vibrant depiction of an interior scene, characterized by a purple textured wall and a yellow floor. It showcases various pieces of brightly colored furniture, including a prominent blue armchair, a brown armchair, orange wooden chairs, a green table, and red benches. A vase with white flowers is visible on the green table, and two smaller framed scenes along with a staircase are painted on the background wall. The overall setting is simple, with a plain light-colored wall providing a minimalist backdrop for the art.",
+            "sampleAnswer": "A sample sentence using painting and man."
+          },
+          {
+            "id": "wr_q5",
+            "type": "write_sentence_picture",
+            "image": "https://i.ibb.co/hJnyyxLK/c15d58c4d00c.webp",
+            "words": [
+              "sunglasses",
+              "woman"
+            ],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "The image shows a close-up shot of two women standing side-by-side against a gray textured wall. The woman on the left has short white hair, dark sunglasses, and a black v-neck top, holding a notebook. The woman on the right has long wavy brown hair, dark sunglasses, a striped vest, and a pearl necklace, both looking confidently toward the camera.",
+            "sampleAnswer": "A sample sentence using sunglasses and woman."
+          }
+        ],
+        "instructions": "In this part of the test, you will write ONE sentence that is based on the picture. You must use the two words or phrases provided.",
+        "partTime": 480
+      },
+      {
+        "part": 2,
+        "partTitle": "Part 2: Respond to a Written Request",
+        "questions": [
+          {
+            "id": "wr_q6",
+            "text": "From: Project Lead\nTo: Development Team\nSubject: Strategies to Overcome Project Delay\n\nDear Team,\n\nWe need to address the current delay in our deliverables. Please provide detailed suggestions on how to accelerate specific phases of the project while maintaining quality. Let me know what additional resources or support you require.\n\nBest regards,\nAmanda Torres",
+            "type": "respond_written_request",
+            "prepTime": 0,
+            "respTime": 600
+          },
+          {
+            "id": "wr_q7",
+            "text": "From: Executive Assistant\nTo: All Managers\nSubject: Topics for Next Office Coordination Meeting\n\nHello,\n\nThe next office coordination meeting is being planned. Please reply with any important agenda items, especially those related to managing delays, resource allocation, or improving communication across departments.\n\nThank you,\nHenry Brooks",
+            "type": "respond_written_request",
+            "prepTime": 0,
+            "respTime": 600
+          }
+        ],
+        "instructions": "In this part of the test, you will show how well you can write a response to an email. Your response should be at least 100 words long."
+      },
+      {
+        "part": 3,
+        "partTitle": "Part 3: Write an Opinion Essay",
+        "questions": [
+          {
+            "id": "wr_q8",
+            "text": "Frequent office meetings during periods of project delays are essential for success. To what extent do you agree or disagree with this statement? Support your opinion with specific reasons and examples.",
+            "type": "opinion_essay",
+            "prepTime": 0,
+            "respTime": 1800
+          }
+        ],
+        "instructions": "In this part of the test, you will write an essay in response to a prompt. Your essay should be at least 300 words long."
+      }
+    ]
+  },
+  {
+    "id": "toeic_writing_test_10",
+    "speaking_data": null,
+    "writing_data": [
+      {
+        "part": 1,
+        "partTitle": "Part 1: Write a Sentence Based on a Picture",
+        "questions": [
+          {
+            "id": "wr_q1",
+            "type": "write_sentence_picture",
+            "image": "https://i.ibb.co/Kp4HYHhk/904956fc0877.webp",
+            "words": [
+              "screens",
+              "group"
+            ],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "The image depicts a serious gathering of individuals in what appears to be a high-tech control room or operations center. In the center, a middle-aged man with a beard and glasses, dressed in a dark suit and turtleneck, stands prominently, looking forward with a focused expression. He is flanked by several other people, including an Asian woman in a dark jacket to his right and a Black woman with braids and an earpiece to his left, both appearing attentive. The background is filled with numerous large digital display screens showcasing diverse information such as maps, surveillance footage, and detailed data. These screens include large headshots of individuals and complex text, highlighting an environment dedicated to intelligence or critical data analysis.",
+            "sampleAnswer": "A sample sentence using screens and group."
+          },
+          {
+            "id": "wr_q2",
+            "type": "write_sentence_picture",
+            "image": "https://i.ibb.co/MxwqBHp9/6ffd6a227348.webp",
+            "words": [
+              "field",
+              "desk"
+            ],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "The image features a sports television broadcast panel set up on a green stadium field. Five individuals are gathered around a curved black desk labeled 'Cazé TV', which holds microphones, mugs, and a soccer ball on a stand. A man in a dark blue suit stands in the center gesturing as he speaks to the others, while an expansive stadium filled with spectators forms the background.",
+            "sampleAnswer": "A sample sentence using field and desk."
+          },
+          {
+            "id": "wr_q3",
+            "type": "write_sentence_picture",
+            "image": "https://i.ibb.co/sJRjjgHB/e3cf9c66859e.webp",
+            "words": [
+              "man",
+              "wall"
+            ],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "The image features a man standing outdoors against a graffiti-covered wall, seemingly in an urban or semi-urban environment. He is wearing a dark blue hoodie and a black baseball cap, with a visible beard. The man is looking slightly to his right, with his right hand open in a gesture as if he is speaking or explaining something. In the foreground, he is leaning on a low concrete wall covered in colorful graffiti tags and designs. Behind him, to the left, lush green tree foliage is visible, while to the right, an old, multi-story building with many windows and a distinctive wooden facade stands under a bright sky.",
+            "sampleAnswer": "A sample sentence using man and wall."
+          },
+          {
+            "id": "wr_q4",
+            "type": "write_sentence_picture",
+            "image": "https://i.ibb.co/60R1M6Rh/a4d592cf965e.webp",
+            "words": [
+              "cheer",
+              "fan"
+            ],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "The picture shows a very energetic crowd of sports fans cheering passionately at an outdoor nighttime event. In the foreground, a shirtless man with extensive tattoos is shouting loudly with his mouth wide open, standing next to other enthusiastic supporters wearing blue and orange basketball jerseys. Many people in the dense crowd behind them are raising their hands in excitement and holding up smartphones to capture the moment. The scene is brightly lit against the dark night sky, conveying a highly intense and festive atmosphere.",
+            "sampleAnswer": "A sample sentence using cheer and fan."
+          },
+          {
+            "id": "wr_q5",
+            "type": "write_sentence_picture",
+            "image": "https://i.ibb.co/Wp4nkCG8/f3fa73ceb214.webp",
+            "words": [
+              "sit",
+              "hold"
+            ],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "The image displays an indoor scene featuring two men seated in yellow armchairs during a formal meeting. The man on the left, wearing a black suit, is smiling warmly while holding the hand of the man on the right, who is dressed in a blue suit with a bright blue tie. They are situated in an elegant room, likely an official office, with a white fireplace, decorative golden ornaments on the mantle, and flags visible in the background. The atmosphere appears cordial and diplomatic.",
+            "sampleAnswer": "A sample sentence using sit and hold."
+          }
+        ],
+        "instructions": "In this part of the test, you will write ONE sentence that is based on the picture. With each picture, you will be given two words or phrases. You must use both of them in your sentence. You may change the forms of the words and you may use the words in any order. You will have 8 minutes to complete this part of the test.",
+        "partTime": 480
+      },
+      {
+        "part": 2,
+        "partTitle": "Part 2: Respond to a Written Request",
+        "questions": [
+          {
+            "id": "wr_q6",
+            "text": "From: Sarah Jenkins, Customer\nTo: Customer Support Team\nSubject: Delayed Delivery of SmartWatch 300X\n\nHello,\n\nI ordered the new SmartWatch 300X two weeks ago. The confirmation email stated that it would arrive within 3-5 business days. I still have not received it, and I am leaving for a business trip next Wednesday. Could you please let me know what is causing this delay and how this can be resolved quickly?\n\nDirections: Respond to the email as a customer support representative. In your email, apologize for the delay, provide ONE reason for the delay, and offer ONE solution to ensure she has a watch before her trip.",
+            "type": "respond_written_request",
+            "prepTime": 0,
+            "respTime": 600
+          },
+          {
+            "id": "wr_q7",
+            "text": "From: Mark Davis, Marketing Director\nTo: All Marketing Staff\nSubject: Eco-Friendly Product Launch\n\nDear Team,\n\nNext month, we will be launching our new line of eco-friendly office supplies. We want to make sure that our current clients are aware of and excited about this release. I would like to get your input on the best strategies to market these items. Please reply to this email with your suggestions.\n\nDirections: Respond to the email. In your email, suggest TWO ways to promote the new product line to existing clients, and ask ONE question about the upcoming launch.",
+            "type": "respond_written_request",
+            "prepTime": 0,
+            "respTime": 600
+          }
+        ],
+        "instructions": "In this part of the test, you will show how well you can write a response to an email. Your response will be scored on the quality and variety of your sentences, vocabulary, and organization. You will have 10 minutes to read and answer each email."
+      },
+      {
+        "part": 3,
+        "partTitle": "Part 3: Write an Opinion Essay",
+        "questions": [
+          {
+            "id": "wr_q8",
+            "text": "Some people believe that providing excellent customer service is the most important factor in a company's success. Others argue that offering high-quality products is more important than customer service. Which opinion do you agree with and why? Support your answer with specific reasons and examples.",
+            "type": "opinion_essay",
+            "prepTime": 0,
+            "respTime": 1800
+          }
+        ],
+        "instructions": "In this part of the test, you will write an essay in response to a prompt. You will have 30 minutes to plan, write, and revise your essay. Typically, an effective essay will contain a minimum of 300 words."
+      }
+    ]
+  },
+  {
+    "id": "toeic_sw_test_2",
+    "speaking_data": [
+      {
+        "part": 1,
+        "partTitle": "Part 1: Read a Text Aloud",
+        "questions": [
+          {
+            "id": "sp_q1",
+            "text": "The annual sales conference will take place next month at the downtown convention center. All department managers are required to attend and present their quarterly reports. This event provides an excellent opportunity for team members to network with colleagues from other branches and learn about new market strategies. Please prepare your materials in advance and confirm your attendance by the end of this week.",
+            "type": "read_aloud",
+            "prepTime": 45,
+            "respTime": 45
+          },
+          {
+            "id": "sp_q2",
+            "text": "Due to the recent delay in our supply chain, the project timeline has been adjusted. The marketing team will launch the new campaign two weeks later than originally planned. We appreciate your understanding and flexibility during this period. All staff members should review the updated schedule and report any potential issues to their supervisors immediately.",
+            "type": "read_aloud",
+            "prepTime": 45,
+            "respTime": 45
+          }
+        ],
+        "instructions": "In this part of the test, you will read aloud the text on the screen. You will have 45 seconds to prepare and 45 seconds to read the text aloud."
+      },
+      {
+        "part": 2,
+        "partTitle": "Part 2: Describe a Picture",
+        "questions": [
+          {
+            "id": "sp_q3",
+            "type": "describe_picture",
+            "image": "",
+            "prepTime": 45,
+            "respTime": 45,
+            "description": "",
+            "sampleAnswer": ""
+          },
+          {
+            "id": "sp_q4",
+            "type": "describe_picture",
+            "image": "",
+            "prepTime": 45,
+            "respTime": 45,
+            "description": "",
+            "sampleAnswer": ""
+          }
+        ],
+        "instructions": "In this part of the test, you will describe the picture on your screen. You will have 45 seconds to prepare and 45 seconds to speak about the picture."
+      },
+      {
+        "part": 3,
+        "partTitle": "Part 3: Respond to Questions",
+        "questions": [
+          {
+            "id": "sp_q5",
+            "text": "How often do you participate in team meetings at work?",
+            "type": "respond_to_questions",
+            "prepTime": 3,
+            "respTime": 15
+          },
+          {
+            "id": "sp_q6",
+            "text": "What do you think is the most important skill for succeeding in a business environment?",
+            "type": "respond_to_questions",
+            "prepTime": 3,
+            "respTime": 15
+          },
+          {
+            "id": "sp_q7",
+            "text": "Describe a challenging project you worked on and how you handled any delays or problems.",
+            "type": "respond_to_questions",
+            "prepTime": 3,
+            "respTime": 30
+          }
+        ],
+        "instructions": "In this part of the test, you will answer three questions about a topic. You will have a short time to prepare before each response."
+      },
+      {
+        "part": 4,
+        "partTitle": "Part 4: Respond to Questions Using Information Provided",
+        "questions": [
+          {
+            "id": "sp_q8",
+            "text": "When does the first session on March 15 start, and who is the speaker?",
+            "type": "respond_using_info",
+            "prepTime": 3,
+            "respTime": 15
+          },
+          {
+            "id": "sp_q9",
+            "text": "I heard the budget review is scheduled for the afternoon on March 15. Is that correct?",
+            "type": "respond_using_info",
+            "prepTime": 3,
+            "respTime": 15
+          },
+          {
+            "id": "sp_q10",
+            "text": "Which sessions does Sarah Chen lead, and what topics does she cover?",
+            "type": "respond_using_info",
+            "prepTime": 3,
+            "respTime": 30
+          }
+        ],
+        "instructions": "In this part of the test, you will answer three questions based on the information provided. You will have a short time to prepare before each response.",
+        "referenceInfo": "Office Project Meeting Schedule\nDate: March 15-17\nLocation: Conference Room B, Main Office\n\nSession 1: Project Update - March 15, 9:00 AM - 10:30 AM, Speaker: Sarah Chen\nSession 2: Budget Review - March 15, 11:00 AM - 12:30 PM, Speaker: Michael Torres\nSession 3: Marketing Strategy - March 16, 9:00 AM - 10:30 AM, Speaker: Lisa Patel\nSession 4: Team Building Workshop - March 16, 2:00 PM - 3:30 PM, Speaker: David Kim\nSession 5: Risk Management - March 17, 10:00 AM - 11:30 AM, Speaker: Sarah Chen"
+      },
+      {
+        "part": 5,
+        "partTitle": "Part 5: Express an Opinion",
+        "questions": [
+          {
+            "id": "sp_q11",
+            "text": "Some companies require employees to attend frequent team-building activities. Do you think these activities are beneficial for workplace productivity? Explain your opinion with reasons and examples.",
+            "type": "express_opinion",
+            "prepTime": 45,
+            "respTime": 60
+          }
+        ],
+        "instructions": "In this part of the test, you will give your opinion about a specific topic. You will have 45 seconds to prepare and 60 seconds to speak."
+      }
+    ],
+    "writing_data": [
+      {
+        "part": 1,
+        "partTitle": "Part 1: Write a Sentence Based on a Picture",
+        "questions": [
+          {
+            "id": "wr_q1",
+            "type": "write_sentence_picture",
+            "image": "",
+            "words": [],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "",
+            "sampleAnswer": ""
+          },
+          {
+            "id": "wr_q2",
+            "type": "write_sentence_picture",
+            "image": "",
+            "words": [],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "",
+            "sampleAnswer": ""
+          },
+          {
+            "id": "wr_q3",
+            "type": "write_sentence_picture",
+            "image": "",
+            "words": [],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "",
+            "sampleAnswer": ""
+          },
+          {
+            "id": "wr_q4",
+            "type": "write_sentence_picture",
+            "image": "",
+            "words": [],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "",
+            "sampleAnswer": ""
+          },
+          {
+            "id": "wr_q5",
+            "type": "write_sentence_picture",
+            "image": "",
+            "words": [],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "",
+            "sampleAnswer": ""
+          }
+        ],
+        "instructions": "In this part of the test, you will write ONE sentence that is based on the picture. You must use the two words or phrases provided.",
+        "partTime": 480
+      },
+      {
+        "part": 2,
+        "partTitle": "Part 2: Respond to a Written Request",
+        "questions": [
+          {
+            "id": "wr_q6",
+            "text": "From: Project Manager\nTo: Team Members\nSubject: Update on Delayed Project\n\nDear Team,\n\nThe client has requested an extension for the final deliverables due to internal changes. Please review the attached revised timeline and let me know if you have any concerns or suggestions for adjusting our resources. We need to respond by Friday.\n\nBest regards,\nElena Vargas",
+            "type": "respond_written_request",
+            "prepTime": 0,
+            "respTime": 600
+          },
+          {
+            "id": "wr_q7",
+            "text": "From: HR Director\nTo: All Staff\nSubject: Suggestions for Next Office Meeting\n\nHello everyone,\n\nWe are planning the next quarterly office meeting and would like your input on topics to discuss. Please reply with any ideas regarding training sessions, team activities, or process improvements that could benefit the department.\n\nThank you,\nRobert Kline",
+            "type": "respond_written_request",
+            "prepTime": 0,
+            "respTime": 600
+          }
+        ],
+        "instructions": "In this part of the test, you will show how well you can write a response to an email. Your response should be at least 100 words long."
+      },
+      {
+        "part": 3,
+        "partTitle": "Part 3: Write an Opinion Essay",
+        "questions": [
+          {
+            "id": "wr_q8",
+            "text": "Some people believe that frequent team meetings improve workplace efficiency, while others think they waste valuable time. Which opinion do you agree with more? Use specific reasons and examples to support your opinion.",
+            "type": "opinion_essay",
+            "prepTime": 0,
+            "respTime": 1800
+          }
+        ],
+        "instructions": "In this part of the test, you will write an essay in response to a prompt. Your essay should be at least 300 words long."
+      }
+    ]
+  },
+  {
+    "id": "toeic_sw_test_6",
+    "speaking_data": [
+      {
+        "part": 1,
+        "partTitle": "Part 1: Read a Text Aloud",
+        "questions": [
+          {
+            "id": "sp_q1",
+            "text": "Due to unforeseen circumstances, the office renovation project has experienced a two-week delay. Management is currently reviewing alternative contractors to speed up the process. All employees are requested to work from the temporary location starting next Monday. We value your patience and cooperation as we work toward completing the upgrades that will improve our working environment.",
+            "type": "read_aloud",
+            "prepTime": 45,
+            "respTime": 45
+          },
+          {
+            "id": "sp_q2",
+            "text": "The quarterly performance review meeting originally set for this Friday will now take place on the following Monday at 2 PM. Please prepare your individual reports and be ready to discuss any challenges related to the recent project delays. This adjustment allows more time for teams to compile accurate data. We look forward to a productive discussion.",
+            "type": "read_aloud",
+            "prepTime": 45,
+            "respTime": 45
+          }
+        ],
+        "instructions": "In this part of the test, you will read aloud the text on the screen. You will have 45 seconds to prepare and 45 seconds to read the text aloud."
+      },
+      {
+        "part": 2,
+        "partTitle": "Part 2: Describe a Picture",
+        "questions": [
+          {
+            "id": "sp_q3",
+            "type": "describe_picture",
+            "image": "https://i.ibb.co/DPTtGfVZ/1ac6bd7f476f.webp",
+            "prepTime": 45,
+            "respTime": 45,
+            "description": "The image features a uniformed guard standing at attention outdoors on a sunny day. In the foreground, the guard is wearing a formal dark green military uniform with a peaked cap, white gloves, and a brown leather belt with a holster. Behind him, slightly out of focus, is a massive red wall displaying a large, framed portrait of a historical figure. The clear blue sky and the bright sunlight highlight the solemn and disciplined posture of the guard in front of the iconic monument.",
+            "sampleAnswer": "Based on the picture, The image features a uniformed guard standing at attention outdoors on a sunny day. In the foreground, the guard is wearing a formal dark green military uniform with a peaked cap, white gloves, and a brown leather belt with a holster. Behind him, slightly out of focus, is a massive red wall displaying a large, framed portrait of a historical figure. The clear blue sky and the bright sunlight highlight the solemn and disciplined posture of the guard in front of the iconic monument."
+          },
+          {
+            "id": "sp_q4",
+            "type": "describe_picture",
+            "image": "https://i.ibb.co/gbs1jYnt/d758ad9bc49c.webp",
+            "prepTime": 45,
+            "respTime": 45,
+            "description": "The photograph captures a formal outdoor meeting between two world leaders shaking hands on a paved walkway. On the left side, a man wearing a dark blue suit with a red tie is extending his hand, while the man on the right, dressed in a dark suit and a light blue tie, is reaching out to complete the handshake. In the background, several other men in business suits are standing and observing the interaction. The setting includes green trees and foliage, suggesting a garden or courtyard at an official residence.",
+            "sampleAnswer": "Based on the picture, The photograph captures a formal outdoor meeting between two world leaders shaking hands on a paved walkway. On the left side, a man wearing a dark blue suit with a red tie is extending his hand, while the man on the right, dressed in a dark suit and a light blue tie, is reaching out to complete the handshake. In the background, several other men in business suits are standing and observing the interaction. The setting includes green trees and foliage, suggesting a garden or courtyard at an official residence."
+          }
+        ],
+        "instructions": "In this part of the test, you will describe the picture on your screen. You will have 45 seconds to prepare and 45 seconds to speak about the picture."
+      },
+      {
+        "part": 3,
+        "partTitle": "Part 3: Respond to Questions",
+        "questions": [
+          {
+            "id": "sp_q5",
+            "text": "Do you prefer in-person or virtual office meetings? Why?",
+            "type": "respond_to_questions",
+            "prepTime": 3,
+            "respTime": 15
+          },
+          {
+            "id": "sp_q6",
+            "text": "What is the best way to inform colleagues about a project delay?",
+            "type": "respond_to_questions",
+            "prepTime": 3,
+            "respTime": 15
+          },
+          {
+            "id": "sp_q7",
+            "text": "Describe an experience when you helped resolve a delay in a group project.",
+            "type": "respond_to_questions",
+            "prepTime": 3,
+            "respTime": 30
+          }
+        ],
+        "instructions": "In this part of the test, you will answer three questions about a topic. You will have a short time to prepare before each response."
+      },
+      {
+        "part": 4,
+        "partTitle": "Part 4: Respond to Questions Using Information Provided",
+        "questions": [
+          {
+            "id": "sp_q8",
+            "text": "When and where does the first session begin on July 5?",
+            "type": "respond_using_info",
+            "prepTime": 3,
+            "respTime": 15
+          },
+          {
+            "id": "sp_q9",
+            "text": "I heard the client communication plan session is in the afternoon on July 6. Is that right?",
+            "type": "respond_using_info",
+            "prepTime": 3,
+            "respTime": 15
+          },
+          {
+            "id": "sp_q10",
+            "text": "Who is leading the sessions on recovery strategies and final action items?",
+            "type": "respond_using_info",
+            "prepTime": 3,
+            "respTime": 30
+          }
+        ],
+        "instructions": "In this part of the test, you will answer three questions based on the information provided. You will have a short time to prepare before each response.",
+        "referenceInfo": "Emergency Project Meeting Agenda\nDate: July 5-7\nLocation: Main Conference Hall, 3rd Floor\n\nSession 1: Current Status Update - July 5, 9:00 AM - 10:00 AM, Speaker: Elena Vargas\nSession 2: Recovery Strategies - July 5, 10:30 AM - 12:00 PM, Speaker: Paul Kim\nSession 3: Client Communication Plan - July 6, 8:45 AM - 10:15 AM, Speaker: Elena Vargas\nSession 4: Timeline Adjustment - July 6, 2:00 PM - 3:30 PM, Speaker: Rachel Soto\nSession 5: Final Action Items - July 7, 9:30 AM - 11:00 AM, Speaker: Paul Kim"
+      },
+      {
+        "part": 5,
+        "partTitle": "Part 5: Express an Opinion",
+        "questions": [
+          {
+            "id": "sp_q11",
+            "text": "In business, project delays are sometimes unavoidable. Do you think companies should focus more on prevention or on effective recovery after a delay occurs? Explain your view with reasons and examples.",
+            "type": "express_opinion",
+            "prepTime": 45,
+            "respTime": 60
+          }
+        ],
+        "instructions": "In this part of the test, you will give your opinion about a specific topic. You will have 45 seconds to prepare and 60 seconds to speak."
+      }
+    ],
+    "writing_data": [
+      {
+        "part": 1,
+        "partTitle": "Part 1: Write a Sentence Based on a Picture",
+        "questions": [
+          {
+            "id": "wr_q1",
+            "type": "write_sentence_picture",
+            "image": "https://i.ibb.co/ZR73QQF1/07ea10a070f8.webp",
+            "words": [
+              "officer",
+              "crowd"
+            ],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "This image shows a lively outdoor gathering at night, featuring a dense crowd of enthusiastic people. In the foreground, two police officers in uniform are interacting joyfully, with one officer shouting excitedly and gripping the other's arm. Behind them, a diverse group of attendees is cheering, raising their arms, and using their smartphones to record the event or take photos. The background is dark but illuminated by the flashes and screens of mobile phones from the energetic audience.",
+            "sampleAnswer": "A sample sentence using officer and crowd."
+          },
+          {
+            "id": "wr_q2",
+            "type": "write_sentence_picture",
+            "image": "https://i.ibb.co/zhT5gK0D/39ad45d49eaa.webp",
+            "words": [
+              "flag",
+              "celebrate"
+            ],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "The image captures a group of people gathered indoors, enthusiastically celebrating an event while holding a large Swiss flag. In the center, a man in a blue suit has his fist raised in triumph, while the people around him, including a woman in a striped dress and a man clapping on the left, are cheering and applauding. Several individuals are wearing scarves with the Swiss cross. The background shows a spacious, well-lit room with large windows, industrial-style ceiling pipes, and some decorative lights.",
+            "sampleAnswer": "A sample sentence using flag and celebrate."
+          },
+          {
+            "id": "wr_q3",
+            "type": "write_sentence_picture",
+            "image": "",
+            "words": [],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "",
+            "sampleAnswer": ""
+          },
+          {
+            "id": "wr_q4",
+            "type": "write_sentence_picture",
+            "image": "",
+            "words": [],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "",
+            "sampleAnswer": ""
+          },
+          {
+            "id": "wr_q5",
+            "type": "write_sentence_picture",
+            "image": "",
+            "words": [],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "",
+            "sampleAnswer": ""
+          }
+        ],
+        "instructions": "In this part of the test, you will write ONE sentence that is based on the picture. You must use the two words or phrases provided.",
+        "partTime": 480
+      },
+      {
+        "part": 2,
+        "partTitle": "Part 2: Respond to a Written Request",
+        "questions": [
+          {
+            "id": "wr_q6",
+            "text": "From: Senior Manager\nTo: Project Team\nSubject: Handling the Recent Delay\n\nDear Team,\n\nThe current project delay is affecting our delivery schedule. Please share your thoughts on immediate steps we can take to get back on track. Include any ideas for reallocating team members or requesting additional support from other departments.\n\nRegards,\nJames Harrington",
+            "type": "respond_written_request",
+            "prepTime": 0,
+            "respTime": 600
+          },
+          {
+            "id": "wr_q7",
+            "text": "From: HR Coordinator\nTo: All Staff\nSubject: Agenda Suggestions for Office Meeting\n\nHello Everyone,\n\nWe are organizing an office meeting to address recent project challenges. Send your ideas for discussion points, particularly on managing delays and improving team coordination.\n\nThank you,\nSophie Laurent",
+            "type": "respond_written_request",
+            "prepTime": 0,
+            "respTime": 600
+          }
+        ],
+        "instructions": "In this part of the test, you will show how well you can write a response to an email. Your response should be at least 100 words long."
+      },
+      {
+        "part": 3,
+        "partTitle": "Part 3: Write an Opinion Essay",
+        "questions": [
+          {
+            "id": "wr_q8",
+            "text": "Project delays can negatively impact a company's reputation and finances. However, some argue that they provide opportunities for improvement. What is your opinion? Use specific reasons and examples to support your view.",
+            "type": "opinion_essay",
+            "prepTime": 0,
+            "respTime": 1800
+          }
+        ],
+        "instructions": "In this part of the test, you will write an essay in response to a prompt. Your essay should be at least 300 words long."
+      }
+    ]
+  },
+  {
+    "id": "toeic_writing_test_5",
+    "speaking_data": null,
+    "writing_data": [
+      {
+        "part": 1,
+        "partTitle": "Part 1: Write a Sentence Based on a Picture",
+        "questions": [
+          {
+            "id": "wr_q1",
+            "type": "write_sentence_picture",
+            "image": "",
+            "words": [],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "",
+            "sampleAnswer": ""
+          },
+          {
+            "id": "wr_q2",
+            "type": "write_sentence_picture",
+            "image": "",
+            "words": [],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "",
+            "sampleAnswer": ""
+          },
+          {
+            "id": "wr_q3",
+            "type": "write_sentence_picture",
+            "image": "",
+            "words": [],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "",
+            "sampleAnswer": ""
+          },
+          {
+            "id": "wr_q4",
+            "type": "write_sentence_picture",
+            "image": "",
+            "words": [],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "",
+            "sampleAnswer": ""
+          },
+          {
+            "id": "wr_q5",
+            "type": "write_sentence_picture",
+            "image": "",
+            "words": [],
+            "prepTime": 0,
+            "respTime": 480,
+            "description": "",
+            "sampleAnswer": ""
+          }
+        ],
+        "instructions": "In this part of the test, you will write ONE sentence that is based on the picture. You must use the two words or phrases provided.",
+        "partTime": 480
+      },
+      {
+        "part": 2,
+        "partTitle": "Part 2: Respond to a Written Request",
+        "questions": [
+          {
+            "id": "wr_q6",
+            "text": "From: Operations Director\nTo: Project Group\nSubject: Addressing the Project Delay\n\nDear Colleagues,\n\nOur current project is behind schedule due to unforeseen issues. Please provide your recommendations on how we can best recover the lost time. Include any specific ideas for task adjustments or additional resources needed.\n\nSincerely,\nMargaret Wong",
+            "type": "respond_written_request",
+            "prepTime": 0,
+            "respTime": 600
+          },
+          {
+            "id": "wr_q7",
+            "text": "From: Team Leader\nTo: Department Members\nSubject: Ideas for the Next Office Meeting\n\nHello Team,\n\nWe will hold an office meeting soon to review recent developments. Please reply with any agenda suggestions, particularly those related to managing project delays and improving future planning.\n\nThank you,\nDaniel Rivera",
+            "type": "respond_written_request",
+            "prepTime": 0,
+            "respTime": 600
+          }
+        ],
+        "instructions": "In this part of the test, you will show how well you can write a response to an email. Your response should be at least 100 words long."
+      },
+      {
+        "part": 3,
+        "partTitle": "Part 3: Write an Opinion Essay",
+        "questions": [
+          {
+            "id": "wr_q8",
+            "text": "When facing a delayed project, is it better for a company to organize many office meetings or to focus on independent work? Which approach do you prefer? Support your opinion with specific reasons and examples.",
+            "type": "opinion_essay",
+            "prepTime": 0,
+            "respTime": 1800
+          }
+        ],
+        "instructions": "In this part of the test, you will write an essay in response to a prompt. Your essay should be at least 300 words long."
+      }
+    ]
+  }
+]

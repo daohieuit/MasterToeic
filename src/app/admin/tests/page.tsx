@@ -23,12 +23,13 @@ import {
   CheckCircle2,
   RefreshCw,
   Loader2,
-  FileText
+  FileText,
+  Edit2
 } from 'lucide-react';
 
 export default function AdminTestsPage() {
   const router = useRouter();
-  const { language, adminApiKey, adminBaseUrl, user, isAdmin } = useApp();
+  const { language, user, isAdmin } = useApp();
 
   // Test states
   const [tests, setTests] = useState<any[]>([]);
@@ -46,7 +47,6 @@ export default function AdminTestsPage() {
   const [pipelineProgress, setPipelineProgress] = useState('');
   const [copiedPrompt, setCopiedPrompt] = useState(false);
   const [unusedImagesCount, setUnusedImagesCount] = useState<number | null>(null);
-  const [proxyStatus, setProxyStatus] = useState<'online' | 'offline' | 'not_applicable'>('not_applicable');
 
   // Import JSON states
   const [geminiJsonText, setGeminiJsonText] = useState('');
@@ -60,8 +60,7 @@ export default function AdminTestsPage() {
       const token = session?.access_token;
       if (!token) return;
 
-      const baseUrlToUse = localStorage.getItem('admin_base_url') || adminBaseUrl || '';
-      const res = await fetch(`/api/admin/pipeline?proxyUrl=${encodeURIComponent(baseUrlToUse)}`, {
+      const res = await fetch(`/api/admin/pipeline`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -69,17 +68,14 @@ export default function AdminTestsPage() {
       if (res.ok) {
         const data = await res.json();
         setUnusedImagesCount(data.totalUnused);
-        if (data.proxyStatus) {
-          setProxyStatus(data.proxyStatus);
-        }
       }
     } catch (e) {
       console.error('Failed to fetch unused images count:', e);
     }
-  }, [isAdmin, adminBaseUrl]);
+  }, [isAdmin]);
 
   // Image validation helper (defined here as it does not rely on React state)
-  const validateTestImages = (test: any): Promise<'ok' | 'missing' | 'broken'> => {
+  const validateTestImages = (test: any, force: boolean = false): Promise<'ok' | 'missing' | 'broken'> => {
     // 1. Check localStorage Cache
     const cacheKey = 'toeic_sw_image_health_cache';
     let cache: Record<string, { status: 'ok' | 'missing' | 'broken'; lastChecked: number }> = {};
@@ -92,8 +88,10 @@ export default function AdminTestsPage() {
 
     const cachedVal = cache[test.id];
     const checkThreshold = 24 * 60 * 60 * 1000; // 24 hours
-    if (cachedVal && (Date.now() - cachedVal.lastChecked < checkThreshold)) {
-      return Promise.resolve(cachedVal.status);
+    if (!force && cachedVal && (Date.now() - cachedVal.lastChecked < checkThreshold)) {
+      if (cachedVal.status === 'ok' || (Date.now() - cachedVal.lastChecked < 5 * 60 * 1000)) {
+        return Promise.resolve(cachedVal.status);
+      }
     }
 
     const images: string[] = [];
@@ -180,11 +178,15 @@ export default function AdminTestsPage() {
     });
   };
 
-  const validateAllImages = useCallback(async (testList: any[]) => {
+  const validateAllImages = useCallback(async (testList: any[], force: boolean = false) => {
+    if (force) {
+      localStorage.removeItem('toeic_sw_image_health_cache');
+      setTestStatuses({});
+    }
     const newStatuses: Record<string, 'ok' | 'missing' | 'broken'> = {};
     await Promise.all(
       testList.map(async (test) => {
-        const status = await validateTestImages(test);
+        const status = await validateTestImages(test, force);
         newStatuses[test.id] = status;
       })
     );
@@ -206,7 +208,6 @@ export default function AdminTestsPage() {
           const formatted = data.map((t: any) => ({
             id: t.id,
             title: t.title,
-            description: t.description,
             speaking: t.speaking_data,
             writing: t.writing_data
           }));
@@ -448,23 +449,6 @@ Nhiệm vụ của bạn là phân tích từng hình ảnh trong tài liệu n�
 
   // Auto-update Missing Images
   const handleAutoUpdateMissing = async () => {
-    const keyToUse = localStorage.getItem('admin_api_key') || adminApiKey || '';
-    const baseUrlToUse = localStorage.getItem('admin_base_url') || adminBaseUrl || '';
-
-    if (!keyToUse) {
-      toast.error(language === 'vi' ? 'Vui lòng cung cấp Gemini API Key tại cấu hình trang Admin.' : 'Please configure Gemini API Key first.');
-      return;
-    }
-
-    // Check proxy offline if using proxy configuration
-    const isWeb = baseUrlToUse.includes('localhost') || baseUrlToUse.includes('127.0.0.1') || baseUrlToUse.includes('8081');
-    if (isWeb && proxyStatus === 'offline') {
-      toast.error(language === 'vi' 
-        ? 'Máy chủ proxy (Web2API) chưa được bật! Vui lòng mở terminal và chạy lệnh: python gemini_web2api.py --cookie-file cookie.txt'
-        : 'Proxy server (Web2API) is offline! Please run: python gemini_web2api.py --cookie-file cookie.txt');
-      return;
-    }
-
     try {
       if (!supabase) {
         throw new Error(language === 'vi' ? 'Supabase chưa được cấu hình' : 'Supabase is not configured');
@@ -479,9 +463,7 @@ Nhiệm vụ của bạn là phân tích từng hình ảnh trong tài liệu n�
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
-          'x-gemini-api-key': keyToUse,
-          'x-gemini-base-url': baseUrlToUse
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({ action: 'auto_fill_missing' })
       });
@@ -618,25 +600,35 @@ Nhiệm vụ của bạn là phân tích từng hình ảnh trong tài liệu n�
                 <Database size={20} />
                 {language === 'vi' ? 'Danh sách đề thi sẵn có' : 'Available Tests'}
               </h3>
-              
-              <button
-                className="btn-accent"
-                onClick={handleAutoUpdateMissing}
-                disabled={updatingMissing || loadingTests}
-                style={{ fontSize: '0.8rem', padding: '8px 14px' }}
-              >
-                {updatingMissing ? (
-                  <>
-                    <Loader2 className="animate-spin" size={14} style={{ marginRight: '6px' }} />
-                    {language === 'vi' ? 'Đang cập nhật...' : 'Updating...'}
-                  </>
-                ) : (
-                  <>
-                    <RefreshCw size={14} style={{ marginRight: '6px' }} />
-                    {language === 'vi' ? 'Cập nhật đề thiếu ảnh' : 'Update Missing Images'}
-                  </>
-                )}
-              </button>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <button 
+                  className="btn-secondary"
+                  onClick={() => validateAllImages(tests, true)}
+                  style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 14px', borderRadius: '0px', fontSize: '0.8rem' }}
+                  title={language === 'vi' ? 'Kiểm tra lại toàn bộ ảnh (Xóa cache)' : 'Re-check all images (Clear cache)'}
+                >
+                  <RefreshCw size={14} />
+                  <span className="desktop-only">{language === 'vi' ? 'Kiểm tra lại' : 'Recheck'}</span>
+                </button>
+                <button
+                  className="btn-accent"
+                  onClick={handleAutoUpdateMissing}
+                  disabled={updatingMissing || loadingTests}
+                  style={{ fontSize: '0.8rem', padding: '8px 14px' }}
+                >
+                  {updatingMissing ? (
+                    <>
+                      <Loader2 className="animate-spin" size={14} style={{ marginRight: '6px' }} />
+                      {language === 'vi' ? 'Đang cập nhật...' : 'Updating...'}
+                    </>
+                  ) : (
+                    <>
+                      <RefreshCw size={14} style={{ marginRight: '6px' }} />
+                      {language === 'vi' ? 'Cập nhật đề thiếu ảnh' : 'Update Missing Images'}
+                    </>
+                  )}
+                </button>
+              </div>
             </div>
 
             {/* Filter controls */}
@@ -738,7 +730,9 @@ Nhiệm vụ của bạn là phân tích từng hình ảnh trong tài liệu n�
                       >
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <h4 style={{ fontSize: '0.95rem', fontWeight: 'bold' }}>{test.title}</h4>
+                            <Link href={`/admin/tests/edit/${test.id}`} style={{ textDecoration: 'none' }}>
+                              <h4 style={{ fontSize: '0.95rem', fontWeight: 'bold', color: 'var(--text-primary)' }} className="hover-accent">{test.title}</h4>
+                            </Link>
                             {status === 'ok' && (
                               <span style={{ display: 'inline-flex', alignItems: 'center', gap: '3px', fontSize: '0.65rem', background: 'rgba(34, 197, 94, 0.2)', color: '#22c55e', padding: '2px 8px', borderRadius: '0px', fontWeight: 'bold' }}>
                                 <CheckCircle2 size={10} /> {language === 'vi' ? 'Đủ ảnh' : 'OK'}
@@ -759,6 +753,14 @@ Nhiệm vụ của bạn là phân tích từng hình ảnh trong tài liệu n�
                         </div>
                         
                         <div style={{ display: 'flex', gap: '8px' }}>
+                          <Link
+                            href={`/admin/tests/edit/${test.id}`}
+                            className="btn-secondary"
+                            style={{ padding: '8px 10px', display: 'flex', alignItems: 'center', gap: '4px', textDecoration: 'none' }}
+                            title={language === 'vi' ? 'Chỉnh sửa' : 'Edit'}
+                          >
+                            <Edit2 size={14} style={{ color: 'var(--accent)' }} />
+                          </Link>
                           <Link
                             href={`/test/${test.id}`}
                             className="btn-secondary"

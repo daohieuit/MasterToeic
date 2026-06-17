@@ -140,6 +140,7 @@ function AudioPlayer({ src }: AudioPlayerProps) {
         max={duration || 100} 
         value={currentTime} 
         onChange={handleSeek} 
+        aria-label="Audio timeline"
         style={{ 
           flex: 1, 
           accentColor: 'var(--accent)', 
@@ -366,30 +367,32 @@ export default function ReviewConsole({
     maintainAspectRatio: false,
   };
 
-  const handleExportPrompt = async () => {
-    let promptText = "Vui lòng đóng vai một giám khảo TOEIC Speaking & Writing chuyên nghiệp và chấm điểm các câu trả lời sau của tôi dựa trên tiêu chí chấm điểm chính thức. Đối với mỗi câu hỏi, hãy cung cấp điểm, sửa lỗi ngữ pháp, nhận xét chi tiết và bài mẫu đạt điểm tối đa.\n\n";
-    
-    reviews.forEach((rev, idx) => {
-      promptText += `--- CÂU HỎI ${idx + 1} (${rev.partTitle.toUpperCase()}) ---\n`;
-      promptText += `Đề bài: ${rev.questionText}\n`;
-      
-      // Chuyển link ảnh thành đường dẫn tuyệt đối nếu cần (giả sử website host ở window.location.origin)
-      const origin = typeof window !== 'undefined' ? window.location.origin : 'https://mastertoeic.vercel.app';
-      if (rev.image) {
-        const fullImageUrl = rev.image.startsWith('http') ? rev.image : origin + rev.image;
-        promptText += `Hình ảnh đính kèm: ${fullImageUrl}\n`;
-      }
-      if (rev.description) promptText += `Mô tả ảnh của hệ thống: ${rev.description}\n`;
-      if (rev.words && rev.words.length > 0) promptText += `Từ khóa bắt buộc: ${rev.words.join(', ')}\n`;
-      promptText += `\nCâu trả lời của tôi:\n${rev.userAnswer || rev.answer || '(Không có câu trả lời)'}\n\n`;
-    });
+  const handleExportJson = () => {
+    const origin = typeof window !== 'undefined' ? window.location.origin : 'https://mastertoeic.vercel.app';
+    const exportData = {
+      testTitle: testTitle,
+      date: date,
+      questions: reviews.map((rev, idx) => ({
+        questionNumber: idx + 1,
+        part: rev.partTitle,
+        prompt: rev.questionText,
+        image: rev.image ? (rev.image.startsWith('http') ? rev.image : origin + rev.image) : null,
+        requiredWords: rev.words || [],
+        systemImageDescription: rev.description || null,
+        sampleAnswer: rev.sampleAnswer || null,
+        userAnswer: rev.userAnswer || rev.answer || null,
+      }))
+    };
 
-    try {
-      await navigator.clipboard.writeText(promptText);
-      alert(language === 'vi' ? 'Đã copy toàn bộ đề, link ảnh và câu trả lời! Bạn có thể dán vào ChatGPT hoặc Gemini để tự chấm.' : 'Copied! You can now paste this to ChatGPT or Gemini to self-grade.');
-    } catch (e) {
-      alert('Lỗi copy. Trình duyệt không hỗ trợ.');
-    }
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `toeic_result_${new Date().getTime()}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   };
 
   const t = {
@@ -412,7 +415,8 @@ export default function ReviewConsole({
       imageDesc: 'Mô tả hình ảnh của AI:',
       requiredWords: 'Từ khóa bắt buộc:',
       unauthAlert: 'Tính năng chấm điểm AI bị khóa đối với tài khoản của bạn để tránh quá tải máy chủ. Đừng lo, bạn vẫn có thể ấn nút bên dưới để copy toàn bộ câu trả lời kèm link ảnh để tự chấm bằng ChatGPT/Gemini của riêng bạn!',
-      exportAI: 'Copy Đề & Câu trả lời (Để tự chấm AI)'
+      exportAI: 'Copy Đề & Câu trả lời (Để tự chấm AI)',
+      exportJson: 'Xuất file JSON (Để tự chấm bằng Gemini Web)'
     },
     en: {
       title: 'Practice Review & Evaluation',
@@ -420,20 +424,21 @@ export default function ReviewConsole({
       scoreOverview: 'Score Overview',
       speakingScore: 'Speaking Score',
       writingScore: 'Writing Score',
-      questionList: 'Questions & AI Evaluations',
+      questionList: 'Questions & Evaluations',
       userAnswer: 'Your Response',
       score: 'Question Score',
       grammarTitle: 'Grammar & Vocabulary Corrections',
-      feedbackTitle: 'Feedback & Advice (AI)',
+      feedbackTitle: 'Feedback & Advice',
       sampleTitle: 'Model Reference Answer',
       backDashboard: 'Back to Dashboard',
       listenSpeech: 'Listen to your response:',
       noGrammarErrors: 'Excellent! No major grammar errors detected.',
       imagePrompt: 'Question Image:',
-      imageDesc: 'AI Image Description Reference:',
+      imageDesc: 'System Image Description Reference:',
       requiredWords: 'Required Keywords:',
-      unauthAlert: 'AI grading is locked for your account to prevent server overload. Don\'t worry, you can click the button below to copy all your answers and image links to self-grade using your own ChatGPT/Gemini!',
-      exportAI: 'Copy Test & Answers (For your own AI)'
+      unauthAlert: 'AI grading is disabled. Please export JSON to self-grade.',
+      exportAI: 'Copy Test & Answers (For your own AI)',
+      exportJson: 'Export JSON (For Gemini Web)'
     }
   }[language];
 
@@ -444,11 +449,14 @@ export default function ReviewConsole({
   return (
     <div className="fade-in review-container">
       
-      {/* Back to Dashboard */}
-      <div style={{ marginBottom: '24px' }}>
+      {/* Back to Dashboard & Export */}
+      <div style={{ marginBottom: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <Link href="/" className="btn-secondary" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '8px 16px' }}>
           <ArrowLeft size={16} /> {t.backDashboard}
         </Link>
+        <button className="btn-primary" onClick={handleExportJson} style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '8px 16px', background: 'var(--accent)', color: '#fff', border: 'none', fontWeight: 'bold' }}>
+          <Download size={16} /> {t.exportJson}
+        </button>
       </div>
 
       {/* Header Panel */}
@@ -486,22 +494,7 @@ export default function ReviewConsole({
         </div>
       </div>
 
-      {unauthorizedForAI && (
-        <div style={{ background: 'var(--background-secondary)', border: '1px solid var(--accent)', borderLeft: '4px solid var(--accent)', padding: '16px', marginBottom: '24px', borderRadius: '4px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-            <AlertCircle size={20} style={{ color: 'var(--accent)' }} />
-            <h4 style={{ color: 'var(--accent)', fontSize: '1.05rem', fontWeight: 'bold' }}>
-              {language === 'vi' ? 'Tài khoản của bạn chưa được cấp quyền dùng AI!' : 'AI Grading is not enabled for your account!'}
-            </h4>
-          </div>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '16px', lineHeight: '1.5' }}>
-            {t.unauthAlert}
-          </p>
-          <button className="btn-accent" onClick={handleExportPrompt} style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '10px 16px', fontWeight: 'bold' }}>
-            <Copy size={16} /> {t.exportAI}
-          </button>
-        </div>
-      )}
+
 
       {/* Detailed Question Review List */}
       <div>

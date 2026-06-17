@@ -12,6 +12,7 @@ import ConfirmModal from '@/components/ConfirmModal';
 import { AlertCircle, RefreshCw, Activity, ArrowRight, Loader } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import toast from 'react-hot-toast';
+import { getSpeakingPartConfig, getWritingPartConfig } from '@/utils/constants';
 
 interface TestParams {
   id: string;
@@ -21,7 +22,7 @@ export default function TestPage({ params }: { params: Promise<TestParams> }) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const resolvedParams = use(params);
-  const { language, adminApiKey, adminBaseUrl, user } = useApp();
+  const { language, user } = useApp();
 
   // Test setup variables
   const testId = resolvedParams.id;
@@ -38,6 +39,8 @@ export default function TestPage({ params }: { params: Promise<TestParams> }) {
 
   // Loading states
   const [testData, setTestData] = useState<any>(null);
+  const hasSpeaking = Array.isArray(testData?.speaking) && testData.speaking.length > 0;
+  const hasWriting = Array.isArray(testData?.writing) && testData.writing.length > 0;
   const [loading, setLoading] = useState(true);
   const [evaluating, setEvaluating] = useState(false);
   const [evalProgress, setEvalProgress] = useState(0);
@@ -64,12 +67,15 @@ export default function TestPage({ params }: { params: Promise<TestParams> }) {
 
   useEffect(() => {
     if (testData) {
-      if (testData.speaking && testData.writing) {
+      const currentHasSpeaking = Array.isArray(testData.speaking) && testData.speaking.length > 0;
+      const currentHasWriting = Array.isArray(testData.writing) && testData.writing.length > 0;
+
+      if (currentHasSpeaking && currentHasWriting) {
         setLobbyMode('full');
-      } else if (testData.speaking) {
+      } else if (currentHasSpeaking) {
         setLobbyMode('speaking');
         setLobbySkill('speaking');
-      } else if (testData.writing) {
+      } else if (currentHasWriting) {
         setLobbyMode('writing');
         setLobbySkill('writing');
       }
@@ -95,7 +101,6 @@ export default function TestPage({ params }: { params: Promise<TestParams> }) {
             selectedTest = {
               id: data.id,
               title: data.title,
-              description: data.description,
               speaking: data.speaking_data,
               writing: data.writing_data
             };
@@ -204,15 +209,20 @@ export default function TestPage({ params }: { params: Promise<TestParams> }) {
       }
 
       let filteredQuestions: any[] = [];
+      let globalSpIdx = 1;
+      let globalWrIdx = 1;
 
       if (activeMode === 'full') {
         if (selectedTest.speaking) {
           selectedTest.speaking.forEach((p: any) => {
+            const pTitle = p.partTitle || getSpeakingPartConfig(p.part)?.partTitle || `Part ${p.part}`;
             p.questions.forEach((q: any) => {
               filteredQuestions.push({
                 ...q,
-                partTitle: p.partTitle,
+                id: q.id || `sp_q${globalSpIdx++}`,
+                partTitle: pTitle,
                 referenceInfo: p.referenceInfo,
+                situation: p.situation,
                 section: 'speaking'
               });
             });
@@ -220,23 +230,44 @@ export default function TestPage({ params }: { params: Promise<TestParams> }) {
         }
         if (selectedTest.writing) {
           selectedTest.writing.forEach((p: any) => {
-            p.questions.forEach((q: any) => {
-              filteredQuestions.push({
+            const pTitle = p.partTitle || getWritingPartConfig(p.part)?.partTitle || `Part ${p.part}`;
+            if (p.part === 1) {
+              const cleanedQuestions = p.questions.map((q: any) => ({
                 ...q,
-                partTitle: p.partTitle,
+                id: q.id || `wr_q${globalWrIdx++}`
+              }));
+              filteredQuestions.push({
+                id: `writing_part_1_group_${Date.now()}`,
+                type: 'writing_part_1_group',
+                partTitle: pTitle,
+                partTime: p.partTime || 480,
+                questions: cleanedQuestions,
                 section: 'writing'
               });
-            });
+            } else {
+              p.questions.forEach((q: any) => {
+                filteredQuestions.push({
+                  ...q,
+                  id: q.id || `wr_q${globalWrIdx++}`,
+                  partTitle: pTitle,
+                  direction: q.direction,
+                  section: 'writing'
+                });
+              });
+            }
           });
         }
       } else if (activeMode === 'speaking') {
         if (selectedTest.speaking) {
           selectedTest.speaking.forEach((p: any) => {
+            const pTitle = p.partTitle || getSpeakingPartConfig(p.part)?.partTitle || `Part ${p.part}`;
             p.questions.forEach((q: any) => {
               filteredQuestions.push({
                 ...q,
-                partTitle: p.partTitle,
+                id: q.id || `sp_q${globalSpIdx++}`,
+                partTitle: pTitle,
                 referenceInfo: p.referenceInfo,
+                situation: p.situation,
                 section: 'speaking'
               });
             });
@@ -245,24 +276,45 @@ export default function TestPage({ params }: { params: Promise<TestParams> }) {
       } else if (activeMode === 'writing') {
         if (selectedTest.writing) {
           selectedTest.writing.forEach((p: any) => {
-            p.questions.forEach((q: any) => {
-              filteredQuestions.push({
+            const pTitle = p.partTitle || getWritingPartConfig(p.part)?.partTitle || `Part ${p.part}`;
+            if (p.part === 1) {
+              const cleanedQuestions = p.questions.map((q: any) => ({
                 ...q,
-                partTitle: p.partTitle,
+                id: q.id || `wr_q${globalWrIdx++}`
+              }));
+              filteredQuestions.push({
+                id: `writing_part_1_group_${Date.now()}`,
+                type: 'writing_part_1_group',
+                partTitle: pTitle,
+                partTime: p.partTime || 480,
+                questions: cleanedQuestions,
                 section: 'writing'
               });
-            });
+            } else {
+              p.questions.forEach((q: any) => {
+                filteredQuestions.push({
+                  ...q,
+                  id: q.id || `wr_q${globalWrIdx++}`,
+                  partTitle: pTitle,
+                  direction: q.direction,
+                  section: 'writing'
+                });
+              });
+            }
           });
         }
       } else if (activeMode === 'part') {
         if (activeSkill === 'speaking' && selectedTest.speaking) {
           const p = selectedTest.speaking.find((x: any) => x.part === part);
           if (p) {
-            p.questions.forEach((q: any) => {
+            const pTitle = p.partTitle || getSpeakingPartConfig(p.part)?.partTitle || `Part ${p.part}`;
+            p.questions.forEach((q: any, qIdx: number) => {
               filteredQuestions.push({
                 ...q,
-                partTitle: p.partTitle,
+                id: q.id || `sp_q${qIdx + 1}`,
+                partTitle: pTitle,
                 referenceInfo: p.referenceInfo,
+                situation: p.situation,
                 section: 'speaking'
               });
             });
@@ -270,13 +322,31 @@ export default function TestPage({ params }: { params: Promise<TestParams> }) {
         } else if (activeSkill === 'writing' && selectedTest.writing) {
           const p = selectedTest.writing.find((x: any) => x.part === part);
           if (p) {
-            p.questions.forEach((q: any) => {
-              filteredQuestions.push({
+            const pTitle = p.partTitle || getWritingPartConfig(p.part)?.partTitle || `Part ${p.part}`;
+            if (p.part === 1) {
+              const cleanedQuestions = p.questions.map((q: any, qIdx: number) => ({
                 ...q,
-                partTitle: p.partTitle,
+                id: q.id || `wr_q${qIdx + 1}`
+              }));
+              filteredQuestions.push({
+                id: `writing_part_1_group_${Date.now()}`,
+                type: 'writing_part_1_group',
+                partTitle: pTitle,
+                partTime: p.partTime || 480,
+                questions: cleanedQuestions,
                 section: 'writing'
               });
-            });
+            } else {
+              p.questions.forEach((q: any, qIdx: number) => {
+                filteredQuestions.push({
+                  ...q,
+                  id: q.id || `wr_q${qIdx + 1}`,
+                  partTitle: pTitle,
+                  direction: q.direction,
+                  section: 'writing'
+                });
+              });
+            }
           }
         }
       }
@@ -289,7 +359,8 @@ export default function TestPage({ params }: { params: Promise<TestParams> }) {
     };
 
     initTest();
-  }, [testId, mode, skill, part, attemptId, user, isStarted, language]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: user?.id prevents re-render loops; router from useRouter() is stable
+  }, [testId, mode, skill, part, attemptId, user?.id, isStarted, language]);
 
   // Sync searchParams to lobby state
   useEffect(() => {
@@ -325,25 +396,48 @@ export default function TestPage({ params }: { params: Promise<TestParams> }) {
     };
   }, [showReview, isStarted]);
 
-  const handleNextQuestion = (answerText: string, audioUrl: string | null = null) => {
+  const handleNextQuestion = (answerData: string | any[], audioUrl: string | null = null) => {
     const currentQ = questions[currentIdx];
     
-    const newAnswers = [
-      ...answers,
-      {
+    let newAnswers = [...answers];
+
+    if (Array.isArray(answerData)) {
+      // It's a group of answers (Writing Part 1)
+      answerData.forEach((ans) => {
+        newAnswers.push({
+          questionId: ans.id,
+          type: ans.type,
+          partTitle: currentQ.partTitle,
+          questionText: ans.text || 'Write one sentence describing the picture.',
+          answer: ans.answer,
+          audioUrl: null,
+          section: 'writing',
+          image: ans.image || null,
+          words: ans.words || null,
+          referenceInfo: null,
+          direction: null,
+          situation: null,
+          description: ans.description || null
+        });
+      });
+    } else {
+      newAnswers.push({
         questionId: currentQ.id,
         type: currentQ.type,
         partTitle: currentQ.partTitle,
         questionText: currentQ.text || (currentQ.type === 'describe_picture' ? 'Describe the picture shown.' : 'Respond using information.'),
-        answer: answerText,
+        answer: answerData as string,
         audioUrl: audioUrl,
         section: currentQ.section,
         image: currentQ.image || null,
         words: currentQ.words || null,
         referenceInfo: currentQ.referenceInfo || null,
+        direction: currentQ.direction || null,
+        situation: currentQ.situation || null,
         description: currentQ.description || null
-      }
-    ];
+      });
+    }
+    
     setAnswers(newAnswers);
 
     if (currentIdx < questions.length - 1) {
@@ -368,170 +462,36 @@ export default function TestPage({ params }: { params: Promise<TestParams> }) {
     setEvalProgress(0);
     
     const evaluationResults: any[] = [];
-    let spScoreSum = 0;
-    let spCount = 0;
-    let wrScoreSum = 0;
-    let wrCount = 0;
-    let isUnauthorized = false;
-    let unauthorizedMessage = '';
 
-    const localKey = localStorage.getItem('admin_api_key') || adminApiKey || '';
-    const localUrl = localStorage.getItem('admin_base_url') || adminBaseUrl || 'http://localhost:8081/v1';
-
-    // Get current session token for API authorization
-    let sessionToken = '';
-    if (user && supabase) {
-      const { data } = await supabase.auth.getSession();
-      if (data.session) {
-        sessionToken = data.session.access_token;
-      }
-    }
-
-    const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+    // Simulate progress
+    await new Promise((resolve) => setTimeout(resolve, 300));
+    setEvalProgress(50);
+    await new Promise((resolve) => setTimeout(resolve, 300));
 
     for (let i = 0; i < allAnswers.length; i++) {
       const ans = allAnswers[i];
-      setEvalProgress(Math.round((i / allAnswers.length) * 100));
 
-      const isBlank = !ans.answer || 
-                      ans.answer.trim() === '' || 
-                      ans.answer === '(No response provided)' || 
-                      ans.answer === '(No speech recorded)' ||
-                      ans.answer.trim() === '(No speech recorded)' ||
-                      ans.answer.trim() === '(No response provided)';
-
-      if (isBlank) {
-        evaluationResults.push({
-          ...ans,
-          userAnswer: ans.answer,
-          score: 0,
-          feedback: language === 'vi' ? 'Không có câu trả lời. Bạn nhận 0 điểm cho câu hỏi này.' : 'No response provided. You receive 0 points for this question.',
-          grammarErrors: [],
-          sampleAnswer: ''
-        });
-
-        if (ans.section === 'speaking') {
-          spCount++;
-        } else {
-          wrCount++;
-        }
-        continue;
-      }
-
-      if (isUnauthorized) {
-        // If already flagged as unauthorized, skip calling API
-        evaluationResults.push({
-          ...ans,
-          userAnswer: ans.answer,
-          score: 0,
-          feedback: unauthorizedMessage || 'Tài khoản không có quyền chấm AI.',
-          grammarErrors: [],
-          sampleAnswer: ''
-        });
-        if (ans.section === 'speaking') spCount++; else wrCount++;
-        continue;
-      }
-
-      // Add a small delay between requests to avoid Gemini API rate limits (429)
-      if (i > 0) {
-        await sleep(800);
-      }
-
-      try {
-        const response = await fetch('/api/eval', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-gemini-api-key': localKey,
-            'x-gemini-base-url': localUrl,
-            ...(sessionToken ? { 'Authorization': `Bearer ${sessionToken}` } : {})
-          },
-          body: JSON.stringify({
-            question: ans.questionText,
-            answer: ans.answer,
-            type: ans.type,
-            details: {
-              image: ans.image,
-              words: ans.words,
-              referenceInfo: ans.referenceInfo,
-              imageDescription: ans.description
-            }
-          })
-        });
-
-        if (response.status === 403) {
-          const errData = await response.json();
-          if (errData.isUnauthorized) {
-            isUnauthorized = true;
-            unauthorizedMessage = errData.error;
-            evaluationResults.push({
-              ...ans,
-              userAnswer: ans.answer,
-              score: 0,
-              feedback: unauthorizedMessage,
-              grammarErrors: [],
-              sampleAnswer: ''
-            });
-            if (ans.section === 'speaking') spCount++; else wrCount++;
-            continue;
-          }
-        }
-
-        if (!response.ok) {
-          throw new Error('Chấm điểm thất bại');
-        }
-
-        const evaluation = await response.json();
-        
-        evaluationResults.push({
-          ...ans,
-          userAnswer: ans.answer,
-          score: evaluation.score || 0,
-          feedback: evaluation.feedback || 'Không thể đánh giá.',
-          grammarErrors: evaluation.grammarErrors || [],
-          sampleAnswer: evaluation.sampleAnswer || ''
-        });
-
-        if (ans.section === 'speaking') {
-          spScoreSum += evaluation.score || 0;
-          spCount++;
-        } else {
-          wrScoreSum += evaluation.score || 0;
-          wrCount++;
-        }
-      } catch (err) {
-        console.error('Error evaluating question:', ans.questionId, err);
-        evaluationResults.push({
-          ...ans,
-          userAnswer: ans.answer,
-          score: 0,
-          feedback: 'Lỗi kết nối API. Không thể chấm bài cho câu hỏi này.',
-          grammarErrors: [],
-          sampleAnswer: 'API Connection Error'
-        });
-        
-        if (ans.section === 'speaking') {
-          spCount++;
-        } else {
-          wrCount++;
-        }
-      }
+      evaluationResults.push({
+        ...ans,
+        userAnswer: ans.answer,
+        score: null, // Removed AI
+        feedback: language === 'vi' ? 'Vui lòng xuất file JSON và gửi cho Gemini Web để chấm điểm.' : 'Please export JSON and send to Gemini Web for evaluation.',
+        grammarErrors: [],
+        sampleAnswer: ans.sampleAnswer || ''
+      });
     }
 
     setEvalProgress(100);
-
-    const averageSpeaking = (!isUnauthorized && spCount > 0) ? Math.round((spScoreSum / spCount) * 2) : null;
-    const averageWriting = (!isUnauthorized && wrCount > 0) ? Math.round((wrScoreSum / wrCount) * 2) : null;
 
     const attemptResult = {
       testId: testData.id,
       testTitle: testData.title,
       mode: mode,
       partName: mode === 'part' ? `${skill.toUpperCase()} Part ${part}` : undefined,
-      speakingScore: averageSpeaking,
-      writingScore: averageWriting,
+      speakingScore: null,
+      writingScore: null,
       reviews: evaluationResults,
-      unauthorizedForAI: isUnauthorized
+      unauthorizedForAI: false
     };
 
     // Save Attempt
@@ -755,12 +715,9 @@ export default function TestPage({ params }: { params: Promise<TestParams> }) {
             <h3 style={{ fontSize: '1.2rem', color: 'var(--accent)', borderBottom: '1px solid var(--border)', paddingBottom: '12px' }}>
               {t.lobbyDetails}
             </h3>
-            <p style={{ fontSize: '0.95rem', color: 'var(--text-secondary)', lineHeight: '1.6', fontStyle: 'italic' }}>
-              &ldquo;{testData?.description}&rdquo;
-            </p>
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginTop: '8px' }}>
-              {testData?.speaking && (
+              {hasSpeaking && (
                 <div>
                   <h4 style={{ fontSize: '0.9rem', fontWeight: 'bold', marginBottom: '8px', color: 'var(--text-primary)' }}>
                     TOEIC Speaking (11 câu hỏi / 11 Qs)
@@ -775,9 +732,9 @@ export default function TestPage({ params }: { params: Promise<TestParams> }) {
                 </div>
               )}
 
-              {testData?.writing && (
+              {hasWriting && (
                 <div>
-                  <h4 style={{ fontSize: '0.9rem', fontWeight: 'bold', marginBottom: '8px', color: 'var(--text-primary)', marginTop: testData?.speaking ? '16px' : '0' }}>
+                  <h4 style={{ fontSize: '0.9rem', fontWeight: 'bold', marginBottom: '8px', color: 'var(--text-primary)', marginTop: hasSpeaking ? '16px' : '0' }}>
                     TOEIC Writing (8 câu hỏi / 8 Qs)
                   </h4>
                   <ul style={{ paddingLeft: '20px', fontSize: '0.85rem', color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '4px' }}>
@@ -803,7 +760,7 @@ export default function TestPage({ params }: { params: Promise<TestParams> }) {
               </label>
               
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-                {testData?.speaking && testData?.writing && (
+                {hasSpeaking && hasWriting && (
                   <label 
                     style={{ 
                       padding: '12px', 
@@ -831,7 +788,7 @@ export default function TestPage({ params }: { params: Promise<TestParams> }) {
                   </label>
                 )}
 
-                {testData?.speaking && (
+                {hasSpeaking && (
                   <label 
                     style={{ 
                       padding: '12px', 
@@ -859,7 +816,7 @@ export default function TestPage({ params }: { params: Promise<TestParams> }) {
                   </label>
                 )}
 
-                {testData?.writing && (
+                {hasWriting && (
                   <label 
                     style={{ 
                       padding: '12px', 
@@ -920,7 +877,7 @@ export default function TestPage({ params }: { params: Promise<TestParams> }) {
               <div className="fade-in" style={{ padding: '16px', background: 'var(--background)', border: '1px solid var(--border)', display: 'flex', flexDirection: 'column', gap: '12px' }}>
                 <h4 style={{ fontSize: '0.8rem', fontWeight: 'bold', color: 'var(--text-primary)' }}>{t.lobbyChoosePart}</h4>
                 <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
-                  {testData?.speaking && (
+                  {hasSpeaking && (
                     <label style={{ fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}>
                       <input 
                         type="radio" 
@@ -931,7 +888,7 @@ export default function TestPage({ params }: { params: Promise<TestParams> }) {
                       Speaking Parts
                     </label>
                   )}
-                  {testData?.writing && (
+                  {hasWriting && (
                     <label style={{ fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}>
                       <input 
                         type="radio" 
@@ -1143,6 +1100,7 @@ export default function TestPage({ params }: { params: Promise<TestParams> }) {
             question={currentQ}
             partTitle={currentQ.partTitle}
             referenceInfo={currentQ.referenceInfo}
+            situation={currentQ.situation}
             onNext={handleNextQuestion}
             timeMultiplier={customTime ? spMult : 1}
             language={language}

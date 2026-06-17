@@ -1,5 +1,6 @@
 import React from 'react';
 import { BookOpen, ArrowRight } from 'lucide-react';
+import { DEFAULT_SPEAKING_PARTS, DEFAULT_WRITING_PARTS } from '../utils/constants';
 
 interface PartIntroScreenProps {
   partTitle: string;
@@ -14,62 +15,30 @@ export default function PartIntroScreen({ partTitle, onStart, language = 'en' }:
     
     // Speaking Parts
     if (t.includes('part 1') && t.includes('read')) {
-      return (
-        <>
-          <p><strong>Directions:</strong> In this part of the test, you will read aloud the text on the screen. You will have 45 seconds to prepare. Then you will have 45 seconds to read the text aloud.</p>
-        </>
-      );
+      return <p><strong>Directions:</strong> {DEFAULT_SPEAKING_PARTS[1].instructions.replace('In this part of the test, ', '')}</p>;
     }
     if (t.includes('part 2') && t.includes('describe')) {
-      return (
-        <>
-          <p><strong>Directions:</strong> In this part of the test, you will describe the picture on your screen in as much detail as you can. You will have 45 seconds to prepare your response. Then you will have 30 seconds to speak about the picture.</p>
-        </>
-      );
+      return <p><strong>Directions:</strong> {DEFAULT_SPEAKING_PARTS[2].instructions.replace('In this part of the test, ', '')}</p>;
     }
     if (t.includes('part 3') && t.includes('respond to questions') && !t.includes('information')) {
-      return (
-        <>
-          <p><strong>Directions:</strong> In this part of the test, you will answer three questions. You will have 3 seconds to prepare after you hear each question. You will have 15 seconds to respond to Questions 5 and 6, and 30 seconds to respond to Question 7.</p>
-        </>
-      );
+      return <p><strong>Directions:</strong> {DEFAULT_SPEAKING_PARTS[3].instructions.replace('In this part of the test, ', '')}</p>;
     }
     if (t.includes('part 4') && t.includes('information provided')) {
-      return (
-        <>
-          <p><strong>Directions:</strong> In this part of the test, you will answer three questions based on the information provided. You will have 45 seconds to read the information before the questions begin. You will have 3 seconds to prepare after you hear each question. You will have 15 seconds to respond to Questions 8 and 9, and 30 seconds to respond to Question 10.</p>
-        </>
-      );
+      return <p><strong>Directions:</strong> {DEFAULT_SPEAKING_PARTS[4].instructions.replace('In this part of the test, ', '')}</p>;
     }
     if (t.includes('part 5') && t.includes('express an opinion')) {
-      return (
-        <>
-          <p><strong>Directions:</strong> In this part of the test, you will give your opinion about a specific topic. Be sure to say as much as you can in the time allowed. You will have 30 seconds to prepare. Then you will have 60 seconds to speak.</p>
-        </>
-      );
+      return <p><strong>Directions:</strong> {DEFAULT_SPEAKING_PARTS[5].instructions.replace('In this part of the test, ', '')}</p>;
     }
     
     // Writing Parts
     if (t.includes('part 1') && t.includes('picture')) {
-      return (
-        <>
-          <p><strong>Directions:</strong> In this part of the test, you will write ONE sentence that is based on a picture. With each picture, you will be given TWO words or phrases that you must use in your sentence. You can change the forms of the words and you can use the words in any order. You will have 8 minutes to complete this part of the test.</p>
-        </>
-      );
+      return <p><strong>Directions:</strong> {DEFAULT_WRITING_PARTS[1].instructions.replace('In this part of the test, ', '')}</p>;
     }
     if (t.includes('part 2') && t.includes('written request')) {
-      return (
-        <>
-          <p><strong>Directions:</strong> In this part of the test, you will show how well you can write a response to an e-mail. Your response will be scored on the quality and variety of your sentences, vocabulary, and organization. You will have 10 minutes to read and answer each e-mail.</p>
-        </>
-      );
+      return <p><strong>Directions:</strong> {DEFAULT_WRITING_PARTS[2].instructions.replace('In this part of the test, ', '')}</p>;
     }
     if (t.includes('part 3') && t.includes('opinion essay')) {
-      return (
-        <>
-          <p><strong>Directions:</strong> In this part of the test, you will write an essay in response to a question that asks you to state, explain, and support your opinion on an issue. Typically, an effective essay will contain a minimum of 300 words. You will have 30 minutes to plan, write, and revise your essay.</p>
-        </>
-      );
+      return <p><strong>Directions:</strong> {DEFAULT_WRITING_PARTS[3].instructions.replace('In this part of the test, ', '')}</p>;
     }
 
     // Default Fallback

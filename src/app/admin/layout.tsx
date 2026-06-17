@@ -36,7 +36,8 @@ export default function AdminLayout({
     if (user !== null) {
       setCheckingAuth(false);
     }
-  }, [user]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: user?.id avoids re-render loops on object reference changes
+  }, [user?.id]);
 
   // Loading state
   if (checkingAuth) {
@@ -72,17 +73,17 @@ export default function AdminLayout({
   // Admin menu links
   const navItems = [
     {
-      label: language === 'vi' ? 'Dashboard' : 'Dashboard',
+      label: language === 'vi' ? 'Tạo đề bằng AI' : 'AI Generator',
       path: '/admin',
       icon: LayoutDashboard
     },
     {
-      label: language === 'vi' ? 'Pipeline & Đồng bộ' : 'Pipeline & Sync',
+      label: language === 'vi' ? 'Kho ảnh & Pipeline' : 'Image Pipeline',
       path: '/admin/tests',
       icon: Settings
     },
     {
-      label: language === 'vi' ? 'Chỉnh sửa Đề thi' : 'Test Editor',
+      label: language === 'vi' ? 'Quản lý đề thi' : 'Manage Tests',
       path: '/admin/manage-tests',
       icon: FileText
     }

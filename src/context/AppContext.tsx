@@ -11,10 +11,6 @@ interface AppContextType {
   toggleTheme: () => void;
   language: Language;
   setLanguage: (lang: Language) => void;
-  adminApiKey: string;
-  setAdminApiKey: (key: string) => void;
-  adminBaseUrl: string;
-  setAdminBaseUrl: (url: string) => void;
   // Supabase Auth and Sync variables
   user: any;
   isAdmin: boolean;
@@ -27,8 +23,6 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 export function AppProvider({ children }: { children: React.ReactNode }) {
   const [theme, setTheme] = useState<Theme>('dark');
   const [language, setLanguage] = useState<Language>('vi');
-  const [adminApiKey, setAdminApiKeyState] = useState<string>('');
-  const [adminBaseUrl, setAdminBaseUrlState] = useState<string>('http://localhost:8081/v1');
   
   // Auth state
   const [user, setUser] = useState<any>(null);
@@ -39,8 +33,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme') as Theme;
     const savedLang = localStorage.getItem('language') as Language;
-    const savedApiKey = localStorage.getItem('admin_api_key') || '';
-    const savedBaseUrl = localStorage.getItem('admin_base_url') || 'http://localhost:8081/v1';
 
     if (savedTheme) {
       setTheme(savedTheme);
@@ -50,8 +42,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }
 
     if (savedLang) setLanguage(savedLang);
-    if (savedApiKey) setAdminApiKeyState(savedApiKey);
-    if (savedBaseUrl) setAdminBaseUrlState(savedBaseUrl);
 
     // Initialize Supabase Auth
     if (supabase) {
@@ -69,36 +59,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }
   }, []);
 
-  // Sync admin config from Supabase database when user changes
-  useEffect(() => {
-    const syncConfigFromDb = async () => {
-      if (user && supabase) {
-        try {
-          const { data, error } = await supabase
-            .from('admin_config')
-            .select('*');
-          
-          if (!error && data) {
-            const apiKeyItem = data.find((item: any) => item.key === 'gemini_api_key');
-            const baseUrlItem = data.find((item: any) => item.key === 'gemini_base_url');
-            
-            if (apiKeyItem) {
-              setAdminApiKeyState(apiKeyItem.value);
-              localStorage.setItem('admin_api_key', apiKeyItem.value);
-            }
-            if (baseUrlItem) {
-              setAdminBaseUrlState(baseUrlItem.value);
-              localStorage.setItem('admin_base_url', baseUrlItem.value);
-            }
-          }
-        } catch (e) {
-          console.error('Failed to sync admin config from database:', e);
-        }
-      }
-    };
 
-    syncConfigFromDb();
-  }, [user]);
 
   const toggleTheme = () => {
     const newTheme = theme === 'light' ? 'dark' : 'light';
@@ -110,38 +71,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const handleSetLanguage = (lang: Language) => {
     setLanguage(lang);
     localStorage.setItem('language', lang);
-  };
-
-  const setAdminApiKey = async (key: string) => {
-    setAdminApiKeyState(key);
-    localStorage.setItem('admin_api_key', key);
-
-    // Sync to Supabase if logged in as admin
-    if (user?.user_metadata?.role === 'admin' && supabase) {
-      try {
-        await supabase
-          .from('admin_config')
-          .upsert({ key: 'gemini_api_key', value: key });
-      } catch (e) {
-        console.error('Failed to sync API key to Supabase:', e);
-      }
-    }
-  };
-
-  const setAdminBaseUrl = async (url: string) => {
-    setAdminBaseUrlState(url);
-    localStorage.setItem('admin_base_url', url);
-
-    // Sync to Supabase if logged in as admin
-    if (user?.user_metadata?.role === 'admin' && supabase) {
-      try {
-        await supabase
-          .from('admin_config')
-          .upsert({ key: 'gemini_base_url', value: url });
-      } catch (e) {
-        console.error('Failed to sync Base URL to Supabase:', e);
-      }
-    }
   };
 
   const logout = async () => {
@@ -158,10 +87,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         toggleTheme,
         language,
         setLanguage: handleSetLanguage,
-        adminApiKey,
-        setAdminApiKey,
-        adminBaseUrl,
-        setAdminBaseUrl,
         user,
         isAdmin,
         isDbConfigured,

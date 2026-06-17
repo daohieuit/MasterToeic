@@ -4,29 +4,42 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useAudioRecorder } from '@/hooks/useAudioRecorder';
 import { useSpeechRecognition } from '@/hooks/useSpeechRecognition';
 import { Mic, MicOff, Volume2, Play, Square, RefreshCw, AlertCircle } from 'lucide-react';
+import { DEFAULT_SPEAKING_PARTS } from '@/utils/constants';
 
 interface Question {
   id: string;
   type: string;
   text?: string;
   image?: string;
-  prepTime: number;
-  respTime: number;
+  prepTime?: number;
+  respTime?: number;
 }
 
 interface SpeakingConsoleProps {
   question: Question;
   partTitle: string;
   referenceInfo?: string;
+  situation?: string;
   onNext: (answerText: string, audioUrl: string | null) => void;
   timeMultiplier: number;
   language: 'en' | 'vi';
 }
 
+const getQIndex = (id: string) => {
+  const m = id.match(/q(\d+)/i);
+  if (m) {
+    const num = parseInt(m[1], 10);
+    if (num === 7 || num === 10) return 2;
+    if (num === 6 || num === 9) return 1;
+  }
+  return 0;
+};
+
 export default function SpeakingConsole({
   question,
   partTitle,
   referenceInfo,
+  situation,
   onNext,
   timeMultiplier,
   language
@@ -36,12 +49,25 @@ export default function SpeakingConsole({
   
   // Set limits based on time multiplier (999 means infinite)
   const isInfinite = timeMultiplier > 100;
-  const prepDuration = isInfinite ? 99999 : Math.round(question.prepTime * timeMultiplier);
-  const respDuration = isInfinite ? 99999 : Math.round(question.respTime * timeMultiplier);
+  
+  // Get part configuration
+  const partMatch = partTitle.match(/part\s*(\d+)/i);
+  const partNum = partMatch ? parseInt(partMatch[1], 10) : 1;
+  const config = DEFAULT_SPEAKING_PARTS[partNum];
+  
+  // Resolve times dynamically
+  const defaultPrep = config ? (typeof config.defaultPrepTime === 'function' ? config.defaultPrepTime(getQIndex(question.id)) : config.defaultPrepTime) : 45;
+  const defaultResp = config ? (typeof config.defaultRespTime === 'function' ? config.defaultRespTime(getQIndex(question.id)) : config.defaultRespTime) : 45;
+  
+  const questionPrepTime = question.prepTime !== undefined ? question.prepTime : defaultPrep;
+  const questionRespTime = question.respTime !== undefined ? question.respTime : defaultResp;
+
+  const prepDuration = isInfinite ? 99999 : Math.round(questionPrepTime * timeMultiplier);
+  const respDuration = isInfinite ? 99999 : Math.round(questionRespTime * timeMultiplier);
 
   // Timer States
-  const [phase, setPhase] = useState<'prepare' | 'respond' | 'completed'>(question.prepTime > 0 ? 'prepare' : 'respond');
-  const [timeLeft, setTimeLeft] = useState(question.prepTime > 0 ? prepDuration : respDuration);
+  const [phase, setPhase] = useState<'prepare' | 'respond' | 'completed'>(questionPrepTime > 0 ? 'prepare' : 'respond');
+  const [timeLeft, setTimeLeft] = useState(questionPrepTime > 0 ? prepDuration : respDuration);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Canvas Waveform visualizer Refs
@@ -62,9 +88,9 @@ export default function SpeakingConsole({
 
   // Reset console when question changes
   useEffect(() => {
-    setPhase(question.prepTime > 0 ? 'prepare' : 'respond');
-    setTimeLeft(question.prepTime > 0 ? prepDuration : respDuration);
-  }, [question, prepDuration, respDuration]);
+    setPhase(questionPrepTime > 0 ? 'prepare' : 'respond');
+    setTimeLeft(questionPrepTime > 0 ? prepDuration : respDuration);
+  }, [question, prepDuration, respDuration, questionPrepTime]);
 
   // Main Timer Logic
   useEffect(() => {
@@ -259,6 +285,24 @@ export default function SpeakingConsole({
             }}
           >
             {referenceInfo}
+          </div>
+        )}
+
+        {/* If situation exists (Part 3) */}
+        {situation && (
+          <div 
+            style={{ 
+              background: 'var(--background-secondary)', 
+              border: '1px solid var(--border)', 
+              padding: '20px', 
+              fontSize: '1.05rem',
+              lineHeight: '1.6',
+              color: 'var(--text-secondary)',
+              fontStyle: 'italic',
+              marginBottom: '16px'
+            }}
+          >
+            <strong>Situation: </strong>{situation}
           </div>
         )}
 

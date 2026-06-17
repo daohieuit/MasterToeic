@@ -6,105 +6,16 @@ import { useApp } from '@/context/AppContext';
 import { supabase } from '@/utils/supabase';
 import Link from 'next/link';
 import toast from 'react-hot-toast';
-import { ArrowLeft, Save, Plus, Trash2, Download, Play, Shield, Key, Database, RefreshCw, Settings, FileJson, Cloud, Loader, Upload, Copy, Check, AlertTriangle, ImageOff, FileText, ChevronDown, ChevronUp } from 'lucide-react';
+import { ArrowLeft, Save, Plus, Trash2, Download, Play, Shield, Key, Database, RefreshCw, Settings, FileJson, Cloud, Loader, Upload, Copy, Check, AlertTriangle, ImageOff, FileText, ChevronDown, ChevronUp, Edit2 } from 'lucide-react';
 
 export default function AdminPage() {
   const router = useRouter();
-  const { language, adminApiKey, setAdminApiKey, adminBaseUrl, setAdminBaseUrl, user, isAdmin } = useApp();
+  const { language, user, isAdmin } = useApp();
   
   // Test generation settings
-  const [skill, setSkill] = useState<'speaking' | 'writing' | 'full'>('speaking');
-  const [topics, setTopics] = useState('');
-  const [generating, setGenerating] = useState(false);
   const [generatedTest, setGeneratedTest] = useState<any>(null);
   const [isSaved, setIsSaved] = useState(false);
-  const [progress, setProgress] = useState(0);
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
-  
-  // Accordion state for API settings
-  const [isSettingsExpanded, setIsSettingsExpanded] = useState(false);
-  
-  // Local state for API configurations to prevent saving to database on every keystroke
-  const [apiKeyLocal, setApiKeyLocal] = useState('');
-  const [baseUrlLocal, setBaseUrlLocal] = useState('');
-  const [proxyStatus, setProxyStatus] = useState<'online' | 'offline' | 'not_applicable'>('not_applicable');
-
-
-  const checkStatusForUrl = useCallback(async (url: string) => {
-    if (!isAdmin || !supabase) return;
-    try {
-      const { data: { session } } = await supabase.auth.getSession();
-      const token = session?.access_token;
-      if (!token) return;
-
-      const res = await fetch(`/api/admin/pipeline?proxyUrl=${encodeURIComponent(url)}`, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      if (res.ok) {
-        const data = await res.json();
-        if (data.proxyStatus) {
-          setProxyStatus(data.proxyStatus);
-        }
-      }
-    } catch (e) {
-      console.error(e);
-    }
-  }, [isAdmin]);
-
-  const fetchProxyStatus = useCallback(() => {
-    const baseUrlToUse = localStorage.getItem('admin_base_url') || adminBaseUrl || '';
-    checkStatusForUrl(baseUrlToUse);
-  }, [adminBaseUrl, checkStatusForUrl]);
-
-  useEffect(() => {
-    setApiKeyLocal(adminApiKey);
-    setBaseUrlLocal(adminBaseUrl);
-
-    if (adminApiKey && adminBaseUrl) {
-      const isWeb = adminBaseUrl.includes('localhost') || adminBaseUrl.includes('127.0.0.1') || adminBaseUrl.includes('8081');
-      if (isWeb) {
-        if (!localStorage.getItem('admin_api_key_web2api')) {
-          localStorage.setItem('admin_api_key_web2api', adminApiKey);
-        }
-      } else {
-        if (!localStorage.getItem('admin_api_key_aistudio')) {
-          localStorage.setItem('admin_api_key_aistudio', adminApiKey);
-        }
-      }
-    }
-    
-    if (isAdmin) {
-      fetchProxyStatus();
-    }
-  }, [adminApiKey, adminBaseUrl, isAdmin, fetchProxyStatus]);
-
-  useEffect(() => {
-    if (!adminApiKey) {
-      setIsSettingsExpanded(true);
-    }
-  }, [adminApiKey]);
-
-  const handleSwitchToWeb2API = () => {
-    if (baseUrlLocal.includes('googleapis.com')) {
-      localStorage.setItem('admin_api_key_aistudio', apiKeyLocal);
-    }
-    setBaseUrlLocal('http://localhost:8081/v1');
-    const savedWebKey = localStorage.getItem('admin_api_key_web2api') || '';
-    setApiKeyLocal(savedWebKey);
-    checkStatusForUrl('http://localhost:8081/v1');
-  };
-
-  const handleSwitchToAIStudio = () => {
-    if (baseUrlLocal.includes('localhost') || baseUrlLocal.includes('127.0.0.1') || baseUrlLocal.includes('8081')) {
-      localStorage.setItem('admin_api_key_web2api', apiKeyLocal);
-    }
-    setBaseUrlLocal('https://generativelanguage.googleapis.com/v1beta/openai');
-    const savedStudioKey = localStorage.getItem('admin_api_key_aistudio') || '';
-    setApiKeyLocal(savedStudioKey);
-    setProxyStatus('not_applicable');
-  };
 
   const handleCopyPrompt = async (fileName: string, key: string) => {
     try {
@@ -241,7 +152,6 @@ export default function AdminPage() {
             setCustomTests(data.map(t => ({
               id: t.id,
               title: t.title,
-              description: t.description,
               speaking: t.speaking_data,
               writing: t.writing_data
             })));
@@ -265,7 +175,8 @@ export default function AdminPage() {
     if (isAdmin) {
       fetchCustomTests();
     }
-  }, [isAdmin, user]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: user?.id avoids re-render loops on object reference changes
+  }, [isAdmin, user?.id]);
 
   // Run image validation when customTests changes
   useEffect(() => {
@@ -308,76 +219,7 @@ export default function AdminPage() {
     };
   };
 
-  const handleGenerate = async () => {
-    const keyToUse = localStorage.getItem('admin_api_key') || adminApiKey || '';
-    if (!keyToUse) {
-      toast.error(language === 'vi' ? 'Vui lòng cung cấp Gemini API Key trong phần Cấu hình trước khi tạo đề.' : 'Please configure your Gemini API Key first.');
-      return;
-    }
 
-    const isWeb = baseUrlLocal.includes('localhost') || baseUrlLocal.includes('127.0.0.1') || baseUrlLocal.includes('8081');
-    if (isWeb && proxyStatus === 'offline') {
-      toast.error(language === 'vi' 
-        ? 'Máy chủ proxy (Web2API) chưa được bật! Vui lòng mở terminal và chạy lệnh: python gemini_web2api.py --cookie-file cookie.txt' 
-        : 'Proxy server (Web2API) is offline! Please run: python gemini_web2api.py --cookie-file cookie.txt');
-      return;
-    }
-
-    setGenerating(true);
-    setGeneratedTest(null);
-    setIsSaved(false);
-    setProgress(0);
-
-    // Simulate progress
-    const interval = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 95) {
-          return 95;
-        }
-        const increment = prev < 40 ? 4 : prev < 75 ? 2 : prev < 90 ? 1 : 0.5;
-        return Number((prev + increment).toFixed(1));
-      });
-    }, 1000);
-
-    try {
-      const response = await fetch('/api/generate', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-gemini-api-key': keyToUse,
-          'x-gemini-base-url': adminBaseUrl
-        },
-        body: JSON.stringify({ skill, topics })
-      });
-
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText || 'Sinh đề thất bại');
-      }
-
-      const test = await response.json();
-      setProgress(100);
-      
-      // Auto-assign sequential name and ID
-      const hasSpeaking = !!test.speaking;
-      const hasWriting = !!test.writing;
-      const testSkill: 'full' | 'speaking' | 'writing' = (hasSpeaking && hasWriting) ? 'full' : hasSpeaking ? 'speaking' : 'writing';
-      const autoNaming = getNextTestNumberAndId(testSkill, customTests);
-      test.title = autoNaming.title;
-      test.id = autoNaming.id;
-      
-      // Delay briefly so user sees 100% completion
-      setTimeout(() => {
-        setGeneratedTest(test);
-      }, 400);
-    } catch (err: any) {
-      console.error(err);
-      toast.error((language === 'vi' ? 'Lỗi sinh đề: ' : 'Generation failed: ') + err.message);
-    } finally {
-      clearInterval(interval);
-      setGenerating(false);
-    }
-  };
 
   // Save generated test directly to browser LocalStorage list or Supabase database
   const handleSaveToBrowser = async () => {
@@ -391,7 +233,6 @@ export default function AdminPage() {
           .insert({
             id: generatedTest.id,
             title: generatedTest.title,
-            description: generatedTest.description,
             speaking_data: generatedTest.speaking || null,
             writing_data: generatedTest.writing || null,
             created_by: user.id
@@ -402,7 +243,6 @@ export default function AdminPage() {
         const testListObj = {
           id: generatedTest.id,
           title: generatedTest.title,
-          description: generatedTest.description,
           speaking: generatedTest.speaking,
           writing: generatedTest.writing
         };
@@ -488,45 +328,8 @@ export default function AdminPage() {
 
         // Do not auto-inject random images on import to allow manual custom images
 
-        const keyToUse = localStorage.getItem('admin_api_key') || adminApiKey || '';
-        if (keyToUse) {
-          const isWeb = baseUrlLocal.includes('localhost') || baseUrlLocal.includes('127.0.0.1') || baseUrlLocal.includes('8081');
-          if (isWeb && proxyStatus === 'offline') {
-            toast.error(language === 'vi' 
-              ? 'Máy chủ proxy (Web2API) chưa được bật! Vui lòng mở terminal và chạy lệnh: python gemini_web2api.py --cookie-file cookie.txt' 
-              : 'Proxy server (Web2API) is offline! Please run: python gemini_web2api.py --cookie-file cookie.txt');
-            setGeneratedTest(test);
-            toast.success(language === 'vi' ? 'Import thành công (Chưa đồng bộ Vision AI do proxy offline).' : 'Imported successfully (AI Vision sync bypassed because proxy is offline).');
-            return;
-          }
-          const toastId = toast.loading(language === 'vi' ? 'Đang dùng Vision AI phân tích ảnh và tạo từ khóa...' : 'Analyzing images and generating keywords with Vision AI...');
-          try {
-            const syncResponse = await fetch('/api/generate', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'x-gemini-api-key': keyToUse,
-                'x-gemini-base-url': adminBaseUrl
-              },
-              body: JSON.stringify({ action: 'sync_images', testData: test })
-            });
-
-            if (!syncResponse.ok) {
-              throw new Error('Sync failed');
-            }
-
-            const syncedTest = await syncResponse.json();
-            setGeneratedTest(syncedTest);
-            toast.success(language === 'vi' ? 'Import và đồng bộ ảnh bằng Vision AI thành công!' : 'Import and AI image sync completed!', { id: toastId });
-          } catch (syncErr) {
-            console.error('Vision AI sync failed on import, using raw test:', syncErr);
-            setGeneratedTest(test);
-            toast.success(language === 'vi' ? 'Import thành công (Chưa đồng bộ Vision AI do lỗi API).' : 'Imported successfully (AI Vision sync bypassed due to API error).', { id: toastId });
-          }
-        } else {
-          setGeneratedTest(test);
-          toast.success(language === 'vi' ? 'Import thành công (Hãy cấu hình API Key để bật Vision AI đồng bộ ảnh).' : 'Imported successfully (Configure API key to enable Vision AI sync).');
-        }
+        setGeneratedTest(test);
+        toast.success(language === 'vi' ? 'Import thành công.' : 'Imported successfully.');
 
         setIsSaved(false);
       } catch (err: any) {
@@ -626,73 +429,6 @@ export default function AdminPage() {
           {/* Grid Container for Creation Options */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px' }}>
             
-            {/* Generator Box */}
-            <div className="card-sharp">
-              <h3 style={{ marginBottom: '20px', fontSize: '1.2rem', color: 'var(--accent)' }}>{t.genHeader}</h3>
-              
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 'bold', marginBottom: '6px' }}>{t.selectSkill}</label>
-                  <select
-                    value={skill}
-                    onChange={(e) => setSkill(e.target.value as any)}
-                    className="admin-premium-input"
-                    style={{ width: '100%', padding: '10px 12px', fontWeight: 'bold' }}
-                  >
-                    <option value="speaking">{t.speaking}</option>
-                    <option value="writing">{t.writing}</option>
-                    <option value="full">{t.full}</option>
-                  </select>
-                </div>
-
-                <div>
-                  <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 'bold', marginBottom: '6px' }}>{t.topicsLabel}</label>
-                  <input
-                    type="text"
-                    placeholder={t.topicsPlace}
-                    value={topics}
-                    onChange={(e) => setTopics(e.target.value)}
-                    className="admin-premium-input"
-                    style={{ width: '100%', padding: '10px 12px' }}
-                  />
-                </div>
-                <button 
-                  className="btn-accent" 
-                  onClick={handleGenerate} 
-                  disabled={generating}
-                  style={{ width: '100%', justifyContent: 'center', padding: '12px', fontWeight: 'bold' }}
-                >
-                  {generating ? (
-                    <>
-                      <RefreshCw className="pulse-border" size={18} style={{ marginRight: '8px' }} />
-                      {t.generating}
-                    </>
-                  ) : (
-                    t.generateBtn
-                  )}
-                </button>
-
-                {generating && (
-                  <div style={{ marginTop: '16px' }} className="fade-in">
-                    <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '6px' }}>
-                      <span>{language === 'vi' ? 'Đang tạo đề bằng AI...' : 'Generating test with AI...'}</span>
-                      <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 'bold' }}>{progress}%</span>
-                    </div>
-                    <div style={{ width: '100%', height: '6px', background: 'var(--border)', overflow: 'hidden' }}>
-                      <div 
-                        style={{ 
-                          width: `${progress}%`, 
-                          height: '100%', 
-                          background: 'linear-gradient(90deg, var(--accent), var(--success))', 
-                          transition: 'width 0.2s ease' 
-                        }} 
-                      />
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-
             {/* Import JSON Box */}
             <div className="card-sharp">
               <h3 style={{ marginBottom: '16px', fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--accent)' }}>
@@ -720,15 +456,19 @@ export default function AdminPage() {
                   onClick={() => document.getElementById('json-file-input')?.click()}
                 >
                   <Upload size={24} style={{ margin: '0 auto 8px', color: 'var(--text-secondary)' }} />
-                  <span style={{ fontSize: '0.85rem', display: 'block', fontWeight: 'bold' }}>
+                  <label 
+                    htmlFor="json-file-input" 
+                    style={{ fontSize: '0.85rem', display: 'block', fontWeight: 'bold', cursor: 'pointer' }}
+                  >
                     {language === 'vi' ? 'Chọn file .json hoặc kéo thả vào đây' : 'Choose .json file or drag & drop'}
-                  </span>
+                  </label>
                   <input 
                     type="file" 
                     id="json-file-input" 
                     accept=".json" 
                     style={{ display: 'none' }} 
                     onChange={handleImportJSON}
+                    aria-label={language === 'vi' ? 'Chọn file JSON đề thi' : 'Choose JSON exam file'}
                   />
                 </div>
                 
@@ -829,174 +569,6 @@ export default function AdminPage() {
         {/* Right column (Config & Management Area): API Settings, Import JSON & Saved Tests */}
         <aside style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
           
-          {/* Settings Box */}
-          {/* Settings Box */}
-          <div className="card-sharp" style={{ padding: '20px' }}>
-            <div 
-              onClick={() => setIsSettingsExpanded(!isSettingsExpanded)}
-              style={{ 
-                display: 'flex', 
-                justifyContent: 'space-between', 
-                alignItems: 'center', 
-                cursor: 'pointer',
-                userSelect: 'none'
-              }}
-            >
-              <h3 style={{ fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '8px', margin: 0 }}>
-                <Key size={18} style={{ color: 'var(--accent)' }} /> 
-                <span>API Settings</span>
-                {isSettingsExpanded ? <ChevronUp size={16} style={{ color: 'var(--text-secondary)' }} /> : <ChevronDown size={16} style={{ color: 'var(--text-secondary)' }} />}
-              </h3>
-              
-              <span style={{ 
-                fontSize: '0.7rem', 
-                fontWeight: 'bold', 
-                padding: '4px 8px', 
-                borderRadius: '0px',
-                border: '1px solid',
-                borderColor: (baseUrlLocal.includes('localhost') || baseUrlLocal.includes('127.0.0.1') || baseUrlLocal.includes('8081')) 
-                  ? (proxyStatus === 'online' ? '#22c55e' : '#ef4444') 
-                  : baseUrlLocal.includes('googleapis.com')
-                    ? '#22c55e'
-                    : 'var(--border)',
-                background: (baseUrlLocal.includes('localhost') || baseUrlLocal.includes('127.0.0.1') || baseUrlLocal.includes('8081')) 
-                  ? (proxyStatus === 'online' ? 'rgba(34, 197, 94, 0.08)' : 'rgba(239, 68, 68, 0.08)') 
-                  : baseUrlLocal.includes('googleapis.com')
-                    ? 'rgba(34, 197, 94, 0.08)'
-                    : 'rgba(156, 163, 175, 0.08)',
-                color: (baseUrlLocal.includes('localhost') || baseUrlLocal.includes('127.0.0.1') || baseUrlLocal.includes('8081')) 
-                  ? (proxyStatus === 'online' ? '#22c55e' : '#ef4444') 
-                  : baseUrlLocal.includes('googleapis.com')
-                    ? '#22c55e'
-                    : 'var(--text-secondary)',
-                display: 'inline-flex',
-                alignItems: 'center',
-                gap: '6px'
-              }}>
-                {(baseUrlLocal.includes('localhost') || baseUrlLocal.includes('127.0.0.1') || baseUrlLocal.includes('8081')) && (
-                  <span 
-                    className="pulsing-dot" 
-                    style={{ 
-                      backgroundColor: proxyStatus === 'online' ? '#22c55e' : '#ef4444',
-                      animation: proxyStatus === 'online' ? 'adminDotPulse 1.6s infinite ease-in-out' : 'none'
-                    }} 
-                  />
-                )}
-                {(baseUrlLocal.includes('localhost') || baseUrlLocal.includes('127.0.0.1') || baseUrlLocal.includes('8081')) 
-                  ? (proxyStatus === 'online' ? 'Web2API Proxy: ON' : 'Web2API Proxy: OFF') 
-                  : baseUrlLocal.includes('googleapis.com')
-                    ? 'Google AI Studio'
-                    : (language === 'vi' ? 'Tự chọn' : 'Custom')}
-              </span>
-            </div>
-            
-            {isSettingsExpanded && (
-              <div style={{ marginTop: '16px', display: 'flex', flexDirection: 'column', gap: '16px' }} className="fade-in">
-                <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', margin: 0 }}>{t.configDesc}</p>
-                
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 'bold', marginBottom: '6px' }}>{t.apiKeyLabel}</label>
-                    <input 
-                      type="password" 
-                      value={apiKeyLocal}
-                      onChange={(e) => setApiKeyLocal(e.target.value)}
-                      placeholder="sk-..."
-                      className="admin-premium-input"
-                      style={{ width: '100%', padding: '8px 12px' }}
-                    />
-                  </div>
-                  <div>
-                    <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 'bold', marginBottom: '6px' }}>{t.baseUrlLabel}</label>
-                    <input 
-                      type="text" 
-                      value={baseUrlLocal}
-                      onChange={(e) => setBaseUrlLocal(e.target.value)}
-                      className="admin-premium-input"
-                      style={{ width: '100%', padding: '8px 12px' }}
-                    />
-                    <div style={{ display: 'flex', gap: '8px', marginTop: '8px' }}>
-                      <button 
-                        className="btn-secondary" 
-                        onClick={handleSwitchToWeb2API}
-                        style={{ 
-                          flex: 1, 
-                          padding: '6px', 
-                          fontSize: '0.75rem', 
-                          justifyContent: 'center',
-                          borderRadius: '0px',
-                          borderColor: (baseUrlLocal.includes('localhost') || baseUrlLocal.includes('127.0.0.1') || baseUrlLocal.includes('8081')) ? 'var(--accent)' : 'var(--border)'
-                        }}
-                      >
-                        Web2API (Local)
-                      </button>
-                      <button 
-                        className="btn-secondary" 
-                        onClick={handleSwitchToAIStudio}
-                        style={{ 
-                          flex: 1, 
-                          padding: '6px', 
-                          fontSize: '0.75rem', 
-                          justifyContent: 'center',
-                          borderRadius: '0px',
-                          borderColor: baseUrlLocal.includes('googleapis.com') ? 'var(--accent)' : 'var(--border)'
-                        }}
-                      >
-                        AI Studio (Direct)
-                      </button>
-                    </div>
-                  </div>
-
-                  {(baseUrlLocal.includes('localhost') || baseUrlLocal.includes('127.0.0.1') || baseUrlLocal.includes('8081')) && (
-                    <div style={{ padding: '12px', background: 'var(--background-secondary)', border: '1px solid var(--border)', borderRadius: '0px' }} className="fade-in">
-                      <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 'bold', color: 'var(--text-secondary)', marginBottom: '6px' }}>
-                        {language === 'vi' ? 'Lệnh chạy server Proxy (Web2API):' : 'Proxy server run command (Web2API):'}
-                      </label>
-                      <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-                        <code 
-                          className="admin-code-input"
-                          style={{ flex: 1, fontSize: '0.75rem', wordBreak: 'break-all', padding: '6px 8px', display: 'block' }}
-                        >
-                          python gemini_web2api.py --cookie-file cookie.txt
-                        </code>
-                        <button
-                          className="btn-secondary"
-                          onClick={() => {
-                            navigator.clipboard.writeText('python gemini_web2api.py --cookie-file cookie.txt');
-                            toast.success(language === 'vi' ? 'Đã copy lệnh chạy proxy!' : 'Proxy command copied!');
-                          }}
-                          style={{ padding: '8px 10px', borderRadius: '0px' }}
-                          title={language === 'vi' ? 'Sao chép' : 'Copy'}
-                        >
-                          <Copy size={12} />
-                        </button>
-                      </div>
-                    </div>
-                  )}
-
-                  <button 
-                    className="btn-primary" 
-                    onClick={async () => {
-                      await setAdminApiKey(apiKeyLocal);
-                      await setAdminBaseUrl(baseUrlLocal);
-                      
-                      if (baseUrlLocal.includes('localhost') || baseUrlLocal.includes('127.0.0.1') || baseUrlLocal.includes('8081')) {
-                        localStorage.setItem('admin_api_key_web2api', apiKeyLocal);
-                      } else if (baseUrlLocal.includes('googleapis.com')) {
-                        localStorage.setItem('admin_api_key_aistudio', apiKeyLocal);
-                      }
-                      
-                      toast.success(language === 'vi' ? 'Đã lưu và đồng bộ cấu hình API!' : 'API Configuration Saved and Synced!');
-                    }}
-                    style={{ width: '100%', justifyContent: 'center', padding: '10px', fontWeight: 'bold', marginTop: '8px' }}
-                  >
-                    {t.saveConfig || (language === 'vi' ? 'Lưu cấu hình' : 'Save Config')}
-                  </button>
-                </div>
-              </div>
-            )}
-          </div>
-
           {/* Browser Custom Tests List */}
           <div className="card-sharp">
             <h3 style={{ marginBottom: '16px', fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -1042,7 +614,9 @@ export default function AdminPage() {
                     >
                       <div>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          <h4 style={{ fontSize: '0.85rem', fontWeight: 'bold' }}>{test.title}</h4>
+                          <Link href={`/admin/tests/edit/${test.id}`} style={{ textDecoration: 'none' }}>
+                            <h4 style={{ fontSize: '0.85rem', fontWeight: 'bold', color: 'var(--text-primary)' }} className="hover-accent">{test.title}</h4>
+                          </Link>
                           {status === 'missing' && (
                             <span style={{ display: 'inline-flex', alignItems: 'center', gap: '3px', fontSize: '0.65rem', background: '#eab308', color: '#000', padding: '2px 6px', borderRadius: '0px', fontWeight: 'bold' }}>
                               <ImageOff size={10} /> {language === 'vi' ? 'Thiếu ảnh' : 'Missing Image'}
@@ -1057,6 +631,9 @@ export default function AdminPage() {
                         <span style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>ID: {test.id}</span>
                       </div>
                       <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                        <Link href={`/admin/tests/edit/${test.id}`} className="btn-secondary" style={{ padding: '6px 8px', display: 'flex', alignItems: 'center', gap: '4px', textDecoration: 'none', borderRadius: '0px' }} title={language === 'vi' ? 'Chỉnh sửa' : 'Edit'}>
+                          <Edit2 size={14} style={{ color: 'var(--accent)' }} />
+                        </Link>
                         <Link href={`/test/${test.id}`} className="btn-secondary" style={{ padding: '6px 8px', display: 'flex', alignItems: 'center', gap: '4px', textDecoration: 'none', borderRadius: '0px' }} title={language === 'vi' ? 'Làm bài' : 'Practice'}>
                           <Play size={14} style={{ color: 'var(--accent)' }} />
                         </Link>

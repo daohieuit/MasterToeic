@@ -4,9 +4,14 @@ The generated questions must strictly adhere to the official TOEIC S&W structure
 
 Crucial Instructions:
 1. Return ONLY the raw JSON object. Do not wrap it in markdown block like ```json or ```.
-2. For all image fields (speaking part 2 questions or writing part 1 questions), leave the "image" field as an empty string "".
-3. For writing part 1 questions (write_sentence_picture), leave the "words" field as an empty array [] (The system will automatically inject curated images and analyze them to generate matching words/descriptions using Vision AI).
-4. Set the "id" and "title" fields to "auto_generated_by_system" (the system will automatically calculate the next sequence number and assign it).
+2. For all image fields (Speaking Part 2 or Writing Part 1), leave "image" as an empty string "". For Writing Part 1, leave "words" as an empty array []. The offline image pipeline will automatically pull images, descriptions, and keywords from local storage.
+3. For ALL questions, you MUST provide a high-quality, authentic, and detailed sample answer in the "sampleAnswer" field. For questions using images (Speaking Part 2 & Writing Part 1), since the image is blank, generate a detailed sampleAnswer describing a typical TOEIC office/street/outdoor scene (which will also act as the picture description; the grading system will filter it later).
+4. Set the "id" and "title" fields to "auto_generated_by_system".
+5. Do NOT include static timing attributes (prepTime, respTime) or instructions in the JSON. These are handled dynamically by the frontend.
+6. The content MUST be realistic in length and detail. Reading text must be 50-80 words. Part 5 responses must be 100+ words. The essay must be at least 300 words. Emails must have proper greetings, requests, and closings.
+7. For Speaking Part 3, you MUST generate a realistic, complete "situation" string that fits the questions. For Writing Part 2, each question MUST include a realistic "direction" starting exactly with "Directions: Respond to the e-mail. " and specifying the role and exact requirements matching the sampleAnswer.
+8. You MUST use the exact schema keys: "speaking_data" and "writing_data". Do NOT use "speaking" or "writing".
+9. Escape all double quotes inside JSON string values as \" or replace them with single quotes ' to prevent JSON format errors. Never wrap URLs in markdown links.
 
 Format structures (Pick one of the following based on the test type you want):
 
@@ -14,52 +19,43 @@ Format structures (Pick one of the following based on the test type you want):
 {
   "id": "auto_generated_by_system",
   "title": "auto_generated_by_system",
-  "speaking": [
+  "speaking_data": [
     {
       "part": 1,
-      "partTitle": "Part 1: Read a Text Aloud",
-      "instructions": "In this part of the test, you will read aloud the text on the screen...",
       "questions": [
-        { "id": "sp_q1", "type": "read_aloud", "text": "[80-word paragraph]", "prepTime": 45, "respTime": 45 },
-        { "id": "sp_q2", "type": "read_aloud", "text": "[80-word paragraph]", "prepTime": 45, "respTime": 45 }
+        { "text": "[A professional 50-80 word announcement, advertisement, or report paragraph. Ensure it is long enough to take 45 seconds to read aloud naturally.]", "sampleAnswer": "[A sample high-quality audio transcription of reading this text with proper pronunciation and intonation]" },
+        { "text": "[A professional 50-80 word announcement, advertisement, or report paragraph. Ensure it is long enough to take 45 seconds to read aloud naturally.]", "sampleAnswer": "[A sample high-quality audio transcription of reading this text with proper pronunciation and intonation]" }
       ]
     },
     {
       "part": 2,
-      "partTitle": "Part 2: Describe a Picture",
-      "instructions": "In this part of the test, you will describe the picture on your screen...",
       "questions": [
-        { "id": "sp_q3", "type": "describe_picture", "image": "", "prepTime": 45, "respTime": 45 },
-        { "id": "sp_q4", "type": "describe_picture", "image": "", "prepTime": 45, "respTime": 45 }
+        { "image": "", "description": "", "sampleAnswer": "[A highly detailed 100-word description of a typical TOEIC scene, e.g., people collaborating in a modern conference room, describing foreground, background, and actions]" },
+        { "image": "", "description": "", "sampleAnswer": "[A highly detailed 100-word description of a typical TOEIC scene, e.g., an outdoor market or street scene with pedestrians, describing foreground, background, and actions]" }
       ]
     },
     {
       "part": 3,
-      "partTitle": "Part 3: Respond to Questions",
-      "instructions": "In this part of the test, you will answer three questions...",
+      "situation": "Imagine that a [Target Audience] is doing research in your country. You have agreed to participate in a telephone interview about [Topic].",
       "questions": [
-        { "id": "sp_q5", "type": "respond_to_questions", "text": "Question 5 text", "prepTime": 0, "respTime": 15 },
-        { "id": "sp_q6", "type": "respond_to_questions", "text": "Question 6 text", "prepTime": 0, "respTime": 15 },
-        { "id": "sp_q7", "type": "respond_to_questions", "text": "Question 7 text", "prepTime": 0, "respTime": 30 }
+        { "text": "[Question 5 text (e.g. How often do you watch television?)]", "sampleAnswer": "[Sample response for Question 5 (Should be 2-3 full sentences, taking about 15 seconds to speak)]" },
+        { "text": "[Question 6 text (e.g. What kinds of programs do you usually watch?)]", "sampleAnswer": "[Sample response for Question 6 (Should be 2-3 full sentences, taking about 15 seconds to speak)]" },
+        { "text": "[Question 7 text (e.g. Describe your favorite television program.)]", "sampleAnswer": "[Sample response for Question 7 (Should be 4-6 full sentences, taking about 30 seconds to speak)]" }
       ]
     },
     {
       "part": 4,
-      "partTitle": "Part 4: Respond to Questions Using Information Provided",
-      "instructions": "In this part of the test, you will answer three questions based on the schedule or information...",
-      "referenceInfo": "[A clean text-based schedule or agenda with dates, locations, sessions, times, and speakers]",
+      "referenceInfo": "[A detailed text-based schedule or agenda with dates, locations, sessions, times, and speakers. Provide enough detail to answer complex questions.]",
       "questions": [
-        { "id": "sp_q8", "type": "respond_using_info", "text": "Question 8 text (usually about date/time of first session)", "prepTime": 0, "respTime": 15 },
-        { "id": "sp_q9", "type": "respond_using_info", "text": "Question 9 text (usually checking a misconception - 'I heard X is at time Y, is that right?')", "prepTime": 0, "respTime": 15 },
-        { "id": "sp_q10", "type": "respond_using_info", "text": "Question 10 text (asking for all sessions related to a person or topic)", "prepTime": 0, "respTime": 30 }
+        { "text": "[Question 8 text (asking for date/time/location of first event)]", "sampleAnswer": "[Sample response based on referenceInfo (2-3 full sentences, about 15 seconds)]" },
+        { "text": "[Question 9 text (checking a misconception - 'I heard event X is at time Y, is that correct?')]", "sampleAnswer": "[Sample response correcting the misconception using referenceInfo (2-3 full sentences, about 15 seconds)]" },
+        { "text": "[Question 10 text (asking to list all sessions/details of a specific speaker or topic)]", "sampleAnswer": "[Sample response listing all relevant sessions from referenceInfo (4-6 full sentences listing multiple details, about 30 seconds)]" }
       ]
     },
     {
       "part": 5,
-      "partTitle": "Part 5: Express an Opinion",
-      "instructions": "In this part of the test, you will give your opinion about a specific topic...",
       "questions": [
-        { "id": "sp_q11", "type": "express_opinion", "text": "Opinion prompt statement", "prepTime": 45, "respTime": 60 }
+        { "text": "[A clear, debated prompt statement asking whether the user agrees/disagrees or prefers an option]", "sampleAnswer": "[A highly detailed, structured response of at least 100 words with an introduction, two main reasons with examples, and a conclusion. It must be long enough to take 60 seconds to speak.]" }
       ]
     }
   ]
@@ -69,34 +65,28 @@ Format structures (Pick one of the following based on the test type you want):
 {
   "id": "auto_generated_by_system",
   "title": "auto_generated_by_system",
-  "writing": [
+  "writing_data": [
     {
       "part": 1,
-      "partTitle": "Part 1: Write a Sentence Based on a Picture",
-      "instructions": "In this part of the test, you will write ONE sentence that is based on the picture...",
       "questions": [
-        { "id": "wr_q1", "type": "write_sentence_picture", "image": "", "words": [], "prepTime": 0, "respTime": 480 },
-        { "id": "wr_q2", "type": "write_sentence_picture", "image": "", "words": [], "prepTime": 0, "respTime": 480 },
-        { "id": "wr_q3", "type": "write_sentence_picture", "image": "", "words": [], "prepTime": 0, "respTime": 480 },
-        { "id": "wr_q4", "type": "write_sentence_picture", "image": "", "words": [], "prepTime": 0, "respTime": 480 },
-        { "id": "wr_q5", "type": "write_sentence_picture", "image": "", "words": [], "prepTime": 0, "respTime": 480 }
+        { "image": "", "words": [], "sampleAnswer": "[A descriptive sentence logically connecting two hypothetical keywords to describe a typical TOEIC picture scene]" },
+        { "image": "", "words": [], "sampleAnswer": "[A descriptive sentence logically connecting two hypothetical keywords to describe a typical TOEIC picture scene]" },
+        { "image": "", "words": [], "sampleAnswer": "[A descriptive sentence logically connecting two hypothetical keywords to describe a typical TOEIC picture scene]" },
+        { "image": "", "words": [], "sampleAnswer": "[A descriptive sentence logically connecting two hypothetical keywords to describe a typical TOEIC picture scene]" },
+        { "image": "", "words": [], "sampleAnswer": "[A descriptive sentence logically connecting two hypothetical keywords to describe a typical TOEIC picture scene]" }
       ]
     },
     {
       "part": 2,
-      "partTitle": "Part 2: Respond to a Written Request",
-      "instructions": "In this part of the test, you will show how well you can write a response to an email...",
       "questions": [
-        { "id": "wr_q6", "type": "respond_written_request", "text": "From: [Name]\\nTo: [Name]\\nSubject: [Subject]\\n\\n[Email content asking for a resolution or suggestion]", "prepTime": 0, "respTime": 600 },
-        { "id": "wr_q7", "type": "respond_written_request", "text": "From: [Name]\\nTo: [Name]\\nSubject: [Subject]\\n\\n[Email content asking for suggestions or plans]", "prepTime": 0, "respTime": 600 }
+        { "direction": "Directions: Respond to the e-mail. In your e-mail, you must include TWO pieces of information and ONE question.", "text": "From: [Name]\nTo: [Name]\nSubject: [Subject]\n\n[A detailed email of 4-5 sentences asking for assistance, feedback, or scheduling]", "sampleAnswer": "[A sample formal email response of at least 50 words meeting all directions criteria, including greetings and closings]" },
+        { "direction": "Directions: Respond to the e-mail. In your e-mail, make at least TWO suggestions and ask ONE question.", "text": "From: [Name]\nTo: [Name]\nSubject: [Subject]\n\n[A detailed email of 4-5 sentences asking for recommendations or planning details]", "sampleAnswer": "[A sample formal email response of at least 50 words meeting all directions criteria, including greetings and closings]" }
       ]
     },
     {
       "part": 3,
-      "partTitle": "Part 3: Write an Opinion Essay",
-      "instructions": "In this part of the test, you will write an essay in response to a prompt...",
       "questions": [
-        { "id": "wr_q8", "type": "opinion_essay", "text": "Opinion essay prompt", "prepTime": 0, "respTime": 1800 }
+        { "text": "[A clear, debated prompt statement of 2-3 sentences asking whether the user agrees/disagrees or prefers an option, with reasons and examples. E.g. There are many ways to find a job... What do you think is the best way...]", "sampleAnswer": "[A high-quality sample essay of at least 300 words with introduction, body paragraphs, and conclusion]" }
       ]
     }
   ]
