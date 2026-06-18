@@ -152,30 +152,46 @@ export default function AdminTestsPage() {
         resolve({ status, brokenUrls });
       };
 
-      const sessionRes = await supabase?.auth.getSession();
-      const token = sessionRes?.data?.session?.access_token;
+      const brokenUrls: string[] = [];
 
-      // Call backend API to validate images accurately
-      fetch('/api/admin/pipeline', {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ action: 'validate_images', urls: images })
-      })
-      .then(res => res.json())
-      .then(data => {
-        if (data.success && data.brokenUrls && data.brokenUrls.length > 0) {
-          saveToCacheAndResolve('broken', data.brokenUrls);
-        } else {
-          saveToCacheAndResolve('ok', []);
-        }
-      })
-      .catch(() => {
-        // Fallback or error
+      await Promise.all(
+        images.map((url) => {
+          return new Promise<void>((imgResolve) => {
+            const img = new Image();
+            
+            // 10-second timeout to prevent hanging on slow/dead links
+            const timer = setTimeout(() => {
+              brokenUrls.push(url);
+              img.src = ''; // Cancel loading
+              imgResolve();
+            }, 10000);
+
+            img.onload = () => {
+              clearTimeout(timer);
+              imgResolve();
+            };
+
+            img.onerror = () => {
+              clearTimeout(timer);
+              brokenUrls.push(url);
+              imgResolve();
+            };
+
+            // If force check, bypass browser cache using a timestamp query param (exclude base64 data URLs)
+            const checkUrl = (force && !url.startsWith('data:'))
+              ? `${url}${url.includes('?') ? '&' : '?'}_t=${Date.now()}`
+              : url;
+
+            img.src = checkUrl;
+          });
+        })
+      );
+
+      if (brokenUrls.length > 0) {
+        saveToCacheAndResolve('broken', brokenUrls);
+      } else {
         saveToCacheAndResolve('ok', []);
-      });
+      }
     });
   };
 
