@@ -122,4 +122,3 @@ SELECT cron.schedule(
     '0 0 * * *',
     'SELECT public.cleanup_old_user_audio();'
 );
-

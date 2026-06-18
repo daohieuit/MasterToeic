@@ -93,7 +93,7 @@ function transformWriting(data: any[]) {
 
 async function migrate() {
   console.log("Fixing example_test.json first...");
-  const examplePath = path.join(process.cwd(), 'example_test.json');
+  const examplePath = path.join(process.cwd(), 'docs', 'example_test.json');
   if (fs.existsSync(examplePath)) {
     const example = JSON.parse(fs.readFileSync(examplePath, 'utf8'));
     example.speaking_data = transformSpeaking(example.speaking_data);

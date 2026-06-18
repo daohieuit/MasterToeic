@@ -76,8 +76,8 @@ Hệ thống tài liệu hướng dẫn chi tiết nằm trong thư mục `/docs
 *   [Yêu cầu Sản phẩm (PRD)](./docs/PRD.md): Mục tiêu, đối tượng, và luồng tính năng.
 *   [Hệ thống Thiết kế (DESIGN)](./docs/DESIGN.md): UI/UX, biến CSS, quy tắc thiết kế.
 *   [Kiến trúc Hệ thống (ARCHITECTURE)](./docs/architecture.md): Mô hình dữ liệu, luồng Audio và hoạt động của Cron Job.
-*   [Cấu trúc Database (SQL)](./docs/database.sql): Mã lệnh SQL khởi tạo bảng trên Supabase.
-*   [Thiết lập Storage (SQL)](./docs/setup_storage.sql): Mã lệnh SQL cấu hình Storage Bucket và RLS cho file ghi âm.
+*   [Cấu trúc Database (SQL)](./supabase/migrations/20260613000000_init_schema.sql): Mã lệnh SQL khởi tạo bảng trên Supabase.
+*   [Thiết lập Storage (SQL)](./supabase/migrations/20260618000000_setup_storage.sql): Mã lệnh SQL cấu hình Storage Bucket và RLS cho file ghi âm.
 *   [Cấu trúc Đề thi TOEIC S&W](./docs/toeic_format.md): Mô tả chi tiết thời gian và luật thi của các Part.
 *   [Hướng dẫn Triển khai Vercel](./docs/deployment.md): Hướng dẫn deploy miễn phí lên Vercel.
 
