@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
+import { supabase } from '@/utils/supabase';
 import { Award, AlertCircle, CheckCircle, ChevronDown, ChevronUp, Play, Pause, ArrowLeft, RefreshCw, BookOpen, Edit3, Image as ImageIcon, Copy, Download, FastForward } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
 import toast from 'react-hot-toast';
@@ -55,6 +56,81 @@ interface QuestionReview {
     cohesion?: number;
   } | null;
 }
+
+const SPEAKING_WEIGHTS: Record<number, number[]> = {
+  1: [10, 10],      // Q1, Q2
+  2: [10, 10],      // Q3, Q4
+  3: [15, 15, 25],  // Q5, Q6, Q7
+  4: [15, 15, 35],  // Q8, Q9, Q10
+  5: [40],          // Q11 (Express an Opinion)
+};
+
+const WRITING_WEIGHTS: Record<number, number[]> = {
+  1: [15, 15, 15, 15, 15],  // Q1 to Q5
+  2: [35, 35],              // Q6, Q7
+  3: [55],                  // Q8 (Essay)
+};
+
+const getPartNumber = (partTitle: string, section: string): number => {
+  const title = partTitle.toLowerCase();
+  if (section === 'speaking') {
+    if (title.includes('part 1') || title.includes('read a text')) return 1;
+    if (title.includes('part 2') || title.includes('describe a picture')) return 2;
+    if (title.includes('part 3') || (title.includes('respond to questions') && !title.includes('using information') && !title.includes('provided'))) return 3;
+    if (title.includes('part 4') || title.includes('using information') || title.includes('provided')) return 4;
+    if (title.includes('part 5') || title.includes('express an opinion') || title.includes('propose a solution')) return 5;
+    return 1;
+  } else {
+    if (title.includes('part 1') || title.includes('write a sentence')) return 1;
+    if (title.includes('part 2') || title.includes('respond to a written')) return 2;
+    if (title.includes('part 3') || title.includes('opinion essay') || title.includes('write an opinion')) return 3;
+    return 1;
+  }
+};
+
+const getQuestionWeight = (rev: QuestionReview, allRevs: QuestionReview[]): number => {
+  const section = rev.section || 'speaking';
+  const partNum = getPartNumber(rev.partTitle, section);
+  
+  // Find index of this question within the same part in allRevs
+  const samePartRevs = allRevs.filter(r => (r.section || 'speaking') === section && getPartNumber(r.partTitle, r.section || 'speaking') === partNum);
+  const idxInPart = samePartRevs.findIndex(r => r === rev);
+  const safeIdx = idxInPart >= 0 ? idxInPart : 0;
+
+  if (section === 'speaking') {
+    const partWeights = SPEAKING_WEIGHTS[partNum] || [];
+    return partWeights[safeIdx] ?? 10;
+  } else {
+    const partWeights = WRITING_WEIGHTS[partNum] || [];
+    return partWeights[safeIdx] ?? 15;
+  }
+};
+
+const getOfficialQuestionNumber = (rev: QuestionReview, allRevs: QuestionReview[]): number => {
+  const section = rev.section || 'speaking';
+  const partNum = getPartNumber(rev.partTitle, section);
+  
+  // Find index of this question within the same part in allRevs
+  const samePartRevs = allRevs.filter(r => (r.section || 'speaking') === section && getPartNumber(r.partTitle, r.section || 'speaking') === partNum);
+  const idxInPart = samePartRevs.findIndex(r => r === rev);
+  const safeIdx = idxInPart >= 0 ? idxInPart : 0;
+
+  if (section === 'speaking') {
+    let offset = 0;
+    if (partNum === 1) offset = 1;
+    else if (partNum === 2) offset = 3;
+    else if (partNum === 3) offset = 5;
+    else if (partNum === 4) offset = 8;
+    else if (partNum === 5) offset = 11;
+    return offset + safeIdx;
+  } else {
+    let offset = 0;
+    if (partNum === 1) offset = 1;
+    else if (partNum === 2) offset = 6;
+    else if (partNum === 3) offset = 8;
+    return offset + safeIdx;
+  }
+};
 
 interface AudioPlayerProps {
   src: string;
@@ -173,6 +249,7 @@ function AudioPlayer({ src }: AudioPlayerProps) {
 }
 
 interface ReviewConsoleProps {
+  attemptId?: string;
   testTitle: string;
   date: string;
   speakingScore: number | null;
@@ -183,6 +260,7 @@ interface ReviewConsoleProps {
 }
 
 export default function ReviewConsole({
+  attemptId,
   testTitle,
   date,
   speakingScore,
@@ -192,7 +270,7 @@ export default function ReviewConsole({
   unauthorizedForAI
 }: ReviewConsoleProps) {
   const [expandedIndex, setExpandedIndex] = useState<number | null>(0);
-  const { theme } = useApp();
+  const { theme, user } = useApp();
 
   const [pastedJson, setPastedJson] = useState('');
   const [localSpeakingScore, setLocalSpeakingScore] = useState<number | null>(speakingScore);
@@ -205,35 +283,48 @@ export default function ReviewConsole({
     const hasSpeaking = revs.some(r => r.section === 'speaking');
     const hasWriting = revs.some(r => r.section === 'writing');
     
-    const speakingParts = Array.from(new Set(revs.filter(r => r.section === 'speaking').map(r => r.partTitle)));
-    const writingParts = Array.from(new Set(revs.filter(r => r.section === 'writing').map(r => r.partTitle)));
+    const speakingRevs = revs.filter(r => r.section === 'speaking');
+    const writingRevs = revs.filter(r => r.section === 'writing');
+    
+    const maxSpeaking = speakingRevs.reduce((sum, r) => sum + getQuestionWeight(r, revs), 0);
+    const maxWriting = writingRevs.reduce((sum, r) => sum + getQuestionWeight(r, revs), 0);
+
+    const speakingParts = Array.from(new Set(speakingRevs.map(r => r.partTitle)));
+    const writingParts = Array.from(new Set(writingRevs.map(r => r.partTitle)));
 
     const promptData = {
       testTitle: title,
-      speakingAnswers: revs
-        .filter(r => r.section === 'speaking')
-        .map((r, i) => ({
+      speakingAnswers: speakingRevs.map((r, i) => {
+        const weight = getQuestionWeight(r, revs);
+        const officialQNum = getOfficialQuestionNumber(r, revs);
+        return {
           questionIndex: i + 1,
+          officialQuestionNumber: `Q${officialQNum}`,
+          maxWeight: weight,
           part: r.partTitle,
           prompt: r.questionText,
           imageDescriptionReference: r.description || null,
           requiredKeywords: r.words || [],
           userSpeechTranscription: r.userAnswer || r.answer || ''
-        })),
-      writingAnswers: revs
-        .filter(r => r.section === 'writing')
-        .map((r, i) => ({
+        };
+      }),
+      writingAnswers: writingRevs.map((r, i) => {
+        const weight = getQuestionWeight(r, revs);
+        const officialQNum = getOfficialQuestionNumber(r, revs);
+        return {
           questionIndex: i + 1,
+          officialQuestionNumber: `Q${officialQNum}`,
+          maxWeight: weight,
           part: r.partTitle,
           prompt: r.questionText,
           imageDescriptionReference: r.description || null,
           requiredKeywords: r.words || [],
           userWrittenResponse: r.userAnswer || r.answer || ''
-        }))
+        };
+      })
     };
 
     let examModeText = '';
-    let gradingScaleInstructions = '';
     let audioInstruction = '';
 
     if (hasSpeaking && hasWriting) {
@@ -241,29 +332,21 @@ export default function ReviewConsole({
 Các phần cần chấm bao gồm:
 - Speaking: ${speakingParts.join(', ')}
 - Writing: ${writingParts.join(', ')}`;
-      gradingScaleInstructions = `Hãy đánh giá và chấm điểm theo tiêu chí thi TOEIC chính thức:
-- Thang điểm tổng hợp từ 0 đến 200 cho cả phần Nói (speakingScore) và phần Viết (writingScore) dựa trên trung bình cộng điểm các câu hỏi tương ứng.`;
       audioInstruction = `Vui lòng NGHE kỹ tệp âm thanh WAV đính kèm để chấm điểm Speaking. Âm thanh chứa câu trả lời của tôi cho các câu hỏi Nói theo đúng thứ tự xuất hiện trong JSON. Nếu có câu nào bị mất âm thanh, hãy dùng văn bản 'userSpeechTranscription' làm căn cứ.`;
     } else if (hasSpeaking) {
       examModeText = `Bài làm này CHỈ bao gồm kỹ năng Nói (Speaking). Không có phần Viết.
 Các phần cần chấm bao gồm:
 - Speaking: ${speakingParts.join(', ')}`;
-      gradingScaleInstructions = `Hãy đánh giá và chấm điểm theo tiêu chí thi TOEIC Speaking chính thức:
-- Thang điểm tổng hợp từ 0 đến 200 cho phần Nói (speakingScore) dựa trên trung bình cộng điểm các câu hỏi Speaking.
-- Trường 'writingScore' trong JSON kết quả BẮT BUỘC phải là null.`;
       audioInstruction = `Vui lòng NGHE kỹ tệp âm thanh WAV đính kèm để chấm điểm Speaking. Âm thanh chứa câu trả lời của tôi cho các câu hỏi Nói theo đúng thứ tự xuất hiện trong JSON. Nếu có câu nào bị mất âm thanh, hãy dùng văn bản 'userSpeechTranscription' làm căn cứ.`;
     } else {
       examModeText = `Bài làm này CHỈ bao gồm kỹ năng Viết (Writing). Không có phần Nói.
 Các phần cần chấm bao gồm:
 - Writing: ${writingParts.join(', ')}`;
-      gradingScaleInstructions = `Hãy đánh giá và chấm điểm theo tiêu chí thi TOEIC Writing chính thức:
-- Thang điểm tổng hợp từ 0 đến 200 cho phần Viết (writingScore) dựa trên trung bình cộng điểm các câu hỏi Writing.
-- Trường 'speakingScore' trong JSON kết quả BẮT BUỘC phải là null.`;
       audioInstruction = `Bài thi này không chứa phần Speaking và không có âm thanh đính kèm. Bạn chỉ cần đánh giá các văn bản trong trường 'userWrittenResponse'.`;
     }
 
     return `Bạn là giám khảo chấm thi TOEIC Speaking & Writing chuyên nghiệp.
-Tôi gửi cho bạn tệp âm thanh WAV ghi lại phần nói của tôi và tệp JSON dữ liệu bài làm dưới đây.
+Tôi gửi cho bạn tệp âm thanh WAV ghi lại phần nói của tôi (nếu có) và tệp JSON dữ liệu bài làm dưới đây.
 
 ---
 [THÔNG TIN BÀI THI]
@@ -278,18 +361,49 @@ ${JSON.stringify(promptData, null, 2)}
 \`\`\`
 
 ---
-[YÊU CẦU ĐÁNH GIÁ & ĐỊNH DẠNG ĐẦU RA]
-${gradingScaleInstructions}
+[THANG ĐIỂM CHI TIẾT THEO TOEIC CHÍNH THỨC]
+Dưới đây là thang điểm chuẩn cho từng câu hỏi trong bài thi TOEIC Speaking và Writing. Hãy sử dụng đúng trọng số này khi đánh giá và chấm điểm:
 
-Trả về kết quả chấm điểm bằng Tiếng Việt. Bạn BẮT BUỘC phải trả về cấu trúc định dạng JSON chuẩn sau đây, không thêm bất kỳ văn bản giải thích nào khác ngoài JSON:
+1. TOEIC Speaking (Tổng điểm tối đa: 200 điểm):
+- Câu 1 (Read a text aloud): Trọng số tối đa 10 điểm
+- Câu 2 (Read a text aloud): Trọng số tối đa 10 điểm
+- Câu 3 (Describe a picture): Trọng số tối đa 10 điểm
+- Câu 4 (Describe a picture): Trọng số tối đa 10 điểm
+- Câu 5 (Respond to questions): Trọng số tối đa 15 điểm
+- Câu 6 (Respond to questions): Trọng số tối đa 15 điểm
+- Câu 7 (Respond to questions): Trọng số tối đa 25 điểm
+- Câu 8 (Respond using info): Trọng số tối đa 15 điểm
+- Câu 9 (Respond using info): Trọng số tối đa 15 điểm
+- Câu 10 (Respond using info): Trọng số tối đa 35 điểm
+- Câu 11 (Express an opinion): Trọng số tối đa 40 điểm
 
+2. TOEIC Writing (Tổng điểm tối đa: 200 điểm):
+- Câu 1 đến 5 (Write a sentence based on a picture): Mỗi câu trọng số tối đa 15 điểm (Tổng cộng 5 câu = 75 điểm)
+- Câu 6 (Respond to a written request): Trọng số tối đa 35 điểm
+- Câu 7 (Respond to a written request): Trọng số tối đa 35 điểm
+- Câu 8 (Write an opinion essay): Trọng số tối đa 55 điểm
+
+---
+[YÊU CẦU ĐÁNH GIÁ & TÍNH ĐIỂM]
+- Mỗi câu hỏi, hãy chấm điểm thô theo thang điểm từ 0 đến 100 điểm phần trăm (ví dụ: phát âm tốt, trôi chảy, đúng từ khóa -> 90/100).
+- Điểm tổng hợp Speaking (speakingScore) và Writing (writingScore) sẽ bằng tổng điểm đạt được của các câu hỏi dựa trên trọng số của chúng.
+  Ví dụ: Nếu chỉ thi phần Writing Part 1 (gồm 5 câu đầu, mỗi câu trọng số tối đa 15, tổng trọng số là 75):
+  Điểm của bạn sẽ được tính bằng tổng: (Điểm_câu_1 / 100 * 15) + (Điểm_câu_2 / 100 * 15) + ... + (Điểm_câu_5 / 100 * 15).
+  Hãy tự động tính toán tổng điểm Speaking và Writing dựa trên các câu hỏi thực tế có trong dữ liệu đầu vào.
+- Trả về kết quả đánh giá bằng Tiếng Việt.
+
+---
+[ĐỊNH DẠNG ĐẦU RA BẮT BUỘC]
+Bạn BẮT BUỘC phải trả về kết quả dưới dạng một khối mã JSON duy nhất đặt trong cặp thẻ \`\`\`json và \`\`\`. Không viết bất kỳ lời chào, lời dẫn, giải thích hay phân tích nào khác bên ngoài khối mã này.
+
+\`\`\`json
 {
-  "speakingScore": [Điểm Speaking tổng hợp từ 0 đến 200, hoặc null nếu không thi Speaking],
-  "writingScore": [Điểm Writing tổng hợp từ 0 đến 200, hoặc null nếu không thi Writing],
+  "speakingScore": ${hasSpeaking ? `[Tổng số điểm Nói tính theo trọng số của các câu đã làm, tối đa là ${maxSpeaking} điểm]` : 'null'},
+  "writingScore": ${hasWriting ? `[Tổng số điểm Viết tính theo trọng số của các câu đã làm, tối đa là ${maxWriting} điểm]` : 'null'},
   "reviews": [
     {
-      "questionNumber": [Số thứ tự câu hỏi từ 1 trở đi],
-      "score": [Điểm câu hỏi từ 0 đến 100],
+      "questionNumber": [Số thứ tự câu hỏi trong danh sách đầu vào, bắt đầu từ 1],
+      "score": [Điểm thô của câu hỏi từ 0 đến 100],
       "feedback": "[Nhận xét chi tiết bằng tiếng Việt, sửa phát âm hoặc cách diễn đạt]",
       "grammarErrors": [
         {
@@ -299,19 +413,20 @@ Trả về kết quả chấm điểm bằng Tiếng Việt. Bạn BẮT BUỘC 
         }
       ],
       "subscores": {
-        "pronunciation": [0-100, chỉ áp dụng cho Speaking, còn lại null],
-        "fluency": [0-100, chỉ áp dụng cho Speaking, còn lại null],
-        "taskCompletion": [0-100],
-        "grammar": [0-100],
-        "vocabulary": [0-100],
-        "cohesion": [0-100]
+        "pronunciation": [Điểm từ 0 đến 100, chỉ áp dụng cho Speaking, còn lại null],
+        "fluency": [Điểm từ 0 đến 100, chỉ áp dụng cho Speaking, còn lại null],
+        "taskCompletion": [Điểm từ 0 đến 100],
+        "grammar": [Điểm từ 0 đến 100],
+        "vocabulary": [Điểm từ 0 đến 100],
+        "cohesion": [Điểm từ 0 đến 100]
       }
     }
   ]
-}`;
+}
+\`\`\``;
   };
 
-  const handleApplyJson = () => {
+  const handleApplyJson = async () => {
     if (!pastedJson.trim()) {
       toast.error(language === 'vi' ? 'Vui lòng dán dữ liệu JSON!' : 'Please paste the JSON data!');
       return;
@@ -324,13 +439,6 @@ Trả về kết quả chấm điểm bằng Tiếng Việt. Bạn BẮT BUỘC 
       }
       
       const parsed = JSON.parse(cleaned);
-
-      if (parsed.speakingScore !== undefined) {
-        setLocalSpeakingScore(parsed.speakingScore);
-      }
-      if (parsed.writingScore !== undefined) {
-        setLocalWritingScore(parsed.writingScore);
-      }
 
       if (Array.isArray(parsed.reviews)) {
         const updatedReviews = localReviews.map((origReview, idx) => {
@@ -346,24 +454,70 @@ Trả về kết quả chấm điểm bằng Tiếng Việt. Bạn BẮT BUỘC 
           }
           return origReview;
         });
+
+        // Compute weighted scores dynamically based on updated reviews
+        const speakingRevs = updatedReviews.filter(r => r.section === 'speaking');
+        const writingRevs = updatedReviews.filter(r => r.section === 'writing');
+
+        const finalSp = speakingRevs.some(r => r.score !== null)
+          ? Math.round(
+              speakingRevs.reduce((sum, rev) => {
+                const weight = getQuestionWeight(rev, updatedReviews);
+                const scorePercent = rev.score ?? 0;
+                return sum + (scorePercent / 100) * weight;
+              }, 0)
+            )
+          : null;
+
+        const finalWr = writingRevs.some(r => r.score !== null)
+          ? Math.round(
+              writingRevs.reduce((sum, rev) => {
+                const weight = getQuestionWeight(rev, updatedReviews);
+                const scorePercent = rev.score ?? 0;
+                return sum + (scorePercent / 100) * weight;
+              }, 0)
+            )
+          : null;
+
+        setLocalSpeakingScore(finalSp);
+        setLocalWritingScore(finalWr);
         setLocalReviews(updatedReviews);
         
-        // Update history item in localStorage for persistence
+        // 1. Update history item in localStorage for persistence
         try {
           const savedHistory = localStorage.getItem('toeic_sw_history');
           if (savedHistory) {
             const historyList = JSON.parse(savedHistory);
-            // Match based on date or testTitle or ID if matching attempt
-            const testAttempt = historyList.find((h: any) => h.testTitle === testTitle && h.date === date);
+            const testAttempt = historyList.find((h: any) => h.id === attemptId || (h.testTitle === testTitle && h.date === date));
             if (testAttempt) {
-              testAttempt.speakingScore = parsed.speakingScore ?? testAttempt.speakingScore;
-              testAttempt.writingScore = parsed.writingScore ?? testAttempt.writingScore;
+              testAttempt.speakingScore = finalSp;
+              testAttempt.writingScore = finalWr;
               testAttempt.reviews = updatedReviews;
               localStorage.setItem('toeic_sw_history', JSON.stringify(historyList));
             }
           }
         } catch (e) {
           console.error('Failed to sync updated score to history storage:', e);
+        }
+
+        // 2. Update Supabase DB if user is logged in
+        if (user && supabase && attemptId) {
+          try {
+            const { error } = await supabase
+              .from('practice_history')
+              .update({
+                speaking_score: finalSp,
+                writing_score: finalWr,
+                reviews: updatedReviews
+              })
+              .eq('id', attemptId)
+              .eq('user_id', user.id);
+            if (error) {
+              console.error('Failed to sync score to Supabase DB:', error.message);
+            }
+          } catch (dbErr) {
+            console.error('Failed to sync score to Supabase DB:', dbErr);
+          }
         }
 
         toast.success(language === 'vi' ? 'Đã cập nhật điểm số và nhận xét từ AI thành công!' : 'Scores and AI reviews updated successfully!');
@@ -451,6 +605,12 @@ Trả về kết quả chấm điểm bằng Tiếng Việt. Bạn BẮT BUỘC 
   const isSpeakingTest = localSpeakingScore !== null || reviews.some(r => r.section === 'speaking');
   const isWritingTest = localWritingScore !== null || reviews.some(r => r.section === 'writing');
   const isFullTest = reviews.some(r => r.section === 'speaking') && reviews.some(r => r.section === 'writing');
+
+  const speakingRevsForMax = localReviews.filter(r => r.section === 'speaking');
+  const writingRevsForMax = localReviews.filter(r => r.section === 'writing');
+
+  const maxSpeaking = speakingRevsForMax.reduce((sum, rev) => sum + getQuestionWeight(rev, localReviews), 0);
+  const maxWriting = writingRevsForMax.reduce((sum, rev) => sum + getQuestionWeight(rev, localReviews), 0);
 
   const processedReviews = localReviews.map(rev => ({
     ...rev,
@@ -700,7 +860,7 @@ Trả về kết quả chấm điểm bằng Tiếng Việt. Bạn BẮT BUỘC 
                 <div className="review-score-card">
                   <span style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '8px' }}>{t.speakingScore}</span>
                   <span style={{ fontSize: '2rem', fontWeight: 'bold', fontFamily: 'var(--font-mono)', color: 'var(--accent)' }}>
-                    {localSpeakingScore !== null ? `${localSpeakingScore}/200` : (language === 'vi' ? 'Chờ chấm' : 'Pending')}
+                    {localSpeakingScore !== null ? `${localSpeakingScore}/${maxSpeaking}` : (language === 'vi' ? 'Chờ chấm' : 'Pending')}
                   </span>
                 </div>
               )}
@@ -708,7 +868,7 @@ Trả về kết quả chấm điểm bằng Tiếng Việt. Bạn BẮT BUỘC 
                 <div className="review-score-card">
                   <span style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '8px' }}>{t.writingScore}</span>
                   <span style={{ fontSize: '2rem', fontWeight: 'bold', fontFamily: 'var(--font-mono)', color: 'var(--success)' }}>
-                    {localWritingScore !== null ? `${localWritingScore}/200` : (language === 'vi' ? 'Chờ chấm' : 'Pending')}
+                    {localWritingScore !== null ? `${localWritingScore}/${maxWriting}` : (language === 'vi' ? 'Chờ chấm' : 'Pending')}
                   </span>
                 </div>
               )}
@@ -798,7 +958,7 @@ Trả về kết quả chấm điểm bằng Tiếng Việt. Bạn BẮT BUỘC 
                 value={pastedJson}
                 onChange={(e) => setPastedJson(e.target.value)}
                 placeholder={language === 'vi' ? 'Dán JSON của Gemini...' : 'Paste Gemini JSON...'}
-                style={{ width: '100%', height: '120px', minHeight: '120px', fontSize: '0.75rem', padding: '8px', background: 'var(--background-secondary)', color: 'var(--text-primary)', border: '1px solid var(--border)', resize: 'vertical', fontFamily: 'var(--font-mono)' }}
+                style={{ width: '100%', height: '240px', minHeight: '200px', fontSize: '0.75rem', padding: '8px', background: 'var(--background-secondary)', color: 'var(--text-primary)', border: '1px solid var(--border)', resize: 'vertical', fontFamily: 'var(--font-mono)' }}
               />
               <button 
                 className="btn-primary" 
@@ -844,7 +1004,7 @@ Trả về kết quả chấm điểm bằng Tiếng Việt. Bạn BẮT BUỘC 
                         {rev.partTitle.toUpperCase()}
                       </span>
                       <span className="mobile-only" style={{ padding: '2px 6px', background: 'var(--background)', border: '1px solid var(--border)', fontSize: '0.75rem', fontWeight: 'bold', fontFamily: 'var(--font-mono)' }}>
-                        {rev.score}/100
+                        {rev.score !== null ? `${Math.round(rev.score * getQuestionWeight(rev, localReviews) / 10) / 10}/${getQuestionWeight(rev, localReviews)} (${rev.score}%)` : '--'}
                       </span>
                     </div>
                     <span style={{ fontSize: '0.95rem', fontWeight: 'bold' }}>
@@ -853,7 +1013,7 @@ Trả về kết quả chấm điểm bằng Tiếng Việt. Bạn BẮT BUỘC 
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flexShrink: 0 }}>
                     <div className="desktop-only review-score-badge">
-                      Score: {rev.score}/100
+                      Score: {rev.score !== null ? `${Math.round(rev.score * getQuestionWeight(rev, localReviews) / 10) / 10}/${getQuestionWeight(rev, localReviews)} (${rev.score}%)` : '--'}
                     </div>
                     {isExpanded ? <ChevronUp size={20} /> : <ChevronDown size={20} />}
                   </div>

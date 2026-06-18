@@ -117,6 +117,7 @@ export default function ReviewPage({ params }: ReviewPageProps) {
   return (
     <div style={{ padding: '24px 5%', width: '100%', minHeight: '100vh', background: 'var(--background)' }}>
       <ReviewConsole
+        attemptId={reviewData.id}
         testTitle={reviewData.testTitle}
         date={reviewData.date}
         speakingScore={reviewData.speakingScore}
