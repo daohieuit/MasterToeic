@@ -38,7 +38,7 @@ interface QuestionReview {
   questionText: string;
   userAnswer: string;
   answer?: string; // Fallback
-  score: number;
+  score: number | null;
   feedback: string;
   grammarErrors: GrammarError[];
   sampleAnswer: string;
@@ -584,6 +584,7 @@ Trả về kết quả chấm điểm bằng Tiếng Việt. Bạn BẮT BUỘC 
       backDashboard: 'Quay lại Trang chủ',
       listenSpeech: 'Nghe lại bài nói:',
       noGrammarErrors: 'Tuyệt vời! Không phát hiện lỗi ngữ pháp rõ rệt.',
+      waitingGrading: 'Vui lòng dán kết quả chấm điểm từ Gemini Web để xem lỗi ngữ pháp.',
       imagePrompt: 'Hình ảnh câu hỏi:',
       imageDesc: 'Mô tả hình ảnh của AI:',
       requiredWords: 'Từ khóa bắt buộc:',
@@ -606,6 +607,7 @@ Trả về kết quả chấm điểm bằng Tiếng Việt. Bạn BẮT BUỘC 
       backDashboard: 'Back to Dashboard',
       listenSpeech: 'Listen to your response:',
       noGrammarErrors: 'Excellent! No major grammar errors detected.',
+      waitingGrading: 'Please paste the grading results from Gemini Web to view grammar corrections.',
       imagePrompt: 'Question Image:',
       imageDesc: 'System Image Description Reference:',
       requiredWords: 'Required Keywords:',
@@ -888,7 +890,11 @@ Trả về kết quả chấm điểm bằng Tiếng Việt. Bạn BẮT BUỘC 
                           {t.grammarTitle}
                         </h4>
                         <div className="review-grammar-box">
-                          {rev.grammarErrors.length === 0 ? (
+                          {rev.score === null ? (
+                            <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                              <AlertCircle size={16} style={{ color: 'var(--accent)' }} /> {t.waitingGrading}
+                            </p>
+                          ) : rev.grammarErrors.length === 0 ? (
                             <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
                               <CheckCircle size={16} style={{ color: 'var(--success)' }} /> {t.noGrammarErrors}
                             </p>
