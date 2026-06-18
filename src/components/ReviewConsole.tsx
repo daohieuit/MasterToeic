@@ -391,6 +391,7 @@ Dưới đây là thang điểm chuẩn cho từng câu hỏi trong bài thi TOE
   Điểm của bạn sẽ được tính bằng tổng: (Điểm_câu_1 / 100 * 15) + (Điểm_câu_2 / 100 * 15) + ... + (Điểm_câu_5 / 100 * 15).
   Hãy tự động tính toán tổng điểm Speaking và Writing dựa trên các câu hỏi thực tế có trong dữ liệu đầu vào.
 - Trả về kết quả đánh giá bằng Tiếng Việt.
+- BẮT BUỘC KHÔNG chèn các ký tự trích dẫn nguồn hay thẻ tài liệu dạng \`[cite: ...]\` hoặc tương tự vào bất kỳ trường văn bản nào (như feedback, explanation, original...).
 
 ---
 [ĐỊNH DẠNG ĐẦU RA BẮT BUỘC]
@@ -437,6 +438,9 @@ Bạn BẮT BUỘC phải trả về kết quả dưới dạng một khối mã
       if (cleaned.startsWith('```')) {
         cleaned = cleaned.replace(/^```json\s*/i, '').replace(/```$/, '');
       }
+      
+      // Clean cite tags (e.g. [cite: 1, 2])
+      cleaned = cleaned.replace(/\[cite:\s*[^\]]+\]/g, '');
       
       const parsed = JSON.parse(cleaned);
 
