@@ -232,8 +232,9 @@ export default function Dashboard() {
       {/* Top Navbar */}
       <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px', borderBottom: '1px solid var(--border)', paddingBottom: '16px', flexWrap: 'wrap', gap: '12px' }}>
         <div>
-          <h1 style={{ fontSize: '1.5rem', display: 'flex', alignItems: 'center', gap: '8px' }} className="responsive-title">
-            <Activity style={{ color: 'var(--accent)' }} /> {t.title}
+          <h1 style={{ fontSize: '1.5rem', display: 'flex', alignItems: 'center', gap: '10px' }} className="responsive-title">
+            <img src="/logo.png" alt="Master Toeic" style={{ height: '32px', width: '32px', objectFit: 'contain' }} />
+            <span>{t.title}</span>
           </h1>
           <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', marginTop: '4px' }} className="desktop-only">{t.subtitle}</p>
         </div>

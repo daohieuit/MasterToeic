@@ -110,6 +110,7 @@ export default function AdminLayout({
           
           {/* Logo & Branding */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <img src="/logo.png" alt="Logo" style={{ height: '28px', width: '28px', objectFit: 'contain' }} />
             <span style={{ 
               fontFamily: 'var(--font-mono), monospace', 
               fontWeight: 900, 
