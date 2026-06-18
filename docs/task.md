@@ -1,0 +1,22 @@
+# Nhiệm vụ: Sắp xếp và tổ chức lại thư mục dự án MasterToeic (task.md)
+
+- [x] Khởi tạo cấu trúc thư mục `supabase/` mới
+  - [x] Tạo thư mục `supabase/migrations/`
+  - [x] Tạo thư mục `supabase/archive/`
+- [x] Di chuyển các file SQL setup database
+  - [x] Di chuyển `docs/database.sql` sang `supabase/migrations/20260613000000_init_schema.sql`
+  - [x] Di chuyển `docs/setup_storage.sql` sang `supabase/migrations/20260618000000_setup_storage.sql`
+- [x] Gom nhóm và dọn dẹp thư mục lưu trữ `archive/` cũ
+  - [x] Di chuyển `archive/db_updates.json` sang `supabase/archive/db_updates.json`
+  - [x] Di chuyển `archive/migrate_tests.ts` sang `supabase/archive/migrate_tests.ts`
+  - [x] Cập nhật đường dẫn đọc `docs/example_test.json` trong `migrate_tests.ts` đã di chuyển
+  - [x] Xóa bỏ thư mục `archive/` rỗng ở gốc dự án
+- [x] Xóa bỏ các thư mục rỗng, không sử dụng
+  - [x] Xóa thư mục `src/data/tests/` và `src/data/`
+  - [x] Xóa thư mục API rỗng `src/app/api/admin/process-images/`
+- [x] Cập nhật tài liệu tham chiếu
+  - [x] Cập nhật liên kết file SQL trong `README.md`
+  - [x] Cập nhật liên kết file SQL trong `docs/architecture.md`
+- [x] Kiểm tra và xác minh biên dịch
+  - [x] Chạy kiểm tra TypeScript `npx tsc --noEmit`
+  - [x] Chạy script kiểm định chất lượng dự án `python .agents/scripts/checklist.py .`
