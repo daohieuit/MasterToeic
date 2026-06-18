@@ -894,66 +894,72 @@ Bạn BẮT BUỘC phải trả về kết quả dưới dạng một khối mã
             : 'To grade and get detailed comments 100% free, follow these 3 simple steps:'}
         </p>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', fontSize: '0.85rem', marginTop: '8px' }}>
-          <div style={{ background: 'var(--background)', padding: '12px', border: '1px solid var(--border)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-            <div>
-              <strong style={{ color: 'var(--accent)', display: 'block', marginBottom: '6px' }}>1. {language === 'vi' ? 'Tải tư liệu' : 'Download Materials'}</strong>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', lineHeight: '1.4', margin: 0 }}>
-                {language === 'vi' ? 'Tải file JSON đề bài và file âm thanh WAV đã gộp bài nói của bạn.' : 'Download the exported JSON and your merged WAV audio file.'}
-              </p>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', fontSize: '0.85rem', marginTop: '8px' }}>
+          {/* Row 1: Step 1 & Step 2 */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px' }}>
+            {/* Step 1 */}
+            <div style={{ background: 'var(--background)', padding: '12px', border: '1px solid var(--border)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+              <div>
+                <strong style={{ color: 'var(--accent)', display: 'block', marginBottom: '6px' }}>1. {language === 'vi' ? 'Tải tư liệu' : 'Download Materials'}</strong>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', lineHeight: '1.4', margin: 0 }}>
+                  {language === 'vi' ? 'Tải file JSON đề bài và file âm thanh WAV đã gộp bài nói của bạn.' : 'Download the exported JSON and your merged WAV audio file.'}
+                </p>
+              </div>
+              <div style={{ marginTop: '12px' }}>
+                <button 
+                  className="btn-accent" 
+                  onClick={handleDownloadMaterials} 
+                  disabled={mergingAudio}
+                  style={{ width: '100%', padding: '8px', fontSize: '0.8rem', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}
+                >
+                  <Download size={14} />
+                  {mergingAudio ? `${language === 'vi' ? 'Đang gộp...' : 'Merging...'} (${mergeProgress}%)` : (language === 'vi' ? 'Tải JSON & Audio' : 'Download JSON & Audio')}
+                </button>
+              </div>
             </div>
-            <div style={{ marginTop: '12px' }}>
-              <button 
-                className="btn-accent" 
-                onClick={handleDownloadMaterials} 
-                disabled={mergingAudio}
-                style={{ width: '100%', padding: '8px', fontSize: '0.8rem', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}
-              >
-                <Download size={14} />
-                {mergingAudio ? `${language === 'vi' ? 'Đang gộp...' : 'Merging...'} (${mergeProgress}%)` : (language === 'vi' ? 'Tải JSON & Audio' : 'Download JSON & Audio')}
-              </button>
+
+            {/* Step 2 */}
+            <div style={{ background: 'var(--background)', padding: '12px', border: '1px solid var(--border)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+              <div>
+                <strong style={{ color: 'var(--accent)', display: 'block', marginBottom: '6px' }}>2. {language === 'vi' ? 'Gửi cho Gemini Web' : 'Send to Gemini Web'}</strong>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', lineHeight: '1.4', margin: 0 }}>
+                  {language === 'vi' ? 'Copy Prompt ở dưới, vào Gemini Web, tải file WAV + JSON lên và paste prompt.' : 'Copy the prompt below, open Gemini Web, upload the audio WAV + JSON, and paste the prompt.'}
+                </p>
+              </div>
+              <div style={{ marginTop: '12px', display: 'flex', gap: '6px' }}>
+                <button 
+                  className="btn-secondary" 
+                  onClick={() => {
+                    navigator.clipboard.writeText(getPromptTemplate(testTitle, localReviews));
+                    toast.success(language === 'vi' ? 'Đã copy prompt chấm điểm!' : 'Prompt copied!');
+                  }} 
+                  style={{ flex: 1, padding: '8px 4px', fontSize: '0.8rem', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}
+                >
+                  <Copy size={12} />
+                  {language === 'vi' ? 'Copy Prompt' : 'Copy Prompt'}
+                </button>
+                <a 
+                  href="https://gemini.google.com" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="btn-secondary" 
+                  style={{ flex: 1, padding: '8px 4px', fontSize: '0.8rem', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
+                >
+                  Mở Gemini &rarr;
+                </a>
+              </div>
             </div>
           </div>
 
-          <div style={{ background: 'var(--background)', padding: '12px', border: '1px solid var(--border)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
-            <div>
-              <strong style={{ color: 'var(--accent)', display: 'block', marginBottom: '6px' }}>2. {language === 'vi' ? 'Gửi cho Gemini Web' : 'Send to Gemini Web'}</strong>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', lineHeight: '1.4', margin: 0 }}>
-                {language === 'vi' ? 'Copy Prompt ở dưới, vào Gemini Web, tải file WAV + JSON lên và paste prompt.' : 'Copy the prompt below, open Gemini Web, upload the audio WAV + JSON, and paste the prompt.'}
-              </p>
-            </div>
-            <div style={{ marginTop: '12px', display: 'flex', gap: '6px' }}>
-              <button 
-                className="btn-secondary" 
-                onClick={() => {
-                  navigator.clipboard.writeText(getPromptTemplate(testTitle, localReviews));
-                  toast.success(language === 'vi' ? 'Đã copy prompt chấm điểm!' : 'Prompt copied!');
-                }} 
-                style={{ flex: 1, padding: '8px 4px', fontSize: '0.8rem', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}
-              >
-                <Copy size={12} />
-                {language === 'vi' ? 'Copy Prompt' : 'Copy Prompt'}
-              </button>
-              <a 
-                href="https://gemini.google.com" 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="btn-secondary" 
-                style={{ flex: 1, padding: '8px 4px', fontSize: '0.8rem', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
-              >
-                Mở Gemini &rarr;
-              </a>
-            </div>
-          </div>
-
-          <div style={{ background: 'var(--background)', padding: '12px', border: '1px solid var(--border)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+          {/* Row 2: Step 3 */}
+          <div style={{ background: 'var(--background)', padding: '16px', border: '1px solid var(--border)', display: 'flex', flexDirection: 'column', gap: '12px' }}>
             <div>
               <strong style={{ color: 'var(--accent)', display: 'block', marginBottom: '6px' }}>3. {language === 'vi' ? 'Nhập kết quả' : 'Paste Result'}</strong>
               <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', lineHeight: '1.4', margin: 0 }}>
                 {language === 'vi' ? 'Dán đoạn mã JSON nhận xét mà Gemini Web trả ra vào đây rồi bấm Áp dụng.' : 'Paste the result JSON code returned by Gemini Web below and click Apply.'}
               </p>
             </div>
-            <div style={{ marginTop: '12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
               <textarea
                 value={pastedJson}
                 onChange={(e) => setPastedJson(e.target.value)}
