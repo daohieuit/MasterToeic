@@ -54,7 +54,8 @@ body {
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-space-grotesk), sans-serif;
   font-weight: 700;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.025em;
+  line-height: 1.25;
 }
 
 /* Distraction-Free / Zen Exam Console */
@@ -135,7 +136,7 @@ button {
 }
 ::-webkit-scrollbar-thumb {
   background: var(--border);
-  border-radius: 3px;
+  border-radius: var(--border-radius, 1px);
 }
 ::-webkit-scrollbar-thumb:hover {
   background: var(--text-secondary);
@@ -173,11 +174,12 @@ button {
   border: 1px solid var(--border);
   padding: 24px;
   position: relative;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .card-sharp:hover {
   border-color: var(--border-focus);
+  transform: translateY(-2px);
 }
 
 /* Custom Checkbox / Accent controls */
@@ -226,6 +228,11 @@ button {
 .btn-accent:hover {
   background-color: var(--accent-hover);
   border-color: var(--accent-hover);
+}
+
+.btn-primary:active, .btn-secondary:active, .btn-accent:active {
+  transform: translateY(1.5px);
+  transition: transform 0.05s ease;
 }
 
 /* Responsive helper classes */
