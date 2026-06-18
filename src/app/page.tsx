@@ -574,6 +574,11 @@ export default function Dashboard() {
                   <span>{t.logout}</span>
                 </button>
               )}
+
+              {/* Version Display */}
+              <div style={{ textAlign: 'center', fontSize: '0.7rem', color: 'var(--text-secondary)', marginTop: '8px', fontWeight: 'bold', letterSpacing: '0.05em' }}>
+                {language === 'vi' ? 'PHIÊN BẢN HIỆN TẠI: 1.0.0' : 'CURRENT VERSION: 1.0.0'}
+              </div>
             </div>
           </div>
         </div>
