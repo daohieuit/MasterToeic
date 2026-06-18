@@ -9,7 +9,8 @@ import WritingConsole from '@/components/WritingConsole';
 import ReviewConsole from '@/components/ReviewConsole';
 import PartIntroScreen from '@/components/PartIntroScreen';
 import ConfirmModal from '@/components/ConfirmModal';
-import { AlertCircle, RefreshCw, Activity, ArrowRight, Loader } from 'lucide-react';
+import { AlertCircle, RefreshCw, Activity, ArrowRight, Loader, Mic, MicOff, Play, Volume2 } from 'lucide-react';
+import { useAudioRecorder } from '@/hooks/useAudioRecorder';
 import confetti from 'canvas-confetti';
 import toast from 'react-hot-toast';
 import { getSpeakingPartConfig, getWritingPartConfig } from '@/utils/constants';
@@ -55,6 +56,11 @@ export default function TestPage({ params }: { params: Promise<TestParams> }) {
   // New States for Intro and Confirm
   const [shownIntroForPart, setShownIntroForPart] = useState<string | null>(null);
   const [showExitConfirm, setShowExitConfirm] = useState(false);
+
+  // Lobby Mic Test States
+  const lobbyRecorder = useAudioRecorder();
+  const [lobbyTestPlaying, setLobbyTestPlaying] = useState(false);
+  const lobbyAudioRef = React.useRef<HTMLAudioElement | null>(null);
 
   // Lobby & Transition States
   const [lobbyMode, setLobbyMode] = useState<'full' | 'speaking' | 'writing' | 'part'>('full');
@@ -459,14 +465,9 @@ export default function TestPage({ params }: { params: Promise<TestParams> }) {
 
   const evaluateTest = async (allAnswers: any[]) => {
     setEvaluating(true);
-    setEvalProgress(0);
+    setEvalProgress(100);
     
     const evaluationResults: any[] = [];
-
-    // Simulate progress
-    await new Promise((resolve) => setTimeout(resolve, 300));
-    setEvalProgress(50);
-    await new Promise((resolve) => setTimeout(resolve, 300));
 
     for (let i = 0; i < allAnswers.length; i++) {
       const ans = allAnswers[i];
@@ -474,14 +475,12 @@ export default function TestPage({ params }: { params: Promise<TestParams> }) {
       evaluationResults.push({
         ...ans,
         userAnswer: ans.answer,
-        score: null, // Removed AI
+        score: null, 
         feedback: language === 'vi' ? 'Vui lòng xuất file JSON và gửi cho Gemini Web để chấm điểm.' : 'Please export JSON and send to Gemini Web for evaluation.',
         grammarErrors: [],
         sampleAnswer: ans.sampleAnswer || ''
       });
     }
-
-    setEvalProgress(100);
 
     const attemptResult = {
       testId: testData.id,
@@ -985,6 +984,78 @@ export default function TestPage({ params }: { params: Promise<TestParams> }) {
                 </div>
               )}
             </div>
+
+            {/* Microphone Test Widget (Only for tests containing Speaking) */}
+            {hasSpeaking && (
+              <div style={{ borderTop: '1px solid var(--border)', paddingTop: '20px' }}>
+                <label style={{ display: 'block', fontSize: '0.85rem', fontWeight: 'bold', marginBottom: '12px', color: 'var(--text-primary)' }}>
+                  3. {language === 'vi' ? 'Kiểm tra Microphone' : 'Test Microphone'}
+                </label>
+                <div style={{ background: 'var(--background)', padding: '16px', border: '1px solid var(--border)', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                    {language === 'vi' 
+                      ? 'Nói thử vài từ để kiểm tra âm lượng mic trước khi thi. Bản ghi sẽ tự động xóa sau khi thoát.' 
+                      : 'Speak a few words to test your mic before starting. Recording is stored in memory and deleted when you exit.'}
+                  </p>
+                  
+                  <div style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                    {!lobbyRecorder.isRecording ? (
+                      <button 
+                        className="btn-accent" 
+                        onClick={lobbyRecorder.startRecording}
+                        style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '8px 12px', fontSize: '0.85rem' }}
+                      >
+                        <Mic size={14} />
+                        {language === 'vi' ? 'Bắt đầu Test Mic' : 'Start Mic Test'}
+                      </button>
+                    ) : (
+                      <button 
+                        className="btn-primary" 
+                        onClick={lobbyRecorder.stopRecording}
+                        style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '8px 12px', fontSize: '0.85rem', background: '#D32F2F', border: 'none', color: '#fff' }}
+                      >
+                        <span className="pulse-dot" style={{ display: 'inline-block', width: '8px', height: '8px', background: '#fff', borderRadius: '50%' }} />
+                        {language === 'vi' ? 'Dừng thu âm' : 'Stop Recording'}
+                      </button>
+                    )}
+
+                    {lobbyRecorder.audioUrl && !lobbyRecorder.isRecording && (
+                      <button 
+                        className="btn-secondary" 
+                        onClick={() => {
+                          if (lobbyAudioRef.current) {
+                            if (lobbyTestPlaying) {
+                              lobbyAudioRef.current.pause();
+                              setLobbyTestPlaying(false);
+                            } else {
+                              lobbyAudioRef.current.play();
+                              setLobbyTestPlaying(true);
+                            }
+                          }
+                        }}
+                        style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '8px 12px', fontSize: '0.85rem' }}
+                      >
+                        <Play size={14} />
+                        {lobbyTestPlaying 
+                          ? (language === 'vi' ? 'Tạm dừng' : 'Pause') 
+                          : (language === 'vi' ? 'Nghe lại' : 'Play Back')}
+                      </button>
+                    )}
+                  </div>
+
+                  {lobbyRecorder.audioUrl && (
+                    <audio 
+                      ref={lobbyAudioRef} 
+                      src={lobbyRecorder.audioUrl} 
+                      style={{ display: 'none' }} 
+                      onEnded={() => setLobbyTestPlaying(false)}
+                      onPause={() => setLobbyTestPlaying(false)}
+                      onPlay={() => setLobbyTestPlaying(true)}
+                    />
+                  )}
+                </div>
+              </div>
+            )}
 
             {/* Start exam action */}
             <button 

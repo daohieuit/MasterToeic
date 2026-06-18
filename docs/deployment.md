@@ -115,7 +115,30 @@ Do chúng ta đang sử dụng gói Vercel Free Tier, hãy lưu ý các thông s
 
 ---
 
-## 6. Auto-Deploy (CI/CD)
+## 6. Quy Trình Tự Chấm Điểm AI Miễn Phí (Self-Grading Workflow)
+
+Để tối ưu hóa chi phí vận hành 0đ và đảm bảo dự án hoạt động trọn đời không lo hết hạn API Key hoặc phát sinh hóa đơn, MasterToeic S&W hỗ trợ cơ chế **Tự chấm điểm bằng Gemini Web** (hoặc bất kỳ AI nào như ChatGPT, Claude) của người dùng:
+
+### Cách Hoạt Động:
+1. **Hoàn thành bài thi:** Sau khi hoàn thành phần thi Nói/Viết, học viên nhấn nộp bài. Hệ thống sẽ ngay lập tức hiển thị giao diện kết quả với trạng thái là `Chờ chấm (Pending)`.
+2. **Tải tư liệu học tập:** Học viên nhấn nút **"Tải JSON & Audio"** ở trang kết quả:
+   - Hệ thống tải xuống 1 file `.json` chứa toàn bộ câu hỏi và câu trả lời dạng chữ của bạn.
+   - Hệ thống tự động giải mã và ghép nối tất cả các file ghi âm nói của bạn cùng với giọng đọc dẫn đề tiếng Anh của AI (ví dụ: *"Part 1, Question 1"*, *"Question 2"*...) xen kẽ khoảng lặng 1.5s thành **1 file `.wav` duy nhất** và tải xuống.
+3. **Chấm trên Gemini Web:**
+   - Học viên bấm **"Copy Prompt"** trên web (nút này sao chép câu lệnh chỉ thị chấm thi chi tiết bằng tiếng Việt định dạng JSON).
+   - Truy cập giao diện chat [Gemini Web](https://gemini.google.com) miễn phí.
+   - Tải tệp `.json` bài làm và tệp âm thanh `.wav` lên khung chat.
+   - Dán Prompt vừa copy và nhấn gửi. Gemini Web sẽ tự động phân tích âm thanh, đối chiếu đáp án mẫu và trả về một đoạn mã JSON kết quả chấm điểm.
+4. **Cập nhật giao diện web:**
+   - Học viên copy đoạn mã JSON kết quả từ Gemini Web.
+   - Quay lại trang kết quả MasterToeic, dán vào ô nhập liệu dưới Bước 3 và bấm **"Dán / Áp dụng (Apply)"**.
+   - Giao diện web sẽ lập tức cập nhật điểm số tổng hợp, biểu đồ Radar phân tích 5 kỹ năng thành phần, và các thẻ sửa lỗi ngữ pháp chi tiết cho từng câu hỏi!
+
+> 💡 **Lợi ích:** Quy trình này giúp bạn không cần thiết lập bất kỳ API Key có phí nào trên Vercel. Mọi quá trình ghi âm, xử lý và ghép nối tệp âm thanh WAV đều diễn ra 100% trên trình duyệt của người học (Client-side) hoàn toàn miễn phí và cực kỳ bảo mật riêng tư.
+
+---
+
+## 7. Auto-Deploy (CI/CD)
 
 Sau khi liên kết repo GitHub với Vercel, mỗi lần bạn `git push` lên nhánh `main`, Vercel sẽ **tự động build và deploy** phiên bản mới. Bạn không cần làm gì thêm.
 

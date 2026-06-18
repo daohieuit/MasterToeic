@@ -2,6 +2,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { Award, AlertCircle, CheckCircle, ChevronDown, ChevronUp, Play, Pause, ArrowLeft, RefreshCw, BookOpen, Edit3, Image as ImageIcon, Copy, Download, FastForward } from 'lucide-react';
 import { useApp } from '@/context/AppContext';
+import toast from 'react-hot-toast';
+import { mergeAudioResponses } from '@/utils/audio';
 import {
   Chart as ChartJS,
   RadialLinearScale,
@@ -31,6 +33,7 @@ interface GrammarError {
 interface QuestionReview {
   id: string;
   type: string;
+  section?: string;
   partTitle: string;
   questionText: string;
   userAnswer: string;
@@ -191,16 +194,186 @@ export default function ReviewConsole({
   const [expandedIndex, setExpandedIndex] = useState<number | null>(0);
   const { theme } = useApp();
 
+  const [pastedJson, setPastedJson] = useState('');
+  const [localSpeakingScore, setLocalSpeakingScore] = useState<number | null>(speakingScore);
+  const [localWritingScore, setLocalWritingScore] = useState<number | null>(writingScore);
+  const [localReviews, setLocalReviews] = useState<QuestionReview[]>(reviews);
+  const [mergingAudio, setMergingAudio] = useState(false);
+  const [mergeProgress, setMergeProgress] = useState(0);
+
+  const getPromptTemplate = (title: string, revs: any[]) => {
+    const promptData = {
+      testTitle: title,
+      speakingAnswers: revs
+        .filter(r => r.section === 'speaking')
+        .map((r, i) => ({
+          questionIndex: i + 1,
+          part: r.partTitle,
+          prompt: r.questionText,
+          imageDescriptionReference: r.description || null,
+          requiredKeywords: r.words || [],
+          userSpeechTranscription: r.userAnswer || r.answer || ''
+        })),
+      writingAnswers: revs
+        .filter(r => r.section === 'writing')
+        .map((r, i) => ({
+          questionIndex: i + 1,
+          part: r.partTitle,
+          prompt: r.questionText,
+          imageDescriptionReference: r.description || null,
+          requiredKeywords: r.words || [],
+          userWrittenResponse: r.userAnswer || r.answer || ''
+        }))
+    };
+
+    return `Bạn là giám khảo chấm thi TOEIC Speaking & Writing chuyên nghiệp.
+Tôi gửi cho bạn tệp âm thanh WAV ghi lại phần nói của tôi và tệp JSON dữ liệu bài làm dưới đây.
+Nếu bài làm có phần Speaking, vui lòng NGHE kỹ file âm thanh WAV đính kèm theo thứ tự câu hỏi để chấm điểm phát âm (Pronunciation), độ trôi chảy (Fluency) và tính liên kết. Nếu không có âm thanh cho câu nào, hãy dùng đoạn Text Transcription làm căn cứ.
+
+Thông tin bài làm:
+\`\`\`json
+${JSON.stringify(promptData, null, 2)}
+\`\`\`
+
+Hãy đánh giá và chấm điểm theo tiêu chí thi TOEIC chính thức (thang điểm 0-200 cho Speaking và 0-200 cho Writing).
+Trả về kết quả chấm điểm bằng Tiếng Việt. Bạn BẮT BUỘC phải trả về cấu trúc định dạng JSON chuẩn sau đây, không thêm bất kỳ văn bản giải thích nào khác ngoài JSON:
+
+{
+  "speakingScore": [Điểm Speaking tổng hợp từ 0 đến 200, hoặc null nếu không thi Speaking],
+  "writingScore": [Điểm Writing tổng hợp từ 0 đến 200, hoặc null nếu không thi Writing],
+  "reviews": [
+    {
+      "questionNumber": [Số thứ tự câu hỏi từ 1 trở đi],
+      "score": [Điểm câu hỏi từ 0 đến 100],
+      "feedback": "[Nhận xét chi tiết bằng tiếng Việt, sửa phát âm hoặc cách diễn đạt]",
+      "grammarErrors": [
+        {
+          "original": "[Lỗi sai trong câu trả lời của người dùng]",
+          "correction": "[Câu đúng sau khi sửa]",
+          "explanation": "[Giải thích ngắn gọn lý do sửa bằng tiếng Việt]"
+        }
+      ],
+      "subscores": {
+        "pronunciation": [0-100, chỉ áp dụng cho Speaking, còn lại null],
+        "fluency": [0-100, chỉ áp dụng cho Speaking, còn lại null],
+        "taskCompletion": [0-100],
+        "grammar": [0-100],
+        "vocabulary": [0-100],
+        "cohesion": [0-100]
+      }
+    }
+  ]
+}`;
+  };
+
+  const handleApplyJson = () => {
+    if (!pastedJson.trim()) {
+      toast.error(language === 'vi' ? 'Vui lòng dán dữ liệu JSON!' : 'Please paste the JSON data!');
+      return;
+    }
+
+    try {
+      let cleaned = pastedJson.trim();
+      if (cleaned.startsWith('```')) {
+        cleaned = cleaned.replace(/^```json\s*/i, '').replace(/```$/, '');
+      }
+      
+      const parsed = JSON.parse(cleaned);
+
+      if (parsed.speakingScore !== undefined) {
+        setLocalSpeakingScore(parsed.speakingScore);
+      }
+      if (parsed.writingScore !== undefined) {
+        setLocalWritingScore(parsed.writingScore);
+      }
+
+      if (Array.isArray(parsed.reviews)) {
+        const updatedReviews = localReviews.map((origReview, idx) => {
+          const parsedRev = parsed.reviews.find((r: any) => r.questionNumber === (idx + 1));
+          if (parsedRev) {
+            return {
+              ...origReview,
+              score: parsedRev.score ?? origReview.score,
+              feedback: parsedRev.feedback ?? origReview.feedback,
+              grammarErrors: parsedRev.grammarErrors ?? origReview.grammarErrors,
+              subscores: parsedRev.subscores ?? origReview.subscores
+            };
+          }
+          return origReview;
+        });
+        setLocalReviews(updatedReviews);
+        
+        // Update history item in localStorage for persistence
+        try {
+          const savedHistory = localStorage.getItem('toeic_sw_history');
+          if (savedHistory) {
+            const historyList = JSON.parse(savedHistory);
+            // Match based on date or testTitle or ID if matching attempt
+            const testAttempt = historyList.find((h: any) => h.testTitle === testTitle && h.date === date);
+            if (testAttempt) {
+              testAttempt.speakingScore = parsed.speakingScore ?? testAttempt.speakingScore;
+              testAttempt.writingScore = parsed.writingScore ?? testAttempt.writingScore;
+              testAttempt.reviews = updatedReviews;
+              localStorage.setItem('toeic_sw_history', JSON.stringify(historyList));
+            }
+          }
+        } catch (e) {
+          console.error('Failed to sync updated score to history storage:', e);
+        }
+
+        toast.success(language === 'vi' ? 'Đã cập nhật điểm số và nhận xét từ AI thành công!' : 'Scores and AI reviews updated successfully!');
+      } else {
+        toast.error(language === 'vi' ? 'Định dạng JSON không chứa danh sách reviews!' : 'JSON format does not contain reviews array!');
+      }
+    } catch (e) {
+      console.error(e);
+      toast.error(language === 'vi' ? 'Lỗi phân tích JSON. Vui lòng kiểm tra lại định dạng dán vào!' : 'JSON parsing error. Please check the format!');
+    }
+  };
+
+  const handleDownloadMaterials = async () => {
+    handleExportJson();
+
+    const speakingCount = localReviews.filter(r => r.section === 'speaking' && r.audioUrl).length;
+    if (speakingCount > 0) {
+      setMergingAudio(true);
+      setMergeProgress(0);
+      try {
+        const wavBlob = await mergeAudioResponses(localReviews, (p) => setMergeProgress(p));
+        if (wavBlob) {
+          const url = URL.createObjectURL(wavBlob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `toeic_speaking_merged_${Date.now()}.wav`;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          URL.revokeObjectURL(url);
+          toast.success(language === 'vi' ? 'Đã tải xuống file âm thanh thành công!' : 'Audio downloaded successfully!');
+        } else {
+          toast.error(language === 'vi' ? 'Lỗi gộp âm thanh!' : 'Failed to merge audio!');
+        }
+      } catch (err) {
+        console.error(err);
+        toast.error('Error generating audio.');
+      } finally {
+        setMergingAudio(false);
+      }
+    }
+  };
+
   // Helper to generate deterministic subscores for older history items
   const getDeterministicSubscores = (rev: any): Record<string, number> => {
+    const baseScore = rev.score !== null && rev.score !== undefined ? rev.score : 0;
+    
     if (rev.subscores && typeof rev.subscores === 'object') {
       return {
-        pronunciation: rev.subscores.pronunciation ?? rev.score,
-        fluency: rev.subscores.fluency ?? rev.score,
-        taskCompletion: rev.subscores.taskCompletion ?? rev.score,
-        grammar: rev.subscores.grammar ?? rev.score,
-        vocabulary: rev.subscores.vocabulary ?? rev.score,
-        cohesion: rev.subscores.cohesion ?? rev.score,
+        pronunciation: rev.subscores.pronunciation ?? baseScore,
+        fluency: rev.subscores.fluency ?? baseScore,
+        taskCompletion: rev.subscores.taskCompletion ?? baseScore,
+        grammar: rev.subscores.grammar ?? baseScore,
+        vocabulary: rev.subscores.vocabulary ?? baseScore,
+        cohesion: rev.subscores.cohesion ?? baseScore,
       };
     }
 
@@ -221,20 +394,20 @@ export default function ReviewConsole({
     const clamp = (val: number) => Math.min(100, Math.max(0, val));
 
     return {
-      pronunciation: clamp(rev.score + delta1),
-      fluency: clamp(rev.score + delta2),
-      taskCompletion: clamp(rev.score + delta1),
-      grammar: clamp(rev.score + delta3),
-      vocabulary: clamp(rev.score + delta4),
-      cohesion: clamp(rev.score + ((delta1 + delta2) >> 1)),
+      pronunciation: clamp(baseScore + delta1),
+      fluency: clamp(baseScore + delta2),
+      taskCompletion: clamp(baseScore + delta1),
+      grammar: clamp(baseScore + delta3),
+      vocabulary: clamp(baseScore + delta4),
+      cohesion: clamp(baseScore + ((delta1 + delta2) >> 1)),
     };
   };
 
-  const isSpeakingTest = speakingScore !== null;
-  const isWritingTest = writingScore !== null;
-  const isFullTest = isSpeakingTest && isWritingTest;
+  const isSpeakingTest = localSpeakingScore !== null || reviews.some(r => r.section === 'speaking');
+  const isWritingTest = localWritingScore !== null || reviews.some(r => r.section === 'writing');
+  const isFullTest = reviews.some(r => r.section === 'speaking') && reviews.some(r => r.section === 'writing');
 
-  const processedReviews = reviews.map(rev => ({
+  const processedReviews = localReviews.map(rev => ({
     ...rev,
     computedSubscores: getDeterministicSubscores(rev)
   }));
@@ -372,7 +545,7 @@ export default function ReviewConsole({
     const exportData = {
       testTitle: testTitle,
       date: date,
-      questions: reviews.map((rev, idx) => ({
+      questions: localReviews.map((rev, idx) => ({
         questionNumber: idx + 1,
         part: rev.partTitle,
         prompt: rev.questionText,
@@ -454,8 +627,16 @@ export default function ReviewConsole({
         <Link href="/" className="btn-secondary" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '8px 16px' }}>
           <ArrowLeft size={16} /> {t.backDashboard}
         </Link>
-        <button className="btn-primary" onClick={handleExportJson} style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '8px 16px', background: 'var(--accent)', color: '#fff', border: 'none', fontWeight: 'bold' }}>
-          <Download size={16} /> {t.exportJson}
+        <button 
+          className="btn-primary" 
+          onClick={handleDownloadMaterials} 
+          disabled={mergingAudio}
+          style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '8px 16px', background: 'var(--accent)', color: '#fff', border: 'none', fontWeight: 'bold' }}
+        >
+          <Download size={16} /> 
+          {mergingAudio 
+            ? `${language === 'vi' ? 'Đang gộp...' : 'Merging...'} (${mergeProgress}%)` 
+            : (language === 'vi' ? 'Tải JSON & Audio' : 'Download JSON & Audio')}
         </button>
       </div>
 
@@ -465,22 +646,22 @@ export default function ReviewConsole({
           <div>
             <h1 style={{ fontSize: '1.6rem', marginBottom: '8px' }}>{testTitle}</h1>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginBottom: '16px' }}>{t.date}: {date}</p>
-
+ 
             {/* Score blocks */}
             <div className="review-score-grid">
-              {speakingScore !== null && (
+              {isSpeakingTest && (
                 <div className="review-score-card">
                   <span style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '8px' }}>{t.speakingScore}</span>
                   <span style={{ fontSize: '2rem', fontWeight: 'bold', fontFamily: 'var(--font-mono)', color: 'var(--accent)' }}>
-                    {speakingScore}/200
+                    {localSpeakingScore !== null ? `${localSpeakingScore}/200` : (language === 'vi' ? 'Chờ chấm' : 'Pending')}
                   </span>
                 </div>
               )}
-              {writingScore !== null && (
+              {isWritingTest && (
                 <div className="review-score-card">
                   <span style={{ display: 'block', fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '8px' }}>{t.writingScore}</span>
                   <span style={{ fontSize: '2rem', fontWeight: 'bold', fontFamily: 'var(--font-mono)', color: 'var(--success)' }}>
-                    {writingScore}/200
+                    {localWritingScore !== null ? `${localWritingScore}/200` : (language === 'vi' ? 'Chờ chấm' : 'Pending')}
                   </span>
                 </div>
               )}
@@ -494,7 +675,95 @@ export default function ReviewConsole({
         </div>
       </div>
 
+      {/* Self-grading Panel */}
+      <div className="card-sharp" style={{ background: 'var(--background-secondary)', padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px', margin: '24px 0', border: '1px solid var(--accent)' }}>
+        <h3 style={{ fontSize: '1.1rem', color: 'var(--accent)', display: 'flex', alignItems: 'center', gap: '8px', margin: 0 }}>
+          <Award size={20} />
+          {language === 'vi' ? 'Chấm điểm tự phục vụ bằng Gemini Web' : 'Self-grading via Gemini Web'}
+        </h3>
+        <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', lineHeight: '1.6', margin: 0 }}>
+          {language === 'vi'
+            ? 'Để chấm điểm và nhận xét chi tiết 100% miễn phí, bạn hãy thực hiện theo 3 bước đơn giản dưới đây:'
+            : 'To grade and get detailed comments 100% free, follow these 3 simple steps:'}
+        </p>
 
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', fontSize: '0.85rem', marginTop: '8px' }}>
+          <div style={{ background: 'var(--background)', padding: '12px', border: '1px solid var(--border)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+            <div>
+              <strong style={{ color: 'var(--accent)', display: 'block', marginBottom: '6px' }}>1. {language === 'vi' ? 'Tải tư liệu' : 'Download Materials'}</strong>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', lineHeight: '1.4', margin: 0 }}>
+                {language === 'vi' ? 'Tải file JSON đề bài và file âm thanh WAV đã gộp bài nói của bạn.' : 'Download the exported JSON and your merged WAV audio file.'}
+              </p>
+            </div>
+            <div style={{ marginTop: '12px' }}>
+              <button 
+                className="btn-accent" 
+                onClick={handleDownloadMaterials} 
+                disabled={mergingAudio}
+                style={{ width: '100%', padding: '8px', fontSize: '0.8rem', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}
+              >
+                <Download size={14} />
+                {mergingAudio ? `${language === 'vi' ? 'Đang gộp...' : 'Merging...'} (${mergeProgress}%)` : (language === 'vi' ? 'Tải JSON & Audio' : 'Download JSON & Audio')}
+              </button>
+            </div>
+          </div>
+
+          <div style={{ background: 'var(--background)', padding: '12px', border: '1px solid var(--border)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+            <div>
+              <strong style={{ color: 'var(--accent)', display: 'block', marginBottom: '6px' }}>2. {language === 'vi' ? 'Gửi cho Gemini Web' : 'Send to Gemini Web'}</strong>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', lineHeight: '1.4', margin: 0 }}>
+                {language === 'vi' ? 'Copy Prompt ở dưới, vào Gemini Web, tải file WAV + JSON lên và paste prompt.' : 'Copy the prompt below, open Gemini Web, upload the audio WAV + JSON, and paste the prompt.'}
+              </p>
+            </div>
+            <div style={{ marginTop: '12px', display: 'flex', gap: '6px' }}>
+              <button 
+                className="btn-secondary" 
+                onClick={() => {
+                  navigator.clipboard.writeText(getPromptTemplate(testTitle, localReviews));
+                  toast.success(language === 'vi' ? 'Đã copy prompt chấm điểm!' : 'Prompt copied!');
+                }} 
+                style={{ flex: 1, padding: '8px 4px', fontSize: '0.8rem', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}
+              >
+                <Copy size={12} />
+                {language === 'vi' ? 'Copy Prompt' : 'Copy Prompt'}
+              </button>
+              <a 
+                href="https://gemini.google.com" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="btn-secondary" 
+                style={{ flex: 1, padding: '8px 4px', fontSize: '0.8rem', textDecoration: 'none', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}
+              >
+                Mở Gemini &rarr;
+              </a>
+            </div>
+          </div>
+
+          <div style={{ background: 'var(--background)', padding: '12px', border: '1px solid var(--border)', display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+            <div>
+              <strong style={{ color: 'var(--accent)', display: 'block', marginBottom: '6px' }}>3. {language === 'vi' ? 'Nhập kết quả' : 'Paste Result'}</strong>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '0.8rem', lineHeight: '1.4', margin: 0 }}>
+                {language === 'vi' ? 'Dán đoạn mã JSON nhận xét mà Gemini Web trả ra vào đây rồi bấm Áp dụng.' : 'Paste the result JSON code returned by Gemini Web below and click Apply.'}
+              </p>
+            </div>
+            <div style={{ marginTop: '12px', display: 'flex', gap: '6px' }}>
+              <textarea
+                value={pastedJson}
+                onChange={(e) => setPastedJson(e.target.value)}
+                placeholder={language === 'vi' ? 'Dán JSON của Gemini...' : 'Paste Gemini JSON...'}
+                style={{ flex: 1, height: '32px', minHeight: '32px', fontSize: '0.75rem', padding: '4px', background: 'var(--background-secondary)', color: 'var(--text-primary)', border: '1px solid var(--border)', resize: 'none' }}
+              />
+              <button 
+                className="btn-primary" 
+                onClick={handleApplyJson}
+                style={{ padding: '4px 10px', fontSize: '0.8rem', background: 'var(--accent)', color: '#fff', border: 'none', fontWeight: 'bold' }}
+              >
+                {language === 'vi' ? 'Dán' : 'Apply'}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
 
       {/* Detailed Question Review List */}
       <div>

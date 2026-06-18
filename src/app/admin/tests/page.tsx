@@ -35,6 +35,7 @@ export default function AdminTestsPage() {
   const [tests, setTests] = useState<any[]>([]);
   const [loadingTests, setLoadingTests] = useState(false);
   const [testStatuses, setTestStatuses] = useState<Record<string, 'ok' | 'missing' | 'broken'>>({});
+  const [allBrokenUrls, setAllBrokenUrls] = useState<Set<string>>(new Set());
   const [updatingMissing, setUpdatingMissing] = useState(false);
 
   // Filter states
@@ -75,10 +76,10 @@ export default function AdminTestsPage() {
   }, [isAdmin]);
 
   // Image validation helper (defined here as it does not rely on React state)
-  const validateTestImages = (test: any, force: boolean = false): Promise<'ok' | 'missing' | 'broken'> => {
+  const validateTestImages = (test: any, force: boolean = false): Promise<{status: 'ok' | 'missing' | 'broken', brokenUrls: string[]}> => {
     // 1. Check localStorage Cache
     const cacheKey = 'toeic_sw_image_health_cache';
-    let cache: Record<string, { status: 'ok' | 'missing' | 'broken'; lastChecked: number }> = {};
+    let cache: Record<string, { status: 'ok' | 'missing' | 'broken'; lastChecked: number; brokenUrls?: string[] }> = {};
     try {
       const savedCache = localStorage.getItem(cacheKey);
       if (savedCache) cache = JSON.parse(savedCache);
@@ -90,7 +91,7 @@ export default function AdminTestsPage() {
     const checkThreshold = 24 * 60 * 60 * 1000; // 24 hours
     if (!force && cachedVal && (Date.now() - cachedVal.lastChecked < checkThreshold)) {
       if (cachedVal.status === 'ok' || (Date.now() - cachedVal.lastChecked < 5 * 60 * 1000)) {
-        return Promise.resolve(cachedVal.status);
+        return Promise.resolve({ status: cachedVal.status, brokenUrls: cachedVal.brokenUrls || [] });
       }
     }
 
@@ -123,57 +124,54 @@ export default function AdminTestsPage() {
       
       // Save status immediately to cache
       try {
-        cache[test.id] = { status, lastChecked: Date.now() };
+        cache[test.id] = { status, lastChecked: Date.now(), brokenUrls: [] };
         localStorage.setItem(cacheKey, JSON.stringify(cache));
       } catch (e) {}
-      return Promise.resolve(status);
+      return Promise.resolve({ status, brokenUrls: [] });
     }
 
     if (images.some(img => !img || img.trim() === '')) {
       try {
-        cache[test.id] = { status: 'missing', lastChecked: Date.now() };
+        cache[test.id] = { status: 'missing', lastChecked: Date.now(), brokenUrls: [] };
         localStorage.setItem(cacheKey, JSON.stringify(cache));
       } catch (e) {}
-      return Promise.resolve('missing');
+      return Promise.resolve({ status: 'missing', brokenUrls: [] });
     }
 
-    return new Promise((resolve) => {
-      const saveToCacheAndResolve = (status: 'ok' | 'missing' | 'broken') => {
+    return new Promise(async (resolve) => {
+      const saveToCacheAndResolve = (status: 'ok' | 'missing' | 'broken', brokenUrls: string[]) => {
         try {
-          cache[test.id] = { status, lastChecked: Date.now() };
+          cache[test.id] = { status, lastChecked: Date.now(), brokenUrls };
           localStorage.setItem(cacheKey, JSON.stringify(cache));
         } catch (e) {
           console.error('Failed to write image health cache:', e);
         }
-        resolve(status);
+        resolve({ status, brokenUrls });
       };
 
-      let checkedCount = 0;
-      let hasBroken = false;
-      
-      images.forEach(url => {
-        if (!url.startsWith('http://') && !url.startsWith('https://') && !url.startsWith('/')) {
-          hasBroken = true;
-          checkedCount++;
-          if (checkedCount === images.length) saveToCacheAndResolve('broken');
-          return;
-        }
+      const sessionRes = await supabase?.auth.getSession();
+      const token = sessionRes?.data?.session?.access_token;
 
-        const img = new Image();
-        img.onload = () => {
-          checkedCount++;
-          if (checkedCount === images.length) {
-            saveToCacheAndResolve(hasBroken ? 'broken' : 'ok');
-          }
-        };
-        img.onerror = () => {
-          hasBroken = true;
-          checkedCount++;
-          if (checkedCount === images.length) {
-            saveToCacheAndResolve('broken');
-          }
-        };
-        img.src = url;
+      // Call backend API to validate images accurately
+      fetch('/api/admin/pipeline', {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify({ action: 'validate_images', urls: images })
+      })
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && data.brokenUrls && data.brokenUrls.length > 0) {
+          saveToCacheAndResolve('broken', data.brokenUrls);
+        } else {
+          saveToCacheAndResolve('ok', []);
+        }
+      })
+      .catch(() => {
+        // Fallback or error
+        saveToCacheAndResolve('ok', []);
       });
     });
   };
@@ -182,15 +180,24 @@ export default function AdminTestsPage() {
     if (force) {
       localStorage.removeItem('toeic_sw_image_health_cache');
       setTestStatuses({});
+      setAllBrokenUrls(new Set());
     }
     const newStatuses: Record<string, 'ok' | 'missing' | 'broken'> = {};
+    const newBrokenUrls = new Set<string>();
+    
     await Promise.all(
       testList.map(async (test) => {
-        const status = await validateTestImages(test, force);
+        const { status, brokenUrls } = await validateTestImages(test, force);
         newStatuses[test.id] = status;
+        brokenUrls.forEach(url => newBrokenUrls.add(url));
       })
     );
     setTestStatuses(newStatuses);
+    setAllBrokenUrls(prev => {
+      const merged = new Set(prev);
+      newBrokenUrls.forEach(url => merged.add(url));
+      return merged;
+    });
   }, []);
 
   // Load custom tests
@@ -271,35 +278,49 @@ export default function AdminTestsPage() {
       const { data: { session } } = await supabase.auth.getSession();
       const token = session?.access_token;
 
-      // 1. Upload to ImgBB via server proxy
-      const uploadRes = await fetch('/api/admin/pipeline', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
-        },
-        body: JSON.stringify({ action: 'upload_imgbb', urls })
-      });
+      const allAreImgBB = urls.every(url => url.startsWith('https://i.ibb.co/') || url.startsWith('https://ibb.co/'));
+      let successfulUrls = urls;
 
-      if (!uploadRes.ok) {
-        throw new Error(language === 'vi' ? 'Lỗi upload ảnh lên ImgBB' : 'Failed to upload images to ImgBB');
+      if (!allAreImgBB) {
+        // 1. Upload to ImgBB via server proxy
+        setPipelineStep('uploading');
+        setPipelineProgress(language === 'vi' ? `Đang tải ảnh lên ImgBB (0/${urls.length})...` : `Uploading images to ImgBB (0/${urls.length})...`);
+
+        const uploadRes = await fetch('/api/admin/pipeline', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({ action: 'upload_imgbb', urls })
+        });
+
+        if (!uploadRes.ok) {
+          throw new Error(language === 'vi' ? 'Lỗi upload ảnh lên ImgBB' : 'Failed to upload images to ImgBB');
+        }
+
+        const { results } = await uploadRes.json();
+        successfulUrls = results
+          .filter((r: any) => r.imgbbUrl)
+          .map((r: any) => r.imgbbUrl);
+
+        const failedCount = results.filter((r: any) => r.error).length;
+        if (successfulUrls.length === 0) {
+          throw new Error(language === 'vi' ? 'Không có hình ảnh nào được tải lên ImgBB thành công.' : 'No images were successfully uploaded to ImgBB.');
+        }
+
+        toast.success(
+          language === 'vi' 
+            ? `Đã tải lên ${successfulUrls.length} ảnh. Thất bại: ${failedCount}`
+            : `Uploaded ${successfulUrls.length} images. Failed: ${failedCount}`
+        );
+      } else {
+        toast.success(
+          language === 'vi' 
+            ? `Phát hiện ${urls.length} ảnh đã có trên ImgBB. Bỏ qua tải lên.`
+            : `Detected ${urls.length} existing ImgBB images. Skipping upload.`
+        );
       }
-
-      const { results } = await uploadRes.json();
-      const successfulUrls = results
-        .filter((r: any) => r.imgbbUrl)
-        .map((r: any) => r.imgbbUrl);
-
-      const failedCount = results.filter((r: any) => r.error).length;
-      if (successfulUrls.length === 0) {
-        throw new Error(language === 'vi' ? 'Không có hình ảnh nào được tải lên ImgBB thành công.' : 'No images were successfully uploaded to ImgBB.');
-      }
-
-      toast.success(
-        language === 'vi' 
-          ? `Đã tải lên ${successfulUrls.length} ảnh. Thất bại: ${failedCount}`
-          : `Uploaded ${successfulUrls.length} images. Failed: ${failedCount}`
-      );
 
       // 2. Generate DOCX file
       setPipelineStep('generating_docx');
@@ -465,7 +486,10 @@ Nhiệm vụ của bạn là phân tích từng hình ảnh trong tài liệu n�
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`
         },
-        body: JSON.stringify({ action: 'auto_fill_missing' })
+        body: JSON.stringify({ 
+          action: 'auto_fill_missing', 
+          brokenUrls: Array.from(allBrokenUrls) 
+        })
       });
 
       if (!response.ok) {

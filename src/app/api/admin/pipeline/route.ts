@@ -407,6 +407,7 @@ export async function POST(req: Request) {
 
     // Action: auto_fill_missing
     if (action === 'auto_fill_missing') {
+      const { brokenUrls = [] } = body;
 
       let unusedImages: any[] = [];
       let usedImages: any[] = [];
@@ -481,7 +482,7 @@ export async function POST(req: Request) {
           for (const part of speakingData) {
             if (part.part === 2 && Array.isArray(part.questions)) {
               for (const q of part.questions) {
-                const hasNoImg = !q.image || q.image.trim() === '' || q.image.includes('placeholder');
+                const hasNoImg = !q.image || q.image.trim() === '' || q.image.includes('placeholder') || brokenUrls.includes(q.image);
                 if (hasNoImg) {
                   const drawn = drawUnusedImage('speaking');
                   if (drawn) {
@@ -501,7 +502,7 @@ export async function POST(req: Request) {
           for (const part of writingData) {
             if (part.part === 1 && Array.isArray(part.questions)) {
               for (const q of part.questions) {
-                const hasNoImg = !q.image || q.image.trim() === '' || q.image.includes('placeholder');
+                const hasNoImg = !q.image || q.image.trim() === '' || q.image.includes('placeholder') || brokenUrls.includes(q.image);
                 if (hasNoImg) {
                   const drawn = drawUnusedImage('writing');
                   if (drawn) {
@@ -546,6 +547,34 @@ export async function POST(req: Request) {
         updatedDetails,
         remainingUnused: unusedImages.length
       });
+    }
+
+    if (action === 'validate_images') {
+      const urls = body.urls || [];
+      const brokenUrls: string[] = [];
+      
+      await Promise.all(urls.map(async (url: string) => {
+        if (!url.startsWith('http://') && !url.startsWith('https://') && !url.startsWith('/')) {
+          brokenUrls.push(url);
+          return;
+        }
+        
+        try {
+          const res = await fetch(url, {
+            method: 'HEAD',
+            headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36' },
+            signal: AbortSignal.timeout(5000) as any
+          });
+          
+          if (!res.ok) {
+            brokenUrls.push(url);
+          }
+        } catch (e) {
+          brokenUrls.push(url);
+        }
+      }));
+
+      return NextResponse.json({ success: true, brokenUrls });
     }
 
     return NextResponse.json({ error: 'Action not found' }, { status: 400 });

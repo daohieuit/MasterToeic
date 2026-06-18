@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BookOpen, ArrowRight } from 'lucide-react';
 import { DEFAULT_SPEAKING_PARTS, DEFAULT_WRITING_PARTS } from '../utils/constants';
 
@@ -9,6 +9,28 @@ interface PartIntroScreenProps {
 }
 
 export default function PartIntroScreen({ partTitle, onStart, language = 'en' }: PartIntroScreenProps) {
+  // Request microphone permission early for Speaking parts to save permission and avoid interrupts
+  useEffect(() => {
+    const t = partTitle.toLowerCase();
+    const isSpeaking = t.includes('speaking') || 
+                       (t.includes('part 1') && t.includes('read')) ||
+                       (t.includes('part 2') && t.includes('describe')) ||
+                       (t.includes('part 3') && t.includes('respond to questions') && !t.includes('information')) ||
+                       (t.includes('part 4') && t.includes('information provided')) ||
+                       (t.includes('part 5') && t.includes('express an opinion'));
+
+    if (isSpeaking && typeof window !== 'undefined' && navigator.mediaDevices) {
+      navigator.mediaDevices.getUserMedia({ audio: true })
+        .then((stream) => {
+          // Release microphone immediately
+          stream.getTracks().forEach(track => track.stop());
+        })
+        .catch((err) => {
+          console.warn('Microphone pre-grant request failed/denied:', err);
+        });
+    }
+  }, [partTitle]);
+
   // Always use English for the test directions to maintain TOEIC authenticity
   const getDirections = (title: string) => {
     const t = title.toLowerCase();

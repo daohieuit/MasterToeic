@@ -22,7 +22,21 @@ export function useAudioRecorder() {
 
       const activeStream = await navigator.mediaDevices.getUserMedia({ audio: true });
       setStream(activeStream);
-      const mediaRecorder = new MediaRecorder(activeStream);
+
+      // Detect optimal MIME type for mobile compatibility (e.g. iOS Safari doesn't support audio/webm)
+      let mimeType = 'audio/webm';
+      if (typeof MediaRecorder !== 'undefined' && !MediaRecorder.isTypeSupported(mimeType)) {
+        if (MediaRecorder.isTypeSupported('audio/mp4')) {
+          mimeType = 'audio/mp4';
+        } else if (MediaRecorder.isTypeSupported('audio/mpeg')) {
+          mimeType = 'audio/mpeg';
+        } else if (MediaRecorder.isTypeSupported('audio/ogg')) {
+          mimeType = 'audio/ogg';
+        }
+      }
+
+      const options = MediaRecorder.isTypeSupported(mimeType) ? { mimeType } : undefined;
+      const mediaRecorder = new MediaRecorder(activeStream, options);
       mediaRecorderRef.current = mediaRecorder;
 
       mediaRecorder.ondataavailable = (event) => {
@@ -32,7 +46,7 @@ export function useAudioRecorder() {
       };
 
       mediaRecorder.onstop = () => {
-        const blob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+        const blob = new Blob(audioChunksRef.current, { type: mimeType });
         const url = URL.createObjectURL(blob);
         setAudioBlob(blob);
         setAudioUrl(url);
