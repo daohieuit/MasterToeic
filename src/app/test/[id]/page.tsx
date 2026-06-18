@@ -29,7 +29,8 @@ export default function TestPage({ params }: { params: Promise<TestParams> }) {
   const testId = resolvedParams.id;
   const mode = searchParams.get('mode') || 'full'; // 'full' | 'speaking' | 'writing' | 'part'
   const skill = searchParams.get('skill') || 'speaking';
-  const part = parseInt(searchParams.get('part') || '0', 10);
+  const partsParam = searchParams.get('parts') || searchParams.get('part') || '1';
+  const selectedParts = partsParam.split(',').map(p => parseInt(p, 10)).filter(p => !isNaN(p) && p > 0);
   const customTime = searchParams.get('customTime') === 'true';
   const spMult = parseFloat(searchParams.get('spMult') || '1');
   const wrMult = parseFloat(searchParams.get('wrMult') || '1');
@@ -65,7 +66,7 @@ export default function TestPage({ params }: { params: Promise<TestParams> }) {
   // Lobby & Transition States
   const [lobbyMode, setLobbyMode] = useState<'full' | 'speaking' | 'writing' | 'part'>('full');
   const [lobbySkill, setLobbySkill] = useState<'speaking' | 'writing'>('speaking');
-  const [lobbyPart, setLobbyPart] = useState<number>(1);
+  const [lobbyParts, setLobbyParts] = useState<number[]>([1]);
   const [lobbyCustomTime, setLobbyCustomTime] = useState<boolean>(false);
   const [lobbySpMult, setLobbySpMult] = useState<number>(1);
   const [lobbyWrMult, setLobbyWrMult] = useState<number>(1);
@@ -311,49 +312,55 @@ export default function TestPage({ params }: { params: Promise<TestParams> }) {
         }
       } else if (activeMode === 'part') {
         if (activeSkill === 'speaking' && selectedTest.speaking) {
-          const p = selectedTest.speaking.find((x: any) => x.part === part);
-          if (p) {
-            const pTitle = p.partTitle || getSpeakingPartConfig(p.part)?.partTitle || `Part ${p.part}`;
-            p.questions.forEach((q: any, qIdx: number) => {
-              filteredQuestions.push({
-                ...q,
-                id: q.id || `sp_q${qIdx + 1}`,
-                partTitle: pTitle,
-                referenceInfo: p.referenceInfo,
-                situation: p.situation,
-                section: 'speaking'
-              });
-            });
-          }
-        } else if (activeSkill === 'writing' && selectedTest.writing) {
-          const p = selectedTest.writing.find((x: any) => x.part === part);
-          if (p) {
-            const pTitle = p.partTitle || getWritingPartConfig(p.part)?.partTitle || `Part ${p.part}`;
-            if (p.part === 1) {
-              const cleanedQuestions = p.questions.map((q: any, qIdx: number) => ({
-                ...q,
-                id: q.id || `wr_q${qIdx + 1}`
-              }));
-              filteredQuestions.push({
-                id: `writing_part_1_group_${Date.now()}`,
-                type: 'writing_part_1_group',
-                partTitle: pTitle,
-                partTime: p.partTime || 480,
-                questions: cleanedQuestions,
-                section: 'writing'
-              });
-            } else {
+          const sortedParts = [...selectedParts].sort((a, b) => a - b);
+          sortedParts.forEach((pNum) => {
+            const p = selectedTest.speaking.find((x: any) => x.part === pNum);
+            if (p) {
+              const pTitle = p.partTitle || getSpeakingPartConfig(p.part)?.partTitle || `Part ${p.part}`;
               p.questions.forEach((q: any, qIdx: number) => {
                 filteredQuestions.push({
                   ...q,
-                  id: q.id || `wr_q${qIdx + 1}`,
+                  id: q.id || `sp_q_${pNum}_${qIdx + 1}`,
                   partTitle: pTitle,
-                  direction: q.direction,
-                  section: 'writing'
+                  referenceInfo: p.referenceInfo,
+                  situation: p.situation,
+                  section: 'speaking'
                 });
               });
             }
-          }
+          });
+        } else if (activeSkill === 'writing' && selectedTest.writing) {
+          const sortedParts = [...selectedParts].sort((a, b) => a - b);
+          sortedParts.forEach((pNum) => {
+            const p = selectedTest.writing.find((x: any) => x.part === pNum);
+            if (p) {
+              const pTitle = p.partTitle || getWritingPartConfig(p.part)?.partTitle || `Part ${p.part}`;
+              if (p.part === 1) {
+                const cleanedQuestions = p.questions.map((q: any, qIdx: number) => ({
+                  ...q,
+                  id: q.id || `wr_q_1_${qIdx + 1}`
+                }));
+                filteredQuestions.push({
+                  id: `writing_part_1_group_${Date.now()}_${pNum}`,
+                  type: 'writing_part_1_group',
+                  partTitle: pTitle,
+                  partTime: p.partTime || 480,
+                  questions: cleanedQuestions,
+                  section: 'writing'
+                });
+              } else {
+                p.questions.forEach((q: any, qIdx: number) => {
+                  filteredQuestions.push({
+                    ...q,
+                    id: q.id || `wr_q_${pNum}_${qIdx + 1}`,
+                    partTitle: pTitle,
+                    direction: q.direction,
+                    section: 'writing'
+                  });
+                });
+              }
+            }
+          });
         }
       }
 
@@ -366,7 +373,7 @@ export default function TestPage({ params }: { params: Promise<TestParams> }) {
 
     initTest();
   // eslint-disable-next-line react-hooks/exhaustive-deps -- intentional: user?.id prevents re-render loops; router from useRouter() is stable
-  }, [testId, mode, skill, part, attemptId, user?.id, isStarted, language]);
+  }, [testId, mode, skill, partsParam, attemptId, user?.id, isStarted, language]);
 
   // Sync searchParams to lobby state
   useEffect(() => {
@@ -376,8 +383,12 @@ export default function TestPage({ params }: { params: Promise<TestParams> }) {
     if (searchParams.get('skill')) {
       setLobbySkill(searchParams.get('skill') as any);
     }
-    if (searchParams.get('part')) {
-      setLobbyPart(parseInt(searchParams.get('part') || '1', 10));
+    const partsVal = searchParams.get('parts') || searchParams.get('part');
+    if (partsVal) {
+      const parsed = partsVal.split(',').map(x => parseInt(x, 10)).filter(x => !isNaN(x) && x > 0);
+      if (parsed.length > 0) {
+        setLobbyParts(parsed);
+      }
     }
     if (searchParams.get('customTime')) {
       setLobbyCustomTime(searchParams.get('customTime') === 'true');
@@ -486,7 +497,7 @@ export default function TestPage({ params }: { params: Promise<TestParams> }) {
       testId: testData.id,
       testTitle: testData.title,
       mode: mode,
-      partName: mode === 'part' ? `${skill.toUpperCase()} Part ${part}` : undefined,
+      partName: mode === 'part' ? `${skill.toUpperCase()} Part ${partsParam}` : undefined,
       speakingScore: null,
       writingScore: null,
       reviews: evaluationResults,
@@ -678,7 +689,7 @@ export default function TestPage({ params }: { params: Promise<TestParams> }) {
       params.set('mode', lobbyMode);
       if (lobbyMode === 'part') {
         params.set('skill', lobbySkill);
-        params.set('part', lobbyPart.toString());
+        params.set('parts', lobbyParts.join(','));
       }
       params.set('customTime', lobbyCustomTime.toString());
       params.set('spMult', lobbySpMult.toString());
@@ -875,14 +886,14 @@ export default function TestPage({ params }: { params: Promise<TestParams> }) {
             {lobbyMode === 'part' && (
               <div className="fade-in" style={{ padding: '16px', background: 'var(--background)', border: '1px solid var(--border)', display: 'flex', flexDirection: 'column', gap: '12px' }}>
                 <h4 style={{ fontSize: '0.8rem', fontWeight: 'bold', color: 'var(--text-primary)' }}>{t.lobbyChoosePart}</h4>
-                <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
+                <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', marginBottom: '4px' }}>
                   {hasSpeaking && (
                     <label style={{ fontSize: '0.85rem', display: 'flex', alignItems: 'center', gap: '6px', cursor: 'pointer' }}>
                       <input 
                         type="radio" 
                         name="lobby_part_skill" 
                         checked={lobbySkill === 'speaking'} 
-                        onChange={() => { setLobbySkill('speaking'); setLobbyPart(1); }} 
+                        onChange={() => { setLobbySkill('speaking'); setLobbyParts([1]); }} 
                       />
                       Speaking Parts
                     </label>
@@ -893,35 +904,82 @@ export default function TestPage({ params }: { params: Promise<TestParams> }) {
                         type="radio" 
                         name="lobby_part_skill" 
                         checked={lobbySkill === 'writing'} 
-                        onChange={() => { setLobbySkill('writing'); setLobbyPart(1); }} 
+                        onChange={() => { setLobbySkill('writing'); setLobbyParts([1]); }} 
                       />
                       Writing Parts
                     </label>
                   )}
                 </div>
 
-                <div>
-                  <select 
-                    value={lobbyPart} 
-                    onChange={(e) => setLobbyPart(parseInt(e.target.value, 10))}
-                    style={{ width: '100%', padding: '8px', border: '1px solid var(--border)', background: 'var(--background-secondary)', color: 'var(--text-primary)', fontWeight: 'bold' }}
-                  >
-                    {lobbySkill === 'speaking' ? (
-                      <>
-                        <option value="1">{t.spPart} 1: Read Aloud (Q1-2)</option>
-                        <option value="2">{t.spPart} 2: Describe Picture (Q3-4)</option>
-                        <option value="3">{t.spPart} 3: Respond to Questions (Q5-7)</option>
-                        <option value="4">{t.spPart} 4: Use Info Provided (Q8-10)</option>
-                        <option value="5">{t.spPart} 5: Express Opinion (Q11)</option>
-                      </>
-                    ) : (
-                      <>
-                        <option value="1">{t.wrPart} 1: Write based on Picture (Q1-5)</option>
-                        <option value="2">{t.wrPart} 2: Respond to Request (Q6-7)</option>
-                        <option value="3">{t.wrPart} 3: Opinion Essay (Q8)</option>
-                      </>
-                    )}
-                  </select>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  {(lobbySkill === 'speaking'
+                    ? [
+                        { id: 1, label: `${t.spPart} 1: Read Aloud (Q1-2)` },
+                        { id: 2, label: `${t.spPart} 2: Describe Picture (Q3-4)` },
+                        { id: 3, label: `${t.spPart} 3: Respond to Questions (Q5-7)` },
+                        { id: 4, label: `${t.spPart} 4: Use Info Provided (Q8-10)` },
+                        { id: 5, label: `${t.spPart} 5: Express Opinion (Q11)` }
+                      ]
+                    : [
+                        { id: 1, label: `${t.wrPart} 1: Write based on Picture (Q1-5)` },
+                        { id: 2, label: `${t.wrPart} 2: Respond to Request (Q6-7)` },
+                        { id: 3, label: `${t.wrPart} 3: Opinion Essay (Q8)` }
+                      ]
+                  ).map((p) => {
+                    const isSelected = lobbyParts.includes(p.id);
+                    return (
+                      <button
+                        key={p.id}
+                        type="button"
+                        onClick={() => {
+                          setLobbyParts((prev) => {
+                            if (prev.includes(p.id)) {
+                              if (prev.length === 1) {
+                                toast.error(language === 'vi' ? 'Bạn phải chọn ít nhất một Part!' : 'You must select at least one Part!');
+                                return prev;
+                              }
+                              return prev.filter(id => id !== p.id);
+                            } else {
+                              return [...prev, p.id];
+                            }
+                          });
+                        }}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '12px',
+                          padding: '12px',
+                          background: isSelected ? 'var(--accent-light)' : 'var(--background-secondary)',
+                          border: `1px solid ${isSelected ? 'var(--accent)' : 'var(--border)'}`,
+                          color: 'var(--text-primary)',
+                          textAlign: 'left',
+                          cursor: 'pointer',
+                          fontWeight: isSelected ? 'bold' : 'normal',
+                          transition: 'all 0.15s ease',
+                          borderRadius: '0px'
+                        }}
+                      >
+                        <div
+                          style={{
+                            width: '18px',
+                            height: '18px',
+                            border: `2px solid ${isSelected ? 'var(--accent)' : 'var(--text-secondary)'}`,
+                            background: isSelected ? 'var(--accent)' : 'transparent',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            color: '#fff',
+                            fontSize: '10px',
+                            fontWeight: 'bold',
+                            flexShrink: 0
+                          }}
+                        >
+                          {isSelected && '✓'}
+                        </div>
+                        <span style={{ fontSize: '0.85rem' }}>{p.label}</span>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
             )}
