@@ -109,16 +109,26 @@ export default function AdminLayout({
         <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           
           {/* Logo & Branding */}
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <img src="/logo.png" alt="Logo" style={{ height: '28px', width: '28px', objectFit: 'contain' }} />
+          <div style={{ display: 'flex', alignItems: 'center' }}>
             <span style={{ 
-              fontFamily: 'var(--font-mono), monospace', 
-              fontWeight: 900, 
-              color: 'var(--accent)', 
-              letterSpacing: '0.05em',
-              fontSize: '1rem'
+              fontFamily: 'var(--font-space-grotesk), sans-serif', 
+              fontWeight: 800, 
+              letterSpacing: '0.08em',
+              fontSize: '1.1rem',
+              textTransform: 'uppercase'
             }}>
-              MASTER TOEIC ADMIN
+              <span style={{ color: 'var(--text-primary)' }}>MASTER</span>
+              <span style={{ color: 'var(--accent)', marginLeft: '4px' }}>TOEIC</span>
+              <span style={{ 
+                color: 'var(--text-secondary)', 
+                fontSize: '0.7rem', 
+                fontWeight: 600, 
+                marginLeft: '8px', 
+                borderLeft: '1px solid var(--border)', 
+                paddingLeft: '8px' 
+              }}>
+                ADMIN
+              </span>
             </span>
           </div>
 

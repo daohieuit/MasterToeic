@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="./public/logo.png" alt="Master Toeic Logo" width="120" height="120" />
+</p>
+
 # Master Toeic - Luyện Thi TOEIC Speaking & Writing Bằng AI
 
 Master Toeic là ứng dụng web serverless tối giản, hiệu quả và hoàn toàn miễn phí (0đ chi phí vận hành) hỗ trợ ôn luyện và thi thử hai kỹ năng Nói (Speaking) và Viết (Writing) theo chuẩn định dạng TOEIC quốc tế. 
