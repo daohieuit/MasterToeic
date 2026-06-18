@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, use } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
+import Link from 'next/link';
 import { useApp } from '@/context/AppContext';
 import { supabase } from '@/utils/supabase';
 import SpeakingConsole from '@/components/SpeakingConsole';
@@ -9,7 +10,7 @@ import WritingConsole from '@/components/WritingConsole';
 import ReviewConsole from '@/components/ReviewConsole';
 import PartIntroScreen from '@/components/PartIntroScreen';
 import ConfirmModal from '@/components/ConfirmModal';
-import { AlertCircle, RefreshCw, Activity, ArrowRight, Loader, Mic, MicOff, Play, Volume2 } from 'lucide-react';
+import { AlertCircle, RefreshCw, Activity, ArrowRight, Loader, Mic, MicOff, Play, Volume2, Award, ArrowLeft } from 'lucide-react';
 import { useAudioRecorder } from '@/hooks/useAudioRecorder';
 import confetti from 'canvas-confetti';
 import toast from 'react-hot-toast';
@@ -1149,15 +1150,88 @@ export default function TestPage({ params }: { params: Promise<TestParams> }) {
 
   if (showReview && reviewData) {
     return (
-      <div style={{ padding: '24px 0', minHeight: '100vh', background: 'var(--background)' }}>
-        <ReviewConsole
-          testTitle={reviewData.testTitle}
-          date={reviewData.date}
-          speakingScore={reviewData.speakingScore}
-          writingScore={reviewData.writingScore}
-          reviews={reviewData.reviews}
-          language={language}
-        />
+      <div style={{ display: 'flex', minHeight: '100vh', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', background: 'var(--background)', padding: '24px' }}>
+        <div className="card-sharp animate-fade-in" style={{ width: '100%', maxWidth: '600px', display: 'flex', flexDirection: 'column', gap: '24px', padding: '32px', borderColor: 'var(--accent)', background: 'var(--background-secondary)', textAlign: 'center', borderRadius: '0px' }}>
+          
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px' }}>
+            <div style={{ padding: '16px', background: 'var(--background)', border: '1px solid var(--accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '50%', width: '64px', height: '64px' }}>
+              <Award size={32} style={{ color: 'var(--accent)' }} />
+            </div>
+            <span style={{ fontSize: '0.85rem', color: 'var(--accent)', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.15em' }}>
+              {language === 'vi' ? 'HOÀN THÀNH BÀI LÀM' : 'EXAM COMPLETED'}
+            </span>
+            <h2 style={{ fontSize: '1.8rem', color: 'var(--text-primary)', margin: '4px 0 0 0', fontWeight: 'bold' }}>
+              {reviewData.testTitle}
+            </h2>
+          </div>
+
+          <div style={{ borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)', padding: '20px 0', display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '0.95rem', background: 'var(--background)', margin: '8px 0' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0 16px' }}>
+              <span style={{ color: 'var(--text-secondary)' }}>{language === 'vi' ? 'Ngày hoàn thành' : 'Completion Date'}:</span>
+              <span style={{ fontWeight: 'bold', fontFamily: 'var(--font-mono)' }}>{reviewData.date}</span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0 16px' }}>
+              <span style={{ color: 'var(--text-secondary)' }}>{language === 'vi' ? 'Chế độ thi' : 'Exam Mode'}:</span>
+              <span style={{ fontWeight: 'bold', textTransform: 'uppercase', color: 'var(--accent)' }}>
+                {reviewData.mode === 'full' 
+                  ? (language === 'vi' ? 'Full Test (Nói & Viết)' : 'Full Test (Speaking & Writing)')
+                  : reviewData.mode === 'speaking'
+                  ? (language === 'vi' ? 'Speaking Only (Chỉ Nói)' : 'Speaking Only')
+                  : reviewData.mode === 'writing'
+                  ? (language === 'vi' ? 'Writing Only (Chỉ Viết)' : 'Writing Only')
+                  : (language === 'vi' ? `Part Luyện Tập (${reviewData.partName})` : `Part Practice (${reviewData.partName})`)}
+              </span>
+            </div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', padding: '0 16px' }}>
+              <span style={{ color: 'var(--text-secondary)' }}>{language === 'vi' ? 'Số câu đã làm' : 'Questions Answered'}:</span>
+              <span style={{ fontWeight: 'bold', fontFamily: 'var(--font-mono)' }}>{reviewData.reviews?.length || 0}</span>
+            </div>
+          </div>
+
+          <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: '1.6', margin: 0 }}>
+            {language === 'vi'
+              ? 'Bài làm của bạn đã được ghi lại thành công. Nhấn nút bên dưới để đi đến trang chi tiết: tải xuống tệp âm thanh/JSON, sao chép prompt và dán kết quả nhận xét từ AI.'
+              : 'Your practice attempt has been recorded successfully. Click the button below to view detailed results, download audio, copy grading prompt, and apply AI feedback.'}
+          </p>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginTop: '8px' }}>
+            <Link 
+              href={`/test/${testId}/review?attemptId=${reviewData.id}`}
+              className="btn-accent"
+              style={{ 
+                width: '100%', 
+                justifyContent: 'center', 
+                padding: '16px', 
+                fontSize: '1.1rem', 
+                fontWeight: 'bold',
+                textDecoration: 'none',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px'
+              }}
+            >
+              {language === 'vi' ? 'Xem chi tiết & Chấm điểm AI' : 'View Details & AI Grading'} <ArrowRight size={20} />
+            </Link>
+
+            <Link 
+              href="/" 
+              className="btn-secondary"
+              style={{ 
+                width: '100%', 
+                justifyContent: 'center', 
+                padding: '12px', 
+                fontSize: '0.95rem',
+                textDecoration: 'none',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px'
+              }}
+            >
+              <ArrowLeft size={16} /> {language === 'vi' ? 'Quay lại Trang chủ' : 'Back to Dashboard'}
+            </Link>
+          </div>
+
+        </div>
       </div>
     );
   }

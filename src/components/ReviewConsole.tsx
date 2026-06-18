@@ -793,19 +793,19 @@ Trả về kết quả chấm điểm bằng Tiếng Việt. Bạn BẮT BUỘC 
                 {language === 'vi' ? 'Dán đoạn mã JSON nhận xét mà Gemini Web trả ra vào đây rồi bấm Áp dụng.' : 'Paste the result JSON code returned by Gemini Web below and click Apply.'}
               </p>
             </div>
-            <div style={{ marginTop: '12px', display: 'flex', gap: '6px' }}>
+            <div style={{ marginTop: '12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
               <textarea
                 value={pastedJson}
                 onChange={(e) => setPastedJson(e.target.value)}
                 placeholder={language === 'vi' ? 'Dán JSON của Gemini...' : 'Paste Gemini JSON...'}
-                style={{ flex: 1, height: '32px', minHeight: '32px', fontSize: '0.75rem', padding: '4px', background: 'var(--background-secondary)', color: 'var(--text-primary)', border: '1px solid var(--border)', resize: 'none' }}
+                style={{ width: '100%', height: '120px', minHeight: '120px', fontSize: '0.75rem', padding: '8px', background: 'var(--background-secondary)', color: 'var(--text-primary)', border: '1px solid var(--border)', resize: 'vertical', fontFamily: 'var(--font-mono)' }}
               />
               <button 
                 className="btn-primary" 
                 onClick={handleApplyJson}
-                style={{ padding: '4px 10px', fontSize: '0.8rem', background: 'var(--accent)', color: '#fff', border: 'none', fontWeight: 'bold' }}
+                style={{ width: '100%', padding: '8px', fontSize: '0.85rem', background: 'var(--accent)', color: '#fff', border: 'none', fontWeight: 'bold', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
               >
-                {language === 'vi' ? 'Dán' : 'Apply'}
+                {language === 'vi' ? 'Áp dụng kết quả' : 'Apply Results'}
               </button>
             </div>
           </div>
