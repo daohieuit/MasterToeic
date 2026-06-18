@@ -48,7 +48,7 @@ export default function ConfirmModal({
         gap: '20px'
       }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-          <div style={{ padding: '10px', backgroundColor: 'var(--accent-light)', borderRadius: '8px', color: 'var(--accent)' }}>
+          <div style={{ padding: '10px', backgroundColor: 'var(--accent-light)', borderRadius: 'var(--border-radius, 1px)', color: 'var(--accent)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <AlertTriangle size={24} />
           </div>
           <h3 style={{ fontSize: '1.2rem', fontWeight: 'bold', color: 'var(--text-primary)', margin: 0 }}>
