@@ -560,11 +560,21 @@ export async function POST(req: Request) {
         }
         
         try {
-          const res = await fetch(url, {
+          // Try HEAD first (fastest and lowest bandwidth)
+          let res = await fetch(url, {
             method: 'HEAD',
             headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36' },
             signal: AbortSignal.timeout(5000) as any
           });
+          
+          // Retry with GET if HEAD is rejected by the CDN (often returns 405 or 403)
+          if (!res.ok) {
+            res = await fetch(url, {
+              method: 'GET',
+              headers: { 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36' },
+              signal: AbortSignal.timeout(5000) as any
+            });
+          }
           
           if (!res.ok) {
             brokenUrls.push(url);
