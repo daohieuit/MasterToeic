@@ -61,3 +61,65 @@ CREATE POLICY "Authenticated users can update tests"
 CREATE POLICY "Authenticated users can delete tests" 
     ON public.custom_tests FOR DELETE 
     USING (auth.role() = 'authenticated');
+
+
+-- 3. Thiết lập Storage cho tệp âm thanh Speaking
+INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_types)
+VALUES (
+    'user_audio',
+    'user_audio',
+    true,
+    10485760, -- 10MB
+    ARRAY['audio/wav', 'audio/webm', 'audio/mp4', 'audio/mpeg', 'audio/ogg']::text[]
+)
+ON CONFLICT (id) DO NOTHING;
+
+-- Bật RLS cho bảng storage.objects
+ALTER TABLE storage.objects ENABLE ROW LEVEL SECURITY;
+
+-- Cho phép xem âm thanh công khai
+CREATE POLICY "Allow public read of user_audio" ON storage.objects
+    FOR SELECT
+    TO public
+    USING (bucket_id = 'user_audio');
+
+-- Cho phép upload vào thư mục riêng của người dùng
+CREATE POLICY "Allow authenticated insert to user_audio" ON storage.objects
+    FOR INSERT
+    TO authenticated
+    WITH CHECK (
+        bucket_id = 'user_audio' 
+        AND (auth.uid())::text = (storage.foldername(name))[1]
+    );
+
+-- Cho phép xóa tệp tin của chính mình
+CREATE POLICY "Allow authenticated delete from user_audio" ON storage.objects
+    FOR DELETE
+    TO authenticated
+    USING (
+        bucket_id = 'user_audio'
+        AND (auth.uid())::text = (storage.foldername(name))[1]
+    );
+
+-- Kích hoạt cron tự động xóa tệp tin cũ hơn 7 ngày
+CREATE EXTENSION IF NOT EXISTS pg_cron;
+
+CREATE OR REPLACE FUNCTION public.cleanup_old_user_audio()
+RETURNS void
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+BEGIN
+    DELETE FROM storage.objects
+    WHERE bucket_id = 'user_audio'
+      AND created_at < (now() - INTERVAL '7 days');
+END;
+$$;
+
+-- Chạy dọn dẹp hàng ngày lúc 00:00
+SELECT cron.schedule(
+    'cleanup-old-user-audio-job',
+    '0 0 * * *',
+    'SELECT public.cleanup_old_user_audio();'
+);
+

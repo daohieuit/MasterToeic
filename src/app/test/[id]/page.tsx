@@ -526,6 +526,87 @@ export default function TestPage({ params }: { params: Promise<TestParams> }) {
         
         if (!error && data && data.length > 0) {
           finalAttemptId = data[0].id;
+          
+          // Sync speaking audio files to Supabase Storage (only for logged-in users)
+          const speakingRevs = evaluationResults.filter(r => r.section === 'speaking' && r.audioUrl && r.audioUrl.startsWith('blob:'));
+          if (speakingRevs.length > 0) {
+            const uploadToastId = toast.loading(
+              language === 'vi' 
+                ? 'Đang tải tệp ghi âm Speaking lên đám mây...' 
+                : 'Uploading Speaking audio responses to cloud storage...'
+            );
+            
+            let uploadSuccessCount = 0;
+            for (let i = 0; i < evaluationResults.length; i++) {
+              const rev = evaluationResults[i];
+              if (rev.section === 'speaking' && rev.audioUrl && rev.audioUrl.startsWith('blob:')) {
+                try {
+                  const response = await fetch(rev.audioUrl);
+                  const blob = await response.blob();
+                  
+                  let ext = 'webm';
+                  if (blob.type) {
+                    const parts = blob.type.split('/');
+                    if (parts.length > 1) {
+                      ext = parts[1].split(';')[0] || 'webm';
+                    }
+                  }
+                  
+                  const filePath = `${user.id}/${finalAttemptId}/${rev.questionId}.${ext}`;
+                  
+                  const { error: uploadError } = await supabase.storage
+                    .from('user_audio')
+                    .upload(filePath, blob, {
+                      contentType: blob.type || 'audio/webm',
+                      cacheControl: '3600',
+                      upsert: true
+                    });
+                    
+                  if (uploadError) {
+                    console.error(`Failed to upload audio for ${rev.questionId}:`, uploadError.message);
+                  } else {
+                    const { data: publicUrlData } = supabase.storage
+                      .from('user_audio')
+                      .getPublicUrl(filePath);
+                      
+                    if (publicUrlData && publicUrlData.publicUrl) {
+                      rev.audioUrl = publicUrlData.publicUrl;
+                      uploadSuccessCount++;
+                    }
+                  }
+                } catch (uploadErr) {
+                  console.error(`Error processing audio upload for ${rev.questionId}:`, uploadErr);
+                }
+              }
+            }
+            
+            if (uploadSuccessCount > 0) {
+              const { error: updateError } = await supabase
+                .from('practice_history')
+                .update({ reviews: evaluationResults })
+                .eq('id', finalAttemptId)
+                .eq('user_id', user.id);
+                
+              if (updateError) {
+                console.error('Failed to sync updated audio URLs to database:', updateError.message);
+                toast.error(
+                  language === 'vi' 
+                    ? 'Không thể đồng bộ link âm thanh lên database.' 
+                    : 'Failed to sync audio URLs to database.',
+                  { id: uploadToastId }
+                );
+              } else {
+                toast.success(
+                  language === 'vi' 
+                    ? `Đã lưu thành công ${uploadSuccessCount} tệp ghi âm Speaking!` 
+                    : `Successfully saved ${uploadSuccessCount} Speaking audio responses!`,
+                  { id: uploadToastId }
+                );
+              }
+            } else {
+              toast.dismiss(uploadToastId);
+            }
+          }
         } else if (error) {
           console.error('Failed to save attempt to Database:', error.message);
         }
