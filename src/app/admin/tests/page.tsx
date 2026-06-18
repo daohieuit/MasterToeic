@@ -37,6 +37,9 @@ export default function AdminTestsPage() {
   const [testStatuses, setTestStatuses] = useState<Record<string, 'ok' | 'missing' | 'broken'>>({});
   const [allBrokenUrls, setAllBrokenUrls] = useState<Set<string>>(new Set());
   const [updatingMissing, setUpdatingMissing] = useState(false);
+  const [isValidating, setIsValidating] = useState(false);
+  const [validatingProgress, setValidatingProgress] = useState(0);
+  const [updatingProgress, setUpdatingProgress] = useState(0);
 
   // Filter states
   const [filterType, setFilterType] = useState<'all' | 'sw' | 's' | 'w'>('all');
@@ -177,6 +180,11 @@ export default function AdminTestsPage() {
   };
 
   const validateAllImages = useCallback(async (testList: any[], force: boolean = false) => {
+    if (testList.length === 0) return;
+    
+    setIsValidating(true);
+    setValidatingProgress(0);
+    
     if (force) {
       localStorage.removeItem('toeic_sw_image_health_cache');
       setTestStatuses({});
@@ -185,11 +193,17 @@ export default function AdminTestsPage() {
     const newStatuses: Record<string, 'ok' | 'missing' | 'broken'> = {};
     const newBrokenUrls = new Set<string>();
     
+    let completedCount = 0;
+    const total = testList.length;
+    
     await Promise.all(
       testList.map(async (test) => {
         const { status, brokenUrls } = await validateTestImages(test, force);
         newStatuses[test.id] = status;
         brokenUrls.forEach(url => newBrokenUrls.add(url));
+        
+        completedCount++;
+        setValidatingProgress(Math.round((completedCount / total) * 100));
       })
     );
     setTestStatuses(newStatuses);
@@ -198,6 +212,11 @@ export default function AdminTestsPage() {
       newBrokenUrls.forEach(url => merged.add(url));
       return merged;
     });
+    
+    setTimeout(() => {
+      setIsValidating(false);
+      setValidatingProgress(0);
+    }, 600);
   }, []);
 
   // Load custom tests
@@ -470,13 +489,27 @@ Nhiệm vụ của bạn là phân tích từng hình ảnh trong tài liệu n�
 
   // Auto-update Missing Images
   const handleAutoUpdateMissing = async () => {
-    try {
-      if (!supabase) {
-        throw new Error(language === 'vi' ? 'Supabase chưa được cấu hình' : 'Supabase is not configured');
-      }
-      setUpdatingMissing(true);
-      const toastId = toast.loading(language === 'vi' ? 'Đang quét kho và cập nhật các đề thiếu ảnh...' : 'Scanning pool and updating missing tests...');
+    if (!supabase) {
+      toast.error(language === 'vi' ? 'Supabase chưa được cấu hình' : 'Supabase is not configured');
+      return;
+    }
 
+    setUpdatingMissing(true);
+    setUpdatingProgress(0);
+
+    // Progress simulation interval
+    const progressInterval = setInterval(() => {
+      setUpdatingProgress((prev) => {
+        if (prev >= 90) return 90;
+        // Increment between 3% and 10%
+        const inc = Math.floor(Math.random() * 8) + 3;
+        return Math.min(prev + inc, 90);
+      });
+    }, 200);
+
+    const toastId = toast.loading(language === 'vi' ? 'Đang quét kho và cập nhật các đề thiếu ảnh...' : 'Scanning pool and updating missing tests...');
+
+    try {
       const { data: { session } } = await supabase.auth.getSession();
       const token = session?.access_token;
 
@@ -500,6 +533,10 @@ Nhiệm vụ của bạn là phân tích từng hình ảnh trong tài liệu n�
       const result = await response.json();
       toast.dismiss(toastId);
 
+      // Finish progress bar
+      clearInterval(progressInterval);
+      setUpdatingProgress(100);
+
       if (result.updatedCount > 0) {
         toast.success(
           language === 'vi'
@@ -513,9 +550,14 @@ Nhiệm vụ của bạn là phân tích từng hình ảnh trong tài liệu n�
         toast.success(language === 'vi' ? 'Không có đề nào cần cập nhật ảnh.' : 'No tests needed image updates.');
       }
     } catch (err: any) {
+      clearInterval(progressInterval);
+      toast.dismiss(toastId);
       toast.error(language === 'vi' ? 'Lỗi: ' + err.message : 'Error: ' + err.message);
     } finally {
-      setUpdatingMissing(false);
+      setTimeout(() => {
+        setUpdatingMissing(false);
+        setUpdatingProgress(0);
+      }, 600);
     }
   };
 
@@ -628,29 +670,87 @@ Nhiệm vụ của bạn là phân tích từng hình ảnh trong tài liệu n�
                 <button 
                   className="btn-secondary"
                   onClick={() => validateAllImages(tests, true)}
-                  style={{ display: 'flex', alignItems: 'center', gap: '6px', padding: '8px 14px', borderRadius: '0px', fontSize: '0.8rem' }}
+                  disabled={isValidating || loadingTests}
+                  style={{ 
+                    position: 'relative',
+                    overflow: 'hidden',
+                    display: 'flex', 
+                    alignItems: 'center', 
+                    gap: '6px', 
+                    padding: '8px 14px', 
+                    borderRadius: '0px', 
+                    fontSize: '0.8rem' 
+                  }}
                   title={language === 'vi' ? 'Kiểm tra lại toàn bộ ảnh (Xóa cache)' : 'Re-check all images (Clear cache)'}
                 >
-                  <RefreshCw size={14} />
-                  <span className="desktop-only">{language === 'vi' ? 'Kiểm tra lại' : 'Recheck'}</span>
+                  {isValidating && (
+                    <div 
+                      style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        bottom: 0,
+                        width: `${validatingProgress}%`,
+                        backgroundColor: 'var(--border)',
+                        opacity: 0.4,
+                        zIndex: 0,
+                        transition: 'width 0.2s ease-out'
+                      }}
+                    />
+                  )}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', zIndex: 1, position: 'relative' }}>
+                    {isValidating ? (
+                      <Loader2 className="animate-spin" size={14} />
+                    ) : (
+                      <RefreshCw size={14} />
+                    )}
+                    <span className="desktop-only">
+                      {isValidating 
+                        ? (language === 'vi' ? `Đang quét (${validatingProgress}%)` : `Scanning (${validatingProgress}%)`)
+                        : (language === 'vi' ? 'Kiểm tra lại' : 'Recheck')}
+                    </span>
+                  </div>
                 </button>
                 <button
                   className="btn-accent"
                   onClick={handleAutoUpdateMissing}
-                  disabled={updatingMissing || loadingTests}
-                  style={{ fontSize: '0.8rem', padding: '8px 14px' }}
+                  disabled={updatingMissing || loadingTests || isValidating}
+                  style={{ 
+                    position: 'relative',
+                    overflow: 'hidden',
+                    fontSize: '0.8rem', 
+                    padding: '8px 14px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '6px'
+                  }}
                 >
-                  {updatingMissing ? (
-                    <>
-                      <Loader2 className="animate-spin" size={14} style={{ marginRight: '6px' }} />
-                      {language === 'vi' ? 'Đang cập nhật...' : 'Updating...'}
-                    </>
-                  ) : (
-                    <>
-                      <RefreshCw size={14} style={{ marginRight: '6px' }} />
-                      {language === 'vi' ? 'Cập nhật đề thiếu ảnh' : 'Update Missing Images'}
-                    </>
+                  {updatingMissing && (
+                    <div 
+                      style={{
+                        position: 'absolute',
+                        top: 0,
+                        left: 0,
+                        bottom: 0,
+                        width: `${updatingProgress}%`,
+                        backgroundColor: 'rgba(255, 255, 255, 0.25)',
+                        zIndex: 0,
+                        transition: 'width 0.2s ease-out'
+                      }}
+                    />
                   )}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px', zIndex: 1, position: 'relative' }}>
+                    {updatingMissing ? (
+                      <Loader2 className="animate-spin" size={14} />
+                    ) : (
+                      <RefreshCw size={14} />
+                    )}
+                    <span>
+                      {updatingMissing 
+                        ? (language === 'vi' ? `Đang cập nhật (${updatingProgress}%)` : `Updating (${updatingProgress}%)`)
+                        : (language === 'vi' ? 'Cập nhật đề thiếu ảnh' : 'Update Missing Images')}
+                    </span>
+                  </div>
                 </button>
               </div>
             </div>
