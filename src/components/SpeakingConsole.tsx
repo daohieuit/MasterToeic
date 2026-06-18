@@ -70,6 +70,14 @@ export default function SpeakingConsole({
   const [timeLeft, setTimeLeft] = useState(questionPrepTime > 0 ? prepDuration : respDuration);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
+  // Image Loading State to delay timer
+  const [imageLoaded, setImageLoaded] = useState(true);
+
+  // Set imageLoaded when question.image changes
+  useEffect(() => {
+    setImageLoaded(!question.image);
+  }, [question.image]);
+
   // Canvas Waveform visualizer Refs
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const animationRef = useRef<number | null>(null);
@@ -96,6 +104,9 @@ export default function SpeakingConsole({
   useEffect(() => {
     if (timerRef.current) clearInterval(timerRef.current);
     
+    // Skip timer countdown if image is loading
+    if (!imageLoaded) return;
+
     if (timeLeft <= 0) {
       if (phase === 'prepare') {
         setPhase('respond');
@@ -114,7 +125,7 @@ export default function SpeakingConsole({
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [timeLeft, phase, respDuration, handleStopRecording]);
+  }, [timeLeft, phase, respDuration, handleStopRecording, imageLoaded]);
 
   // Auto trigger recording when entering respond phase
   useEffect(() => {
@@ -315,11 +326,20 @@ export default function SpeakingConsole({
 
         {/* Question Image (Part 2 Describe Picture) */}
         {question.image && (
-          <div className="speaking-image-container">
+          <div className="speaking-image-container" style={{ position: 'relative', minHeight: '250px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--background-secondary)', border: '1px solid var(--border)' }}>
+            {!imageLoaded && (
+              <div style={{ position: 'absolute', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', color: 'var(--accent)' }}>
+                <div className="animate-spin" style={{ width: '24px', height: '24px', border: '3px solid var(--border)', borderTopColor: 'var(--accent)', borderRadius: '50%' }} />
+                <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Loading image...</span>
+              </div>
+            )}
             <img 
               src={question.image} 
               alt="Describe this photo" 
               className="speaking-image"
+              onLoad={() => setImageLoaded(true)}
+              onError={() => setImageLoaded(true)}
+              style={{ opacity: imageLoaded ? 1 : 0, transition: 'opacity 0.2s ease' }}
             />
           </div>
         )}

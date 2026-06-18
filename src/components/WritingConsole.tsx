@@ -53,10 +53,19 @@ export default function WritingConsole({
   const duration = isInfinite ? 99999 : Math.round(baseTime * timeMultiplier);
 
   const [subIdx, setSubIdx] = useState(0);
+  const activeQ = groupQuestions[subIdx];
   const [answers, setAnswers] = useState<string[]>(Array(groupQuestions.length).fill(''));
   const [timeLeft, setTimeLeft] = useState(duration);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const handleNextRef = useRef<() => void>(() => {});
+
+  // Image Loading State to delay timer
+  const [imageLoaded, setImageLoaded] = useState(true);
+
+  // Set imageLoaded when activeQ.image changes
+  useEffect(() => {
+    setImageLoaded(!activeQ?.image);
+  }, [activeQ?.image]);
 
   handleNextRef.current = () => {
     if (isGroup) {
@@ -81,6 +90,9 @@ export default function WritingConsole({
   useEffect(() => {
     if (timerRef.current) clearInterval(timerRef.current);
 
+    // Skip timer countdown if image is loading
+    if (!imageLoaded) return;
+
     if (timeLeft <= 0) {
       handleNextRef.current();
       return;
@@ -93,7 +105,7 @@ export default function WritingConsole({
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
-  }, [timeLeft]);
+  }, [timeLeft, imageLoaded]);
 
   const handleSubmit = () => {
     handleNextRef.current();
@@ -141,8 +153,6 @@ export default function WritingConsole({
       prevQ: 'Previous Question'
     }
   }['en']; // Force English in test mode to match TOEIC format
-
-  const activeQ = groupQuestions[subIdx];
 
   const getPlaceholder = () => {
     if (activeQ.type === 'write_sentence_picture') return t.placeholderPicture;
@@ -200,11 +210,20 @@ export default function WritingConsole({
           )}
 
           {activeQ.image && (
-            <div className="writing-image-container">
+            <div className="writing-image-container" style={{ position: 'relative', minHeight: '200px', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'var(--background-secondary)' }}>
+              {!imageLoaded && (
+                <div style={{ position: 'absolute', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', color: 'var(--accent)' }}>
+                  <div className="animate-spin" style={{ width: '24px', height: '24px', border: '3px solid var(--border)', borderTopColor: 'var(--accent)', borderRadius: '50%' }} />
+                  <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>Loading image...</span>
+                </div>
+              )}
               <img 
                 src={activeQ.image} 
                 alt="TOEIC Writing Scenario" 
                 className="writing-image"
+                onLoad={() => setImageLoaded(true)}
+                onError={() => setImageLoaded(true)}
+                style={{ opacity: imageLoaded ? 1 : 0, transition: 'opacity 0.2s ease' }}
               />
             </div>
           )}
