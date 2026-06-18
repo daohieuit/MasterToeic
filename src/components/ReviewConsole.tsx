@@ -202,6 +202,12 @@ export default function ReviewConsole({
   const [mergeProgress, setMergeProgress] = useState(0);
 
   const getPromptTemplate = (title: string, revs: any[]) => {
+    const hasSpeaking = revs.some(r => r.section === 'speaking');
+    const hasWriting = revs.some(r => r.section === 'writing');
+    
+    const speakingParts = Array.from(new Set(revs.filter(r => r.section === 'speaking').map(r => r.partTitle)));
+    const writingParts = Array.from(new Set(revs.filter(r => r.section === 'writing').map(r => r.partTitle)));
+
     const promptData = {
       testTitle: title,
       speakingAnswers: revs
@@ -226,16 +232,55 @@ export default function ReviewConsole({
         }))
     };
 
+    let examModeText = '';
+    let gradingScaleInstructions = '';
+    let audioInstruction = '';
+
+    if (hasSpeaking && hasWriting) {
+      examModeText = `Bài làm này bao gồm CẢ HAI kỹ năng Nói (Speaking) và Viết (Writing).
+Các phần cần chấm bao gồm:
+- Speaking: ${speakingParts.join(', ')}
+- Writing: ${writingParts.join(', ')}`;
+      gradingScaleInstructions = `Hãy đánh giá và chấm điểm theo tiêu chí thi TOEIC chính thức:
+- Thang điểm tổng hợp từ 0 đến 200 cho cả phần Nói (speakingScore) và phần Viết (writingScore) dựa trên trung bình cộng điểm các câu hỏi tương ứng.`;
+      audioInstruction = `Vui lòng NGHE kỹ tệp âm thanh WAV đính kèm để chấm điểm Speaking. Âm thanh chứa câu trả lời của tôi cho các câu hỏi Nói theo đúng thứ tự xuất hiện trong JSON. Nếu có câu nào bị mất âm thanh, hãy dùng văn bản 'userSpeechTranscription' làm căn cứ.`;
+    } else if (hasSpeaking) {
+      examModeText = `Bài làm này CHỈ bao gồm kỹ năng Nói (Speaking). Không có phần Viết.
+Các phần cần chấm bao gồm:
+- Speaking: ${speakingParts.join(', ')}`;
+      gradingScaleInstructions = `Hãy đánh giá và chấm điểm theo tiêu chí thi TOEIC Speaking chính thức:
+- Thang điểm tổng hợp từ 0 đến 200 cho phần Nói (speakingScore) dựa trên trung bình cộng điểm các câu hỏi Speaking.
+- Trường 'writingScore' trong JSON kết quả BẮT BUỘC phải là null.`;
+      audioInstruction = `Vui lòng NGHE kỹ tệp âm thanh WAV đính kèm để chấm điểm Speaking. Âm thanh chứa câu trả lời của tôi cho các câu hỏi Nói theo đúng thứ tự xuất hiện trong JSON. Nếu có câu nào bị mất âm thanh, hãy dùng văn bản 'userSpeechTranscription' làm căn cứ.`;
+    } else {
+      examModeText = `Bài làm này CHỈ bao gồm kỹ năng Viết (Writing). Không có phần Nói.
+Các phần cần chấm bao gồm:
+- Writing: ${writingParts.join(', ')}`;
+      gradingScaleInstructions = `Hãy đánh giá và chấm điểm theo tiêu chí thi TOEIC Writing chính thức:
+- Thang điểm tổng hợp từ 0 đến 200 cho phần Viết (writingScore) dựa trên trung bình cộng điểm các câu hỏi Writing.
+- Trường 'speakingScore' trong JSON kết quả BẮT BUỘC phải là null.`;
+      audioInstruction = `Bài thi này không chứa phần Speaking và không có âm thanh đính kèm. Bạn chỉ cần đánh giá các văn bản trong trường 'userWrittenResponse'.`;
+    }
+
     return `Bạn là giám khảo chấm thi TOEIC Speaking & Writing chuyên nghiệp.
 Tôi gửi cho bạn tệp âm thanh WAV ghi lại phần nói của tôi và tệp JSON dữ liệu bài làm dưới đây.
-Nếu bài làm có phần Speaking, vui lòng NGHE kỹ file âm thanh WAV đính kèm theo thứ tự câu hỏi để chấm điểm phát âm (Pronunciation), độ trôi chảy (Fluency) và tính liên kết. Nếu không có âm thanh cho câu nào, hãy dùng đoạn Text Transcription làm căn cứ.
 
-Thông tin bài làm:
+---
+[THÔNG TIN BÀI THI]
+${examModeText}
+
+[HƯỚNG DẪN ÂM THANH]
+${audioInstruction}
+
+[DỮ LIỆU BÀI LÀM (JSON)]
 \`\`\`json
 ${JSON.stringify(promptData, null, 2)}
 \`\`\`
 
-Hãy đánh giá và chấm điểm theo tiêu chí thi TOEIC chính thức (thang điểm 0-200 cho Speaking và 0-200 cho Writing).
+---
+[YÊU CẦU ĐÁNH GIÁ & ĐỊNH DẠNG ĐẦU RA]
+${gradingScaleInstructions}
+
 Trả về kết quả chấm điểm bằng Tiếng Việt. Bạn BẮT BUỘC phải trả về cấu trúc định dạng JSON chuẩn sau đây, không thêm bất kỳ văn bản giải thích nào khác ngoài JSON:
 
 {
