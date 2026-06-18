@@ -985,7 +985,7 @@ Bạn BẮT BUỘC phải trả về kết quả dưới dạng một khối mã
         </h3>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          {reviews.map((rev, idx) => {
+          {processedReviews.map((rev, idx) => {
             const isExpanded = expandedIndex === idx;
             const displayAnswer = rev.userAnswer || rev.answer || '';
             
@@ -1081,6 +1081,35 @@ Bạn BẮT BUỘC phải trả về kết quả dưới dạng một khối mã
                         {displayAnswer}
                       </div>
                     </div>
+
+                    {/* Criteria Subscores */}
+                    {rev.score !== null && (
+                      <div style={{ marginBottom: '24px' }}>
+                        <h4 style={{ fontSize: '0.9rem', color: 'var(--accent)', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          <Award size={16} /> {language === 'vi' ? 'Điểm tiêu chí chi tiết' : 'Criteria Scores'}
+                        </h4>
+                        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))', gap: '12px' }}>
+                          {Object.entries(rev.computedSubscores || {}).map(([key, val]) => {
+                            if (rev.section === 'writing' && (key === 'pronunciation' || key === 'fluency')) return null;
+                            const label = {
+                              pronunciation: language === 'vi' ? 'Phát âm' : 'Pronunciation',
+                              fluency: language === 'vi' ? 'Trôi chảy' : 'Fluency',
+                              taskCompletion: language === 'vi' ? 'Hoàn thành ý' : 'Task Completion',
+                              grammar: language === 'vi' ? 'Ngữ pháp' : 'Grammar',
+                              vocabulary: language === 'vi' ? 'Từ vựng' : 'Vocabulary',
+                              cohesion: language === 'vi' ? 'Tính liên kết' : 'Cohesion',
+                            }[key] || key;
+
+                            return (
+                              <div key={key} style={{ background: 'var(--background-secondary)', padding: '10px 16px', border: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>{label}</span>
+                                <span style={{ fontSize: '0.95rem', fontWeight: 'bold', fontFamily: 'var(--font-mono)', color: val === null || val === 0 ? 'var(--text-secondary)' : 'var(--accent)' }}>{val !== null ? `${val}/100` : '--'}</span>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
 
                     {/* AI Feedback & Scores */}
                     <div className="review-feedback-grid">
