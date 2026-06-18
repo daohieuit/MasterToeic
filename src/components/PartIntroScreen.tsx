@@ -9,7 +9,7 @@ interface PartIntroScreenProps {
 }
 
 export default function PartIntroScreen({ partTitle, onStart, language = 'en' }: PartIntroScreenProps) {
-  // Request microphone permission early for Speaking parts to save permission and avoid interrupts
+  // Request microphone and speech recognition permissions early for Speaking parts to avoid interrupts
   useEffect(() => {
     const t = partTitle.toLowerCase();
     const isSpeaking = t.includes('speaking') || 
@@ -19,15 +19,36 @@ export default function PartIntroScreen({ partTitle, onStart, language = 'en' }:
                        (t.includes('part 4') && t.includes('information provided')) ||
                        (t.includes('part 5') && t.includes('express an opinion'));
 
-    if (isSpeaking && typeof window !== 'undefined' && navigator.mediaDevices) {
-      navigator.mediaDevices.getUserMedia({ audio: true })
-        .then((stream) => {
-          // Release microphone immediately
-          stream.getTracks().forEach(track => track.stop());
-        })
-        .catch((err) => {
-          console.warn('Microphone pre-grant request failed/denied:', err);
-        });
+    if (isSpeaking && typeof window !== 'undefined') {
+      if (navigator.mediaDevices) {
+        navigator.mediaDevices.getUserMedia({ audio: true })
+          .then((stream) => {
+            // Release microphone immediately
+            stream.getTracks().forEach(track => track.stop());
+
+            // Request speech recognition permission early
+            const SpeechRecognition = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+            if (SpeechRecognition) {
+              try {
+                const rec = new SpeechRecognition();
+                rec.continuous = false;
+                rec.interimResults = false;
+                rec.onstart = () => {
+                  try { rec.abort(); } catch (e) {}
+                };
+                rec.onerror = (e: any) => {
+                  // Silently catch error (including abort error or blocked error)
+                };
+                rec.start();
+              } catch (e) {
+                console.warn('SpeechRecognition pre-grant trigger failed:', e);
+              }
+            }
+          })
+          .catch((err) => {
+            console.warn('Microphone pre-grant request failed/denied:', err);
+          });
+      }
     }
   }, [partTitle]);
 

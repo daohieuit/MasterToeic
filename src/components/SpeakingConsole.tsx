@@ -73,6 +73,10 @@ export default function SpeakingConsole({
   // Image Loading State to delay timer
   const [imageLoaded, setImageLoaded] = useState(true);
 
+  // State for pending submission while recording is stopping
+  const [pendingSubmit, setPendingSubmit] = useState(false);
+  const submitTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
   // Set imageLoaded when question.image changes
   useEffect(() => {
     setImageLoaded(!question.image);
@@ -209,9 +213,43 @@ export default function SpeakingConsole({
     };
   }, [isRecording, stream]);
 
+  // Handle submission when recording finally stops and audioUrl is ready
+  useEffect(() => {
+    if (pendingSubmit && !isRecording && audioUrl) {
+      if (submitTimeoutRef.current) {
+        clearTimeout(submitTimeoutRef.current);
+        submitTimeoutRef.current = null;
+      }
+      onNext(transcript || '(No speech recorded)', audioUrl);
+      setPendingSubmit(false);
+    }
+  }, [pendingSubmit, isRecording, audioUrl, transcript, onNext]);
+
+  // Clean up timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (submitTimeoutRef.current) clearTimeout(submitTimeoutRef.current);
+    };
+  }, []);
+
   const handleSubmit = () => {
-    handleStopRecording();
-    onNext(transcript || '(No speech recorded)', audioUrl);
+    if (isRecording) {
+      setPendingSubmit(true);
+      handleStopRecording();
+      
+      if (submitTimeoutRef.current) clearTimeout(submitTimeoutRef.current);
+      submitTimeoutRef.current = setTimeout(() => {
+        setPendingSubmit((stillPending) => {
+          if (stillPending) {
+            onNext(transcript || '(No speech recorded)', null);
+            return false;
+          }
+          return stillPending;
+        });
+      }, 1000);
+    } else {
+      onNext(transcript || '(No speech recorded)', audioUrl);
+    }
   };
 
   const t = {
@@ -394,8 +432,9 @@ export default function SpeakingConsole({
           <button 
             className="btn-accent speaking-submit-btn" 
             onClick={handleSubmit}
+            disabled={pendingSubmit}
           >
-            {t.submit}
+            {pendingSubmit ? (language === 'vi' ? 'Đang xử lý...' : 'Processing...') : t.submit}
           </button>
         </div>
 
