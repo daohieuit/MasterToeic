@@ -78,9 +78,10 @@ Hỗ trợ 3 chế độ làm bài:
 
 ---
 
-### 3.4. Lưu trữ lịch sử học tập (Local History & Progress)
-* Lưu trữ lịch sử toàn bộ các bài làm, đáp án của người dùng, file ghi âm cục bộ (dưới dạng base64 hoặc IndexedDB blob) và nhận xét của AI.
-* Trang thống kê cá nhân hiển thị biểu đồ tiến trình điểm số (Speaking và Writing) qua các lần làm bài (sử dụng LocalStorage).
+### 3.4. Lưu trữ lịch sử học tập (History & Cloud Sync)
+* **Khách (Guest):** Lưu trữ lịch sử toàn bộ các bài làm, đáp án của người dùng và nhận xét của AI cục bộ tại `localStorage`. File ghi âm tồn tại tạm thời dưới dạng tệp Blob trên bộ nhớ RAM trình duyệt.
+* **Người dùng đã đăng nhập (Cloud Sync):** Đồng bộ dữ liệu lịch sử bài làm trực tiếp lên Supabase Database (bảng `practice_history`). Đồng thời, các file ghi âm Speaking của người dùng được tự động tải lên Supabase Storage (bucket `user_audio`) để người dùng có thể nghe lại bất cứ khi nào xem lịch sử chi tiết. Các file âm thanh trên Cloud sẽ được tự động xóa sau 7 ngày qua công cụ `pg_cron` của PostgreSQL để tối ưu hóa bộ nhớ.
+* Trang thống kê cá nhân (Dashboard) hiển thị biểu đồ tiến trình điểm số (Speaking và Writing) qua các lần làm bài (lấy từ Supabase hoặc LocalStorage tùy theo trạng thái đăng nhập).
 
 ---
 
@@ -94,6 +95,6 @@ Hỗ trợ 3 chế độ làm bài:
 ## 4. Ràng buộc kỹ thuật & Giải pháp tối ưu hóa chi phí
 * **Frontend Framework:** Next.js (App Router) với React.
 * **Styling:** Vanilla CSS kết hợp các CSS Variables mạnh mẽ để quản lý Theme (Light/Dark) và đáp ứng chuẩn thiết kế cao cấp, nói không với sự rập khuôn của các thư viện UI mặc định (theo quy tắc `frontend-specialist`).
-* **Database:** Không dùng database server. Lưu dữ liệu cấu hình đề thi ở file JSON tĩnh `/src/data/tests/` và lưu kết quả làm bài của học viên ở trình duyệt (`localStorage` / `IndexedDB`).
-* **API Integration:** Xây dựng API Route Next.js `/api/eval` và `/api/generate` làm cầu nối gọi tới `gemini-web2api`. Điều này giúp bảo vệ API Key của hệ thống không bị lộ ra ngoài client-side.
-* **Deployment:** Deploy miễn phí lên Vercel. Dữ liệu đề thi tĩnh giúp trang tải cực nhanh và chịu tải lớn mà không tốn tài nguyên server.
+* **Database & Storage (Supabase):** Sử dụng Supabase làm backend cơ sở dữ liệu serverless và lưu trữ đám mây. Kích hoạt RLS (Row Level Security) chặt chẽ đảm bảo người dùng chỉ truy cập được dữ liệu và tệp ghi âm của chính mình.
+* **API Integration:** Xây dựng API Route Next.js để làm cầu nối tương tác với Supabase hoặc Gemini. Điều này giúp bảo vệ các thông tin đăng nhập và API Key của hệ thống không bị lộ ra ngoài client-side.
+* **Deployment:** Deploy miễn phí lên Vercel. Sử dụng cơ chế Serverless hoàn chỉnh kết hợp dữ liệu tĩnh giúp ứng dụng chạy cực nhanh, chịu tải tốt với mức chi phí vận hành lý tưởng (0đ).

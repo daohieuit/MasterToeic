@@ -72,11 +72,29 @@ Gồm **8 câu hỏi** thực hiện trong vòng **60 phút**. Thang điểm quy
 
 ---
 
-## 3. Cơ Chế Quy Đổi Điểm Trong Ứng Dụng
+## 3. Cơ Chế Chấm Điểm & Tính Điểm Trọng Số
 
-Trong phòng thi thử của MasterToeic S&W:
-1. Mỗi câu hỏi đơn lẻ được chấm trên thang điểm từ **0 đến 100 điểm** bởi Gemini AI dựa theo các tiêu chí trên.
-2. Khi kết thúc bài làm:
-   * **Speaking Score (Nói):** Được tính bằng trung bình cộng điểm các câu Nói nhân với 2 (Quy đổi về thang điểm 0 - 200).
-   * **Writing Score (Viết):** Được tính bằng trung bình cộng điểm các câu Viết nhân với 2 (Quy đổi về thang điểm 0 - 200).
-3. Cách quy đổi điểm này giúp học viên ước lượng nhanh tương đối trình độ hiện tại của mình so với thang điểm thực tế.
+Trong ứng dụng MasterToeic S&W, điểm số được tính toán chính xác theo thang điểm trọng số của ETS:
+
+### 3.1. Thang điểm cho từng câu hỏi (Trọng số chi tiết)
+Học viên và AI chấm điểm sẽ đánh giá mỗi câu theo thang điểm phần trăm (0 - 100%). Sau đó, hệ thống sẽ tự động nhân với trọng số tối đa của câu hỏi đó để ra điểm thành phần thực tế:
+
+* **Phần thi Nói (Speaking) - Tổng điểm tối đa 200:**
+  * **Q1 - Q2** (Part 1): Trọng số tối đa **10 điểm / câu** (Tối đa 20 điểm)
+  * **Q3 - Q4** (Part 2): Trọng số tối đa **10 điểm / câu** (Tối đa 20 điểm)
+  * **Q5 - Q6** (Part 3): Trọng số tối đa **15 điểm / câu**, riêng **Q7** trọng số **25 điểm** (Tối đa 55 điểm)
+  * **Q8 - Q9** (Part 4): Trọng số tối đa **15 điểm / câu**, riêng **Q10** trọng số **35 điểm** (Tối đa 65 điểm)
+  * **Q11** (Part 5): Trọng số tối đa **40 điểm**
+  * *Tổng điểm:* 20 + 20 + 55 + 65 + 40 = **200 điểm**.
+
+* **Phần thi Viết (Writing) - Tổng điểm tối đa 200:**
+  * **Q1 - Q5** (Part 1): Trọng số tối đa **15 điểm / câu** (Tối đa 75 điểm)
+  * **Q6 - Q7** (Part 2): Trọng số tối đa **35 điểm / câu** (Tối đa 70 điểm)
+  * **Q8** (Part 3): Trọng số tối đa **55 điểm**
+  * *Tổng điểm:* 75 + 70 + 55 = **200 điểm**.
+
+### 3.2. Tính điểm động cho chế độ Luyện tập theo Part (Part Practice)
+Khi người dùng chọn chế độ luyện tập riêng lẻ từng part hoặc kết hợp một số part (ví dụ chỉ làm Writing Part 1 gồm Q1-Q5), tổng điểm tối đa sẽ **không mặc định là 200** mà sẽ được tính động bằng tổng trọng số của các câu thực tế có trong bài làm (ví dụ: `X/75` đối với Writing Part 1). 
+
+Công thức tính điểm này giúp học viên biết chính xác mức độ hoàn thành bài thi của mình so với mục tiêu cụ thể một cách trực quan nhất.
+

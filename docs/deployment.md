@@ -109,7 +109,7 @@ Do chúng ta đang sử dụng gói Vercel Free Tier, hãy lưu ý các thông s
    * Để tránh bị quá thời gian (timeout) khi chấm bài, hệ thống MasterToeic S&W đã được thiết kế để **gửi yêu cầu chấm điểm riêng lẻ cho từng câu hỏi một cách tuần tự**. Điều này giúp thời gian phản hồi của mỗi request chỉ mất từ 2-4 giây, hoàn toàn nằm trong giới hạn an toàn.
 2. **Payload Limit (4.5MB):**
    * Giới hạn dung lượng tải lên của Vercel Serverless Function là 4.5MB.
-   * Ứng dụng **không tải trực tiếp file âm thanh ghi âm** lên server. File ghi âm được giữ ở client-side, hệ thống chỉ gửi văn bản transcription lên Gemini chấm điểm. Dung lượng request chỉ vài KB.
+   * Để tránh giới hạn này, các tệp âm thanh ghi âm được tải lên trực tiếp từ trình duyệt đến **Supabase Storage** (đối với người dùng đăng nhập) hoặc được giữ tạm thời ở RAM client-side dưới dạng Blob URL (đối với khách). Do đó, Vercel Serverless API không phải xử lý hay truyền tải dữ liệu âm thanh thô, giúp dung lượng request lên Vercel cực nhẹ (chỉ vài KB).
 3. **Bandwidth (100GB/tháng):**
    * Gói Free cho phép 100GB bandwidth/tháng. Đủ cho vài trăm học viên sử dụng hàng ngày.
 
