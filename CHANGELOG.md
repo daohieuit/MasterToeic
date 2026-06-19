@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## [1.0.2] - 2026-06-20
+
+### 🚀 Changed
+* **Responsive Dashboard Tabs:** Added a responsive Tab Switcher for mobile/tablet screens to toggle between the Exam List and Practice History, solving viewport collapsing issues.
+* **Settings Account Display:** Added a mobile-only user profile display showing the active student email inside the Settings drawer when it is hidden from the header.
+
 ## [1.0.1] - 2026-06-20
 
 ### 🚀 Changed
