@@ -152,16 +152,15 @@ export async function GET(req: Request) {
       return NextResponse.json({ error: 'Forbidden: Admin access required' }, { status: 403 });
     }
 
-    const unusedPath = path.join(process.cwd(), 'image_pipeline', 'data', 'unused_images.json');
-    let totalUnused = 0;
-    if (fs.existsSync(unusedPath)) {
-      try {
-        const unusedImages = JSON.parse(fs.readFileSync(unusedPath, 'utf8'));
-        totalUnused = Array.isArray(unusedImages) ? unusedImages.length : 0;
-      } catch (e) {
-        totalUnused = 0;
-      }
+    const { count, error: countErr } = await supabase
+      .from('toeic_images')
+      .select('*', { count: 'exact', head: true })
+      .eq('is_used', false);
+
+    if (countErr) {
+      throw countErr;
     }
+    const totalUnused = count || 0;
 
     return NextResponse.json({ totalUnused });
   } catch (error: any) {
@@ -203,9 +202,6 @@ export async function POST(req: Request) {
     // 2. Parse request payload
     const body = await req.json();
     const { action } = body;
-
-    const unusedPath = path.join(process.cwd(), 'image_pipeline', 'data', 'unused_images.json');
-    const usedPath = path.join(process.cwd(), 'image_pipeline', 'data', 'used_images.json');
 
     // Action: upload_imgbb
     if (action === 'upload_imgbb') {
@@ -353,55 +349,56 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: 'Invalid payload: descriptions array is required' }, { status: 400 });
       }
 
-      let unusedImages: any[] = [];
-      let usedImages: any[] = [];
-
-      if (fs.existsSync(unusedPath)) {
-        try {
-          unusedImages = JSON.parse(fs.readFileSync(unusedPath, 'utf8'));
-        } catch (e) {
-          unusedImages = [];
-        }
-      }
-      if (fs.existsSync(usedPath)) {
-        try {
-          usedImages = JSON.parse(fs.readFileSync(usedPath, 'utf8'));
-        } catch (e) {
-          usedImages = [];
-        }
+      const { data: existing, error: fetchErr } = await supabase
+        .from('toeic_images')
+        .select('url');
+      
+      if (fetchErr) {
+        return NextResponse.json({ error: `Lỗi truy vấn CSDL: ${fetchErr.message}` }, { status: 500 });
       }
 
-      const importedList: any[] = [];
+      const existingUrls = new Set(existing?.map((x: any) => x.url) || []);
+      const toInsert: any[] = [];
       let duplicatesSkipped = 0;
 
       for (const item of descriptions) {
         if (!item.url || !item.description) continue;
-        const existsInUnused = unusedImages.some((img: any) => img.url === item.url);
-        const existsInUsed = usedImages.some((img: any) => img.url === item.url);
-        
-        if (!existsInUnused && !existsInUsed) {
-          const newItem = {
+        if (existingUrls.has(item.url)) {
+          duplicatesSkipped++;
+        } else {
+          toInsert.push({
             url: item.url,
             description: item.description,
-            words: item.words || []
-          };
-          unusedImages.push(newItem);
-          importedList.push(newItem);
-        } else {
-          duplicatesSkipped++;
+            words: item.words || [],
+            is_used: false
+          });
         }
       }
 
-      if (importedList.length > 0) {
-        fs.mkdirSync(path.dirname(unusedPath), { recursive: true });
-        fs.writeFileSync(unusedPath, JSON.stringify(unusedImages, null, 2));
+      if (toInsert.length > 0) {
+        const { error: insErr } = await supabase
+          .from('toeic_images')
+          .insert(toInsert);
+        
+        if (insErr) {
+          return NextResponse.json({ error: `Lỗi lưu ảnh vào CSDL: ${insErr.message}` }, { status: 500 });
+        }
+      }
+
+      const { count: totalUnused, error: countErr } = await supabase
+        .from('toeic_images')
+        .select('*', { count: 'exact', head: true })
+        .eq('is_used', false);
+      
+      if (countErr) {
+        return NextResponse.json({ error: `Lỗi đếm số lượng ảnh: ${countErr.message}` }, { status: 500 });
       }
 
       return NextResponse.json({
         success: true,
-        importedCount: importedList.length,
+        importedCount: toInsert.length,
         duplicatesSkipped,
-        totalUnused: unusedImages.length
+        totalUnused: totalUnused || 0
       });
     }
 
@@ -409,49 +406,38 @@ export async function POST(req: Request) {
     if (action === 'auto_fill_missing') {
       const { brokenUrls = [] } = body;
 
-      let unusedImages: any[] = [];
-      let usedImages: any[] = [];
+      const { data: unusedImages, error: fetchImagesErr } = await supabase
+        .from('toeic_images')
+        .select('*')
+        .eq('is_used', false);
 
-      if (fs.existsSync(unusedPath)) {
-        try {
-          unusedImages = JSON.parse(fs.readFileSync(unusedPath, 'utf8'));
-        } catch (e) {
-          unusedImages = [];
-        }
-      }
-      if (fs.existsSync(usedPath)) {
-        try {
-          usedImages = JSON.parse(fs.readFileSync(usedPath, 'utf8'));
-        } catch (e) {
-          usedImages = [];
-        }
+      if (fetchImagesErr) {
+        return NextResponse.json({ error: `Lỗi truy vấn kho ảnh: ${fetchImagesErr.message}` }, { status: 500 });
       }
 
-      if (unusedImages.length === 0) {
-        return NextResponse.json({ error: 'Kho ảnh (unused_images.json) trống. Vui lòng nạp thêm ảnh trước.' }, { status: 400 });
+      if (!unusedImages || unusedImages.length === 0) {
+        return NextResponse.json({ error: 'Kho ảnh trống. Vui lòng nạp thêm ảnh trước.' }, { status: 400 });
       }
+
+      let pool = [...unusedImages];
+      const drawnUrls = new Set<string>();
 
       const drawUnusedImage = (skillType: 'speaking' | 'writing') => {
-        if (unusedImages.length === 0) return null;
-        let pool = unusedImages;
+        if (pool.length === 0) return null;
+        let subPool = pool;
         if (skillType === 'writing') {
-          pool = unusedImages.filter((img) => img.words && img.words.length > 0);
-          if (pool.length === 0) pool = unusedImages;
+          subPool = pool.filter((img) => img.words && img.words.length > 0);
+          if (subPool.length === 0) subPool = pool;
         }
-        const idx = Math.floor(Math.random() * pool.length);
-        const selected = pool[idx];
+        if (subPool.length === 0) return null;
+        const idx = Math.floor(Math.random() * subPool.length);
+        const selected = subPool[idx];
         
-        // Remove from unused
-        const mainIdx = unusedImages.findIndex((img) => img.url === selected.url);
-        if (mainIdx !== -1) {
-          unusedImages.splice(mainIdx, 1);
-        }
+        // Remove from pool in memory
+        pool = pool.filter((img) => img.url !== selected.url);
         
-        // Add to used
-        const existsInUsed = usedImages.some(img => img.url === selected.url);
-        if (!existsInUsed) {
-          usedImages.push(selected);
-        }
+        // Track drawn URL
+        drawnUrls.add(selected.url);
         
         return selected;
       };
@@ -536,16 +522,27 @@ export async function POST(req: Request) {
         }
       }
 
-      if (totalUpdatedTests > 0) {
-        fs.writeFileSync(unusedPath, JSON.stringify(unusedImages, null, 2));
-        fs.writeFileSync(usedPath, JSON.stringify(usedImages, null, 2));
+      if (drawnUrls.size > 0) {
+        const { error: updateImagesErr } = await supabase
+          .from('toeic_images')
+          .update({ is_used: true })
+          .in('url', Array.from(drawnUrls));
+        
+        if (updateImagesErr) {
+          console.error(`Lỗi cập nhật trạng thái đã dùng của ảnh:`, updateImagesErr.message);
+        }
       }
+
+      const { count: remainingUnused, error: countErr } = await supabase
+        .from('toeic_images')
+        .select('*', { count: 'exact', head: true })
+        .eq('is_used', false);
 
       return NextResponse.json({
         success: true,
         updatedCount: totalUpdatedTests,
         updatedDetails,
-        remainingUnused: unusedImages.length
+        remainingUnused: remainingUnused || 0
       });
     }
 

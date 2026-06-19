@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## [1.0.1] - 2026-06-20
+
+### 🚀 Changed
+* **Database-Driven Image Pool:** Migrated Speaking & Writing image assets repository from local JSON storage (`unused_images.json`/`used_images.json`) to Supabase database table `toeic_images` with Row-Level Security (RLS) policies.
+* **Sync API & CLI:** Updated the admin pipeline API endpoint (`/api/admin/pipeline`) and developer CLI tools (`pipeline_cli.js`) to read and write images directly to Supabase.
+* **Asset Migration & Cleanup:** Synced 124 existing images to the remote database and cleared the local fallback JSON files.
+* **Documentation:** Updated the image pipeline guide (`IMAGE_WORKFLOW.md`) to reflect the database-driven architecture.
+
 ## [1.0.0] - 2026-06-19
 
 ### 🎉 Added

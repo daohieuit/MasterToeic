@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const { Document, Packer, Paragraph, Table, TableCell, TableRow, ImageRun, WidthType } = require('docx');
+const { createClient } = require('@supabase/supabase-js');
 
 // Helper to load env variables from project root (.env.local)
 function loadEnv() {
@@ -282,7 +283,6 @@ async function runDocx() {
 // ACTION: PARSE
 async function runParse() {
   const pasteFile = path.join(__dirname, '..', 'workspace', 'paste_ai_here.txt');
-  const unusedFile = path.join(__dirname, '..', 'data', 'unused_images.json');
 
   if (!fs.existsSync(pasteFile)) {
     fs.mkdirSync(path.dirname(pasteFile), { recursive: true });
@@ -303,43 +303,70 @@ async function runParse() {
     return;
   }
 
-  let unusedList = [];
-  if (fs.existsSync(unusedFile)) {
-    try {
-      unusedList = JSON.parse(fs.readFileSync(unusedFile, 'utf8'));
-    } catch (e) {
-      console.warn("Could not read unused_images.json, starting a new list.");
-    }
+  const env = loadEnv();
+  const supabaseUrl = env['NEXT_PUBLIC_SUPABASE_URL'];
+  const supabaseKey = env['SUPABASE_SERVICE_ROLE_KEY'] || env['NEXT_PUBLIC_SUPABASE_ANON_KEY'];
+
+  if (!supabaseUrl || !supabaseKey) {
+    console.error("Missing Supabase connection credentials in .env.local");
+    return;
   }
 
+  const supabase = createClient(supabaseUrl, supabaseKey);
+
+  console.log("Connecting to Supabase to fetch existing image URLs...");
+  const { data: existing, error: fetchErr } = await supabase
+    .from('toeic_images')
+    .select('url');
+
+  if (fetchErr) {
+    console.error("Failed to query existing images from Supabase:", fetchErr.message);
+    return;
+  }
+
+  const existingUrls = new Set(existing?.map(x => x.url) || []);
+  const toInsert = [];
   let addedCount = 0;
+
   newBlocks.forEach(block => {
     if (block.url && block.description) {
-      const exists = unusedList.some(item => item.url === block.url);
-      if (!exists) {
-        unusedList.push({
+      if (!existingUrls.has(block.url)) {
+        toInsert.push({
           url: block.url,
           description: block.description,
-          words: block.words || []
+          words: block.words || [],
+          is_used: false
         });
         addedCount++;
       }
     }
   });
 
-  fs.mkdirSync(path.dirname(unusedFile), { recursive: true });
-  fs.writeFileSync(unusedFile, JSON.stringify(unusedList, null, 2));
+  if (toInsert.length > 0) {
+    console.log(`Inserting ${toInsert.length} new images into database...`);
+    const { error: insErr } = await supabase
+      .from('toeic_images')
+      .insert(toInsert);
+
+    if (insErr) {
+      console.error("Failed to save new images to database:", insErr.message);
+      return;
+    }
+  } else {
+    console.log("No new unique images to insert (all parsed URLs already exist).");
+  }
 
   const imgbbFile = path.join(__dirname, '..', 'workspace', 'imgbb_links.txt');
   if (fs.existsSync(imgbbFile)) {
     const imgbbContent = fs.readFileSync(imgbbFile, 'utf8');
     const imgbbLines = imgbbContent.split('\n').map(line => line.trim()).filter(Boolean);
-    const remainingLines = imgbbLines.filter(line => !unusedList.some(item => item.url === line));
+    const insertedUrls = new Set(toInsert.map(x => x.url));
+    const remainingLines = imgbbLines.filter(line => !insertedUrls.has(line));
     fs.writeFileSync(imgbbFile, remainingLines.join('\n') + (remainingLines.length > 0 ? '\n' : ''));
   }
 
   fs.writeFileSync(pasteFile, "");
-  console.log(`\n--- Success! Extracted and appended ${addedCount} described images to unused_images.json ---`);
+  console.log(`\n--- Success! Extracted and saved ${addedCount} described images to Supabase toeic_images table ---`);
 }
 
 // CLI Routing
