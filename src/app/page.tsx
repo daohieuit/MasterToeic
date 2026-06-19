@@ -24,6 +24,7 @@ export default function Dashboard() {
   const [loadingHistory, setLoadingHistory] = useState(false);
   const [showConfig, setShowConfig] = useState(false);
   const [filter, setFilter] = useState<'all' | 'full' | 'speaking' | 'writing'>('all');
+  const [activeMobileTab, setActiveMobileTab] = useState<'tests' | 'history'>('tests');
   
   // Custom tests uploaded by admin (saved in database or localStorage)
   const [customTests, setCustomTests] = useState<any[]>([]);
@@ -174,7 +175,9 @@ export default function Dashboard() {
       practiceBtn: 'Vào phòng thi',
       fullTestType: 'Full Test (Nói & Viết)',
       speakingTestType: 'Speaking Test (Nói)',
-      writingTestType: 'Writing Test (Viết)'
+      writingTestType: 'Writing Test (Viết)',
+      testsTab: 'Đề thi',
+      historyTab: 'Lịch sử làm bài'
     },
     en: {
       title: 'MASTER TOEIC',
@@ -205,7 +208,9 @@ export default function Dashboard() {
       practiceBtn: 'Practice Now',
       fullTestType: 'Full Test (Speaking & Writing)',
       speakingTestType: 'Speaking Test (Speaking)',
-      writingTestType: 'Writing Test (Writing)'
+      writingTestType: 'Writing Test (Writing)',
+      testsTab: 'Exams',
+      historyTab: 'Practice History'
     }
   }[language];
 
@@ -271,13 +276,58 @@ export default function Dashboard() {
         </div>
       </header>
 
-
+      {/* Mobile/Tablet Tab Switcher */}
+      <div className="mobile-tabs-container">
+        <button 
+          onClick={() => setActiveMobileTab('tests')} 
+          style={{ 
+            flex: 1, 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center', 
+            gap: '8px', 
+            padding: '12px', 
+            fontSize: '0.85rem', 
+            fontWeight: 'bold', 
+            border: '1px solid ' + (activeMobileTab === 'tests' ? 'var(--text-primary)' : 'var(--border)'), 
+            background: activeMobileTab === 'tests' ? 'var(--text-primary)' : 'transparent', 
+            color: activeMobileTab === 'tests' ? 'var(--background)' : 'var(--text-primary)',
+            transition: 'all 0.15s ease'
+          }}
+        >
+          <BookOpen size={16} />
+          <span>{t.testsTab}</span>
+        </button>
+        <button 
+          onClick={() => setActiveMobileTab('history')} 
+          style={{ 
+            flex: 1, 
+            display: 'flex', 
+            alignItems: 'center', 
+            justifyContent: 'center', 
+            gap: '8px', 
+            padding: '12px', 
+            fontSize: '0.85rem', 
+            fontWeight: 'bold', 
+            border: '1px solid ' + (activeMobileTab === 'history' ? 'var(--text-primary)' : 'var(--border)'), 
+            background: activeMobileTab === 'history' ? 'var(--text-primary)' : 'transparent', 
+            color: activeMobileTab === 'history' ? 'var(--background)' : 'var(--text-primary)',
+            transition: 'all 0.15s ease'
+          }}
+        >
+          <Clock size={16} />
+          <span>{t.historyTab}</span>
+        </button>
+      </div>
 
       {/* Main Dashboard Layout (Asymmetric 70/30 Grid) */}
       <div className="dashboard-grid">
         
         {/* Left Column (70%) - Test taking & settings */}
-        <section style={{ display: 'flex', flexDirection: 'column', gap: '32px', width: '100%' }}>
+        <section 
+          className={activeMobileTab === 'tests' ? 'mobile-show' : 'mobile-hide'} 
+          style={{ display: 'flex', flexDirection: 'column', gap: '32px', width: '100%' }}
+        >
           
             {/* Test Grid */}
             <div>
@@ -365,7 +415,10 @@ export default function Dashboard() {
         </section>
 
         {/* Right Column (30%) - Analytics & History */}
-        <aside style={{ width: '100%' }}>
+        <aside 
+          className={activeMobileTab === 'history' ? 'mobile-show' : 'mobile-hide'} 
+          style={{ width: '100%' }}
+        >
           {/* Average Scores Panel */}
           <div className="card-sharp" style={{ marginBottom: '24px', background: 'var(--background-secondary)' }}>
             <h3 style={{ marginBottom: '20px', fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -543,6 +596,19 @@ export default function Dashboard() {
                 )}
               </button>
             </div>
+
+            {/* User Info (Mobile only) */}
+            {user && (
+              <div className="mobile-only" style={{ width: '100%', flexDirection: 'column', gap: '8px', borderBottom: '1px solid var(--border)', paddingBottom: '16px' }}>
+                <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 'bold', color: 'var(--text-secondary)' }}>
+                  {language === 'vi' ? 'TÀI KHOẢN' : 'ACCOUNT'}
+                </label>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 12px', background: 'var(--background)', border: '1px solid var(--border)', width: '100%' }}>
+                  <User size={16} style={{ color: 'var(--accent)' }} />
+                  <span style={{ fontSize: '0.85rem', fontWeight: 'bold', color: 'var(--text-primary)', wordBreak: 'break-all' }}>{user.email}</span>
+                </div>
+              </div>
+            )}
 
 
 

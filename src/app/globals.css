@@ -911,3 +911,25 @@ button {
     transform: rotate(360deg);
   }
 }
+
+/* Responsive columns & tab switcher for dashboard */
+.mobile-tabs-container {
+  display: none;
+}
+
+@media (max-width: 1024px) {
+  .mobile-tabs-container {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+    width: 100%;
+  }
+  
+  .mobile-hide {
+    display: none !important;
+  }
+  
+  .mobile-show {
+    display: flex !important;
+  }
+}
