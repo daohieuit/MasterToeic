@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## [1.0.3] - 2026-06-20
+
+### 🚀 Changed
+* **Redesigned History Cards:** Replaced the plain single-row history list with structured cards, adding text ellipsis for long titles to resolve word-wrapping and line overflow issues.
+* **Settings Drawer Email:** Cleaned up the mobile-only email display in the Settings Drawer to be static text rather than styled as a clickable button.
+
 ## [1.0.2] - 2026-06-20
 
 ### 🚀 Changed

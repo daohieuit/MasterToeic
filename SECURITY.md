@@ -8,7 +8,8 @@ We take the security and privacy of **MASTER TOEIC** seriously. If you discover 
 
 This security policy applies to the following active versions of the project:
 
-| v1.0.2 (Current) | ✅ Supported |
+| v1.0.3 (Current) | ✅ Supported |
+| v1.0.2 | ✅ Supported |
 | v1.0.1 | ✅ Supported |
 | v1.0.0 | ✅ Supported |
 | < v1.0.0 (Beta drafts) | ❌ Unsupported |
