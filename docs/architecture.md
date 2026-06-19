@@ -1,15 +1,15 @@
-# Kiến Trúc Hệ Thống (docs/architecture.md)
+# System Architecture (docs/architecture.md)
 
-Tài liệu này mô tả chi tiết kiến trúc kỹ thuật, mô hình dữ liệu, luồng xử lý âm thanh và tích hợp AI của ứng dụng **MASTER TOEIC S&W**.
+This document describes the technical architecture, data model, audio pipelines, and AI integration flow of the **MASTER TOEIC** platform.
 
 ---
 
-## 1. Tổng Quan Kiến Trúc (Architecture Overview)
+## 1. Architecture Overview
 
-MASTER TOEIC S&W là ứng dụng web serverless hiệu năng cao được xây dựng trên Next.js (App Router), vận hành theo mô hình kết hợp (Hybrid Model):
+MASTER TOEIC is a serverless web application built on Next.js (App Router) operating on a hybrid client-cloud sync model:
 
-*   **Chế độ Khách (Guest Mode - Offline-First):** Lưu trữ toàn bộ dữ liệu lịch sử thi tại `localStorage`. File âm thanh ghi âm Speaking được duy trì tạm thời dưới dạng Object URL (`blob:`) trên bộ nhớ RAM trình duyệt. Hoàn toàn không phát sinh chi phí truyền tải đám mây.
-*   **Chế độ Đăng nhập (Authenticated Mode - Cloud Sync):** Đồng bộ dữ liệu lịch sử thi lên Supabase Database. Tự động tải các file ghi âm Speaking của người dùng lên Supabase Storage và thiết lập lịch dọn dẹp tự động để tối ưu dung lượng lưu trữ.
+*   **Guest Mode (Offline-First):** All exam history is stored in the browser's `localStorage`. Speaking recording files are stored temporarily as memory Object URLs (`blob:`). No cloud storage bandwidth or database connections are used.
+*   **Authenticated Mode (Cloud Sync):** Exam results are synced directly to Supabase Database. Speaking recording audio files are uploaded to Supabase Storage, and a database-level cleanup cron deletes recordings older than 7 days.
 
 ```
 ┌────────────────────────────────────────────────────────────────────────┐
@@ -44,21 +44,21 @@ MASTER TOEIC S&W là ứng dụng web serverless hiệu năng cao được xây 
 
 ---
 
-## 2. Công Nghệ Sử Dụng (Technology Stack)
+## 2. Technology Stack
 
 *   **Core:** React 19, Next.js 16 (App Router), TypeScript.
-*   **Styling:** Vanilla CSS kết hợp CSS Variables (Hệ màu sắc tối giản, không sử dụng Tailwind CSS hay các UI Library cồng kềnh nhằm giữ tính tùy biến cao và tải trang nhanh).
+*   **Styling:** Vanilla CSS + CSS Variables (Brutalist minimalistic style, avoiding Tailwind CSS or UI component libraries to keep bundle size light and paint times fast).
 *   **Database & Storage:** Supabase (PostgreSQL, Storage API).
-*   **Audio API:** Web Audio API (giải mã, trộn âm, ghép nối tệp), MediaRecorder API (ghi âm).
-*   **AI Integration:** Tương thích API Gemini (qua SDK hoặc API Gemini Web định dạng JSON).
-*   **Charts:** Chart.js + react-chartjs-2 (Biểu đồ Radar phân tích kỹ năng thành phần).
+*   **Audio API:** Web Audio API (decoding, blending, concatenating), MediaRecorder API (recording).
+*   **AI Integration:** Compatible with Google Gemini Web (manual JSON clipboard injection).
+*   **Charts:** Chart.js + react-chartjs-2 (Radar chart analyzing subscores).
 
 ---
 
-## 3. Mô Hình Dữ Liệu (Data Model)
+## 3. Data Model
 
-### 3.1. Bảng Lịch Sử Làm Bài (Table: `practice_history`)
-Bảng này lưu trữ kết quả toàn bộ bài thi thử và luyện tập của người dùng.
+### 3.1. Practice History Table (`practice_history`)
+Stores exam mock attempts submitted by authenticated users.
 
 ```sql
 CREATE TABLE IF NOT EXISTS public.practice_history (
@@ -68,14 +68,14 @@ CREATE TABLE IF NOT EXISTS public.practice_history (
     test_title TEXT NOT NULL,
     date TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL,
     mode TEXT NOT NULL, -- 'full' | 'speaking' | 'writing' | 'part'
-    part_name TEXT,     -- Ví dụ: "SPEAKING Part 3"
-    speaking_score INTEGER, -- 0 - 200 (hoặc NULL nếu chưa chấm / không thi)
-    writing_score INTEGER,  -- 0 - 200 (hoặc NULL nếu chưa chấm / không thi)
-    reviews JSONB NOT NULL  -- Mảng chứa thông tin chi tiết từng câu hỏi
+    part_name TEXT,     -- e.g. "SPEAKING Part 3"
+    speaking_score INTEGER, -- 0 - 200 (or NULL if not taken)
+    writing_score INTEGER,  -- 0 - 200 (or NULL if not taken)
+    reviews JSONB NOT NULL  -- Array containing details of each question
 );
 ```
 
-#### Cấu trúc phần tử trong mảng `reviews` (JSONB):
+#### JSONB structure inside the `reviews` array:
 ```json
 {
   "questionId": "sp_q_1_1",
@@ -85,12 +85,12 @@ CREATE TABLE IF NOT EXISTS public.practice_history (
   "audioUrl": "https://[ref].supabase.co/storage/v1/object/public/user_audio/[user_id]/[attempt_id]/sp_q_1_1.webm",
   "section": "speaking",
   "score": 80,
-  "feedback": "Phát âm rõ ràng, nhịp điệu tương đối tốt...",
+  "feedback": "Clear pronunciation, good pacing...",
   "grammarErrors": [
     {
       "original": "shoping",
       "correction": "shopping",
-      "explanation": "Sai chính tả từ shopping."
+      "explanation": "Spelling mistake: shopping."
     }
   ],
   "computedSubscores": {
@@ -104,47 +104,44 @@ CREATE TABLE IF NOT EXISTS public.practice_history (
 }
 ```
 
-### 3.2. Cấu hình Lưu trữ Âm thanh (Storage Bucket: `user_audio`)
-*   **Chế độ:** Public (URL trực tiếp hỗ trợ phát âm thanh qua thẻ HTML `<audio>`).
-*   **Bảo mật RLS:**
-    *   **SELECT:** Cho phép tất cả mọi người đọc (để bot chấm điểm hoặc trình duyệt khách nghe lại).
-    *   **INSERT / DELETE:** Chỉ cho phép người dùng đã đăng nhập thao tác trên thư mục trùng với UUID của chính mình: `user_audio/[auth.uid()]/...`.
-*   **Đường dẫn lưu tệp:** `user_audio/[user_id]/[attempt_id]/[question_id].[ext]`
+### 3.2. Audio Storage Bucket (`user_audio`)
+*   **Access Type:** Public (directly streamable via HTML `<audio>` elements).
+*   **Row-Level Security (RLS) Policies:**
+    *   **SELECT:** Anonymous public read access (enables evaluation or student playback).
+    *   **INSERT / DELETE:** Checked via `auth.uid()` validation, restricting uploads to folders matching their user UUID: `user_audio/[auth.uid()]/...`.
+*   **File path naming:** `user_audio/[user_id]/[attempt_id]/[question_id].[ext]`
 
 ---
 
-## 4. Xử Lý File Âm Thanh & Gộp Tệp (Audio Pipelines)
+## 4. Audio Pipelines
 
-Ứng dụng cung cấp hai cơ chế xử lý âm thanh độc lập tùy thuộc vào tính năng:
+The application uses two distinct pipelines to handle recording:
 
-### 4.1. Luồng Ghi âm & Tải lên Storage (Độc lập từng câu)
-Khi hoàn thành một câu hỏi Nói (Speaking):
-1.  Ghi âm qua **MediaRecorder API** ➔ xuất ra Blob định dạng mặc định của trình duyệt (`audio/webm` trên Chrome/Android hoặc `audio/mp4` trên Safari/iOS).
-2.  Sau khi kết thúc toàn bộ đề thi, nếu người dùng đã đăng nhập:
-    -   Hệ thống đọc dữ liệu nhị phân từ các Blob URL cục bộ.
-    -   Thực hiện tải lên Supabase Storage bucket `user_audio` theo đường dẫn cá nhân.
-    -   Lấy liên kết công khai (Public URL) và cập nhật trường `audioUrl` của câu đó.
+### 4.1. Recording & Storage Upload Pipeline
+When a user completes a Speaking question:
+1.  **MediaRecorder API** captures input ➔ outputs browser-native Blob (`audio/webm` on Chrome/Android, `audio/mp4` on Safari/iOS).
+2.  Upon exam completion:
+    -   If logged in, the client reads the binary buffers from the temporary Blob URLs.
+    -   Uploads files in parallel to Supabase Storage bucket `user_audio`.
+    -   Stores returned public CDN links in the `reviews` array.
 
-### 4.2. Luồng Trộn & Ghép Nối Âm thanh (Audio Merging - Tải xuống cục bộ)
-Để hỗ trợ việc nộp bài và chấm điểm offline miễn phí trên Gemini Web, hệ thống tích hợp thư viện ghép nối âm thanh [audio.ts](file:///d:/Workspace/MasterToeic/src/utils/audio.ts) chạy bằng **Web Audio API**:
-
-1.  **TTS Markers:** Hệ thống tự động gọi API `/api/tts` để sinh giọng đọc chỉ thị của AI (ví dụ: *"Part 1, Question 1"*, *"Question 2"*...).
-2.  **Khử trùng khớp mẫu (Decoding):** Sử dụng `AudioContext.decodeAudioData` giải mã tệp chỉ thị AI và tệp ghi âm Speaking của học viên sang mảng đệm số `AudioBuffer`.
-3.  **Tạo khoảng nghỉ (Silence Buffer):** Chèn các đoạn im lặng 1.0 giây sau chỉ thị AI và 1.5 giây giữa các câu trả lời.
-4.  **Hợp nhất (Concatenation):** Tạo một `AudioBuffer` lớn bằng tổng độ dài tất cả các tệp, sao chép dữ liệu từ các tệp thành phần vào các vị trí offset tương ứng.
-5.  **Mã hóa WAV:** Chuyển đổi mảng dữ liệu âm thanh số sang định dạng **WAV 16-bit PCM Mono** (1 kênh để tiết kiệm dung lượng) và tải xuống thiết bị của người dùng.
+### 4.2. Audio Merging Pipeline (Local Download)
+To support offline, zero-cost grading on Gemini Web, the [audio.ts](file:///d:/Workspace/MasterToeic/src/utils/audio.ts) utility decodes and concatenates audio inside the browser via **Web Audio API**:
+1.  **TTS Markers:** Fetches instruction audio clips (e.g. *"Part 1, Question 1"*) from `/api/tts`.
+2.  **Decoding:** Decodes TTS and client voice blobs into `AudioBuffer` buffers.
+3.  **Silent Intervals:** Inserts 1.0s silence after instructions and 1.5s silence between answers.
+4.  **Concatenation:** Calculates total duration, allocations one single large buffer, copies sub-buffers into offsets, and encodes the output into **16-bit PCM Mono WAV format** for local download.
 
 ---
 
-## 5. Cơ Chế Tự Động Dọn Dẹp (Cron Garbage Collector)
+## 5. Automated Cleanup Cron Job
 
-Để tránh lãng phí dung lượng lưu trữ Cloud (vốn giới hạn trên gói miễn phí), chúng tôi sử dụng extension `pg_cron` tích hợp trong cơ sở dữ liệu Supabase:
+To prevent cloud storage quotas from filling up on the free tier, we use Supabase PostgreSQL **`pg_cron`**:
 
-*   Một hàm SQL định danh `cleanup_old_user_audio()` chạy với quyền admin (`SECURITY DEFINER`) để xóa toàn bộ các bản ghi tệp cũ hơn 7 ngày trong bảng `storage.objects` của bucket `user_audio`:
+*   **Database function `cleanup_old_user_audio()`** runs with elevated permissions (`SECURITY DEFINER`) to delete database records:
     ```sql
     DELETE FROM storage.objects
     WHERE bucket_id = 'user_audio'
       AND created_at < (now() - INTERVAL '7 days');
     ```
-*   Một lịch trình cron chạy hàng ngày vào lúc nửa đêm (`0 0 * * *`) để kích hoạt hàm trên, tự động giải phóng hoàn toàn dung lượng các file âm thanh đã quá hạn.
-*   Khi tệp bị xóa khỏi bảng `storage.objects` ở database, trigger nội bộ của Supabase Storage sẽ tự động gửi webhook để xóa vĩnh viễn tệp tin vật lý tương ứng trên hệ thống lưu trữ đám mây.
+*   **Cron Schedule:** Fires daily at midnight (`0 0 * * *`) to invoke the function. Webhook triggers inside Supabase Storage then delete the actual physical files from the cloud bucket.

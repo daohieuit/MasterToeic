@@ -1,38 +1,38 @@
-# Chính Sách Bảo Mật (SECURITY.md)
+# Security Policy (SECURITY.md)
 
-Chúng tôi rất coi trọng vấn đề bảo mật thông tin và an toàn hệ thống của dự án **MASTER TOEIC**. Nếu bạn phát hiện bất kỳ lỗ hổng bảo mật nào trong mã nguồn hoặc hệ thống kết nối Supabase của dự án, vui lòng thông báo cho chúng tôi để xử lý nhanh nhất có thể.
+We take the security and privacy of **MASTER TOEIC** seriously. If you discover any security vulnerabilities in the codebase or Supabase connection configurations, please report them to us immediately so we can address them.
 
 ---
 
-## 🛡️ Phiên Bản Được Hỗ Trợ
+## 🛡️ Supported Versions
 
-Chính sách bảo mật này áp dụng cho các phiên bản sau của dự án:
+This security policy applies to the following active versions of the project:
 
-| Phiên Bản | Hỗ Trợ Bảo Mật |
+| Version | Supported |
 | :--- | :---: |
-| v1.0.0 (Hiện tại) | ✅ Có hỗ trợ |
-| < v1.0.0 (Bản thử nghiệm) | ❌ Ngưng hỗ trợ |
+| v1.0.0 (Current) | ✅ Supported |
+| < v1.0.0 (Beta drafts) | ❌ Unsupported |
 
 ---
 
-## 🔒 Báo Cáo Lỗ Hổng Bảo Mật (Reporting a Vulnerability)
+## 🔒 Reporting a Vulnerability
 
-**LƯU Ý QUAN TRỌNG:** Vui lòng KHÔNG công khai các lỗ hổng bảo mật trực tiếp trên mục Issue của GitHub trước khi liên hệ với chúng tôi để khắc phục. Việc công khai lỗ hổng quá sớm có thể gây ảnh hưởng xấu đến dữ liệu của những người dùng khác đang sử dụng hệ thống.
+**CRITICAL NOTICE:** Please do NOT post security vulnerabilities publicly on the GitHub Issues section. Doing so could expose other active user databases to exploitation before a fix is released.
 
-Quy trình báo cáo lỗ hổng bảo mật an toàn:
+To report a vulnerability responsibly:
 
-1. **Gửi thông tin bảo mật:**
-   * Liên hệ trực tiếp với tác giả qua email của nhà phát triển chính: [daohieuit0803@gmail.com](mailto:daohieuit0803@gmail.com).
-   * Cung cấp mô tả chi tiết về lỗ hổng, bao gồm:
-     * Loại lỗ hổng (ví dụ: SQL Injection, XSS, RLS bypass trên Supabase, lộ thông tin).
-     * Các bước cụ thể hoặc đoạn code để khai thác thử nghiệm lỗ hổng (Proof of Concept - PoC).
-     * Đánh giá mức độ ảnh hưởng của lỗ hổng đến dữ liệu người dùng.
+1. **Email the Maintainer:**
+   * Send a detailed report directly to the lead developer at [daohieuit0803@gmail.com](mailto:daohieuit0803@gmail.com).
+   * Include a description of the vulnerability, including:
+     * Vulnerability type (e.g., SQL Injection, XSS, RLS Policy Bypass on Supabase, sensitive credential leak).
+     * Detailed steps to reproduce the issue (Proof of Concept - PoC).
+     * Any potential impact on user data.
 
-2. **Xác nhận & Phản hồi:**
-   * Chúng tôi cam kết sẽ gửi email phản hồi xác nhận đã nhận thông tin trong vòng **24 - 48 giờ** kể từ lúc bạn gửi báo cáo.
-   * Ban quản trị sẽ tiến hành phân tích lỗi và đưa ra kế hoạch sửa đổi.
+2. **Acknowledge and Investigate:**
+   * We will respond via email to acknowledge your report within **24 - 48 hours**.
+   * We will investigate and develop a patch as quickly as possible.
 
-3. **Khắc phục lỗi:**
-   * Sau khi sửa lỗi thành công, chúng tôi sẽ phát hành bản cập nhật (hotfix) và công bố lời cảm ơn đối với các chuyên gia bảo mật đã đóng góp phát hiện lỗ hổng một cách văn minh.
+3. **Fix and Publish:**
+   * Once patched, we will release a hotfix deployment and credit you for responsibly disclosing the vulnerability to our project.
 
-Cảm ơn bạn đã hỗ trợ chúng tôi bảo vệ an toàn cho học viên học tập tại MASTER TOEIC!
+Thank you for helping us keep MASTER TOEIC secure for all students!

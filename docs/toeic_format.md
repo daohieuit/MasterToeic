@@ -1,100 +1,52 @@
-# Cấu Trúc Đề Thi TOEIC Speaking & Writing (docs/toeic_format.md)
+# TOEIC Speaking & Writing Format (docs/toeic_format.md)
 
-Ứng dụng MASTER TOEIC S&W mô phỏng chính xác cấu trúc và thời gian làm bài của bài thi TOEIC Speaking & Writing chính thức được tổ chức bởi ETS.
-
----
-
-## 1. Phần Thi Nói (TOEIC Speaking Test)
-
-Gồm **11 câu hỏi** thực hiện trong khoảng **20 phút**. Thang điểm quy đổi từ **0 - 200 điểm**.
-
-| Part | Câu Hỏi | Nội Dung Nhiệm Vụ | Thời Gian Chuẩn Bị | Thời Gian Trả Lời | Tiêu Chí Đánh Giá |
-|---|---|---|---|---|---|
-| **Part 1** | Q1 - Q2 | Read a Text Aloud (Đọc đoạn văn thành tiếng) | 45 giây | 45 giây | Phát âm, ngữ điệu, trọng âm |
-| **Part 2** | Q3 - Q4 | Describe a Picture (Miêu tả một bức tranh) | 45 giây | 45 giây | Ngữ pháp, từ vựng, tính liên kết |
-| **Part 3** | Q5 - Q7 | Respond to Questions (Trả lời câu hỏi tình huống) | 0 giây | Q5: 15 giây<br>Q6: 15 giây<br>Q7: 30 giây | Trả lời đúng trọng tâm, độ lưu loát |
-| **Part 4** | Q8 - Q10 | Respond to Questions Using Info Provided (Trả lời câu hỏi sử dụng thông tin cho sẵn) | 45 giây đọc tài liệu | Q8: 15 giây<br>Q9: 15 giây<br>Q10: 30 giây | Độ chính xác của thông tin trích xuất |
-| **Part 5** | Q11 | Express an Opinion (Nêu ý kiến cá nhân) | 45 giây | 60 giây | Khả năng lập luận, ví dụ chứng minh |
-
-### 📝 Các Ví dụ Minh họa (Speaking Sample Questions)
-
-#### Part 1: Read a Text Aloud (Q1-2)
-* **Đoạn văn mẫu:**
-  > *"If you’re shopping, sightseeing and running around every minute, your vacation can seem like hard work. To avoid vacation stress, come to the Blue Valley Inn on beautiful Lake Mead. While staying at our inn, you’ll breathe clean country air as you view spectacular sights. With its spacious rooms, swimming pool and many outdoor activities, the inn is the perfect place for a vacation you won’t forget. The Blue Valley Inn prides itself on the personal attention it provides to every guest. The Blue Valley motto has always been 'A happy guest is our greatest treasure.'"*
-
-#### Part 2: Describe a Picture (Q3-4)
-* **Nhiệm vụ:** Mô tả một bức tranh công sở chi tiết nhất có thể (ví dụ: mô tả nhóm người đang họp quanh bàn, hành động của từng người, đồ vật trên bàn).
-
-#### Part 3: Respond to Questions (Q5-7)
-* **Tình huống:** *Imagine that a Canadian marketing firm is doing research in your country. You have agreed to participate in a telephone interview about television viewing.*
-  * **Question 5:** How often do you watch television?
-  * **Question 6:** What kinds of programs do you usually watch?
-  * **Question 7:** Describe your favorite television program.
-
-#### Part 4: Respond to Questions Using Info Provided (Q8-10)
-* **Tình huống:** *Hello, I’m calling about a conference on May 27 I saw advertised in the newspaper. It’s about starting your own business. I was hoping you could give me some information.*
-  * **Question 8:** Could you tell me what time the conference starts and how long it will last?
-  * **Question 9:** How much does conference attendance cost?
-  * **Question 10:** I may not be available for the full day. Could you give me information about the activities in the morning, before lunchtime?
-
-#### Part 5: Express an Opinion (Q11)
-* **Question:** *Some people prefer to take a job that does not pay well but does provide a lot of time off from work. What is your opinion about taking a job with a low salary that has a lot of vacation time? Give reasons for your opinion.*
+This document describes the structure, timing, evaluation criteria, and scoring scale of the official TOEIC Speaking & Writing exam.
 
 ---
 
-## 2. Phần Thi Viết (TOEIC Writing Test)
+## 🗣️ 1. TOEIC Speaking Section
 
-Gồm **8 câu hỏi** thực hiện trong vòng **60 phút**. Thang điểm quy đổi từ **0 - 200 điểm**.
+The Speaking section evaluates your ability to communicate in English in daily and workplace contexts.
 
-| Part | Câu Hỏi | Nội Dung Nhiệm Vụ | Thời Gian Làm Bài | Tiêu Chỉ Đánh Giá |
-|---|---|---|---|---|
-| **Part 1** | Q1 - Q5 | Write a Sentence Based on a Picture (Viết câu miêu tả tranh sử dụng 2 từ gợi ý) | 8 phút (Dùng chung cho cả 5 câu) | Đúng ngữ pháp, dùng chính xác 2 từ khóa trong 1 câu duy nhất |
-| **Part 2** | Q6 - Q7 | Respond to a Written Request (Trả lời email yêu cầu) | 10 phút cho mỗi email (Tổng 20 phút) | Văn phong lịch sự, đưa ra đủ số lượng gợi ý/giải pháp theo đề |
-| **Part 3** | Q8 | Write an Opinion Essay (Viết bài luận nêu ý kiến) | 30 phút | Cấu trúc bài viết mạch lạc, từ vựng đa dạng, ngữ pháp phức tạp (Tối thiểu 300 từ) |
+*   **Total Questions:** 11 questions.
+*   **Total Duration:** Approximately 20 minutes.
 
-### 📝 Các Ví dụ Minh họa (Writing Sample Questions)
+### Speaking Structure and Timing
 
-#### Part 1: Write a Sentence Based on a Picture (Q1-5)
-* **Từ gợi ý:** `airport terminal, so`
-* **Nhiệm vụ:** Viết 1 câu hoàn chỉnh miêu tả bức tranh sân bay có sử dụng từ khóa gợi ý trên.
-
-#### Part 2: Respond to a Written Request (Q6-7)
-* **Email gốc:**
-  > **From:** Dale City Welcome Committee  
-  > **To:** New Dale City Resident  
-  > **Subject:** Welcome to your new home!  
-  >
-  > Welcome! We would like to be the first to welcome you to Dale City. We know that there are many things to do when you move, from finding your way around town to setting up your utilities. Please contact us if you need any help at all.
-* **Nhiệm vụ:** Viết phản hồi cho email trên. Giả sử bạn vừa chuyển tới thành phố mới, hãy đưa ra tối thiểu **2 yêu cầu cung cấp thông tin**.
-
-#### Part 3: Write an Opinion Essay (Q8)
-* **Question:** *There are many ways to find a job: newspaper advertisements, Internet job search websites, and personal recommendations. What do you think is the best way to find a job? Give reasons or examples to support your opinion.*
+| Questions | Part / Task | Preparation Time | Response Time | Evaluation Criteria |
+| :--- | :--- | :---: | :---: | :--- |
+| **Q1 - Q2** | **Read a Text Aloud** | 45 seconds | 45 seconds | Pronunciation, Intonation, Stress |
+| **Q3 - Q4** | **Describe a Picture** | 45 seconds | 30 seconds | Pacing, Vocabulary, Grammar, Cohesion |
+| **Q5 - Q7** | **Respond to Questions** | 3 seconds | 15s (Q5, Q6)<br>30s (Q7) | Content appropriateness, Vocabulary, Fluency |
+| **Q8 - Q10** | **Respond to Questions Using Information Provided** | 45s (Read table)<br>3s per question | 15s (Q8, Q9)<br>30s (Q10) | Information accuracy, Listening comprehension |
+| **Q11** | **Express an Opinion** | 45 seconds | 60 seconds | Content coherence, Grammar, Argument quality |
 
 ---
 
-## 3. Cơ Chế Chấm Điểm & Tính Điểm Trọng Số
+## ✍️ 2. TOEIC Writing Section
 
-Trong ứng dụng MASTER TOEIC S&W, điểm số được tính toán chính xác theo thang điểm trọng số của ETS:
+The Writing section evaluates your ability to write English sentences, respond to emails, and compose analytical essays.
 
-### 3.1. Thang điểm cho từng câu hỏi (Trọng số chi tiết)
-Học viên và AI chấm điểm sẽ đánh giá mỗi câu theo thang điểm phần trăm (0 - 100%). Sau đó, hệ thống sẽ tự động nhân với trọng số tối đa của câu hỏi đó để ra điểm thành phần thực tế:
+*   **Total Questions:** 8 questions.
+*   **Total Duration:** 60 minutes.
 
-* **Phần thi Nói (Speaking) - Tổng điểm tối đa 200:**
-  * **Q1 - Q2** (Part 1): Trọng số tối đa **10 điểm / câu** (Tối đa 20 điểm)
-  * **Q3 - Q4** (Part 2): Trọng số tối đa **10 điểm / câu** (Tối đa 20 điểm)
-  * **Q5 - Q6** (Part 3): Trọng số tối đa **15 điểm / câu**, riêng **Q7** trọng số **25 điểm** (Tối đa 55 điểm)
-  * **Q8 - Q9** (Part 4): Trọng số tối đa **15 điểm / câu**, riêng **Q10** trọng số **35 điểm** (Tối đa 65 điểm)
-  * **Q11** (Part 5): Trọng số tối đa **40 điểm**
-  * *Tổng điểm:* 20 + 20 + 55 + 65 + 40 = **200 điểm**.
+### Writing Structure and Timing
 
-* **Phần thi Viết (Writing) - Tổng điểm tối đa 200:**
-  * **Q1 - Q5** (Part 1): Trọng số tối đa **15 điểm / câu** (Tối đa 75 điểm)
-  * **Q6 - Q7** (Part 2): Trọng số tối đa **35 điểm / câu** (Tối đa 70 điểm)
-  * **Q8** (Part 3): Trọng số tối đa **55 điểm**
-  * *Tổng điểm:* 75 + 70 + 55 = **200 điểm**.
+| Questions | Part / Task | Duration | Evaluation Criteria |
+| :--- | :--- | :---: | :--- |
+| **Q1 - Q5** | **Write a Sentence Based on a Picture** | 8 minutes (total for 5) | Grammar correctness, Relation to picture, Usage of given keywords |
+| **Q6 - Q7** | **Respond to an Email Request** | 10 minutes per email | Sentence variety, Cohesion, Content relevance |
+| **Q8** | **Write an Opinion Essay** | 30 minutes | Essay organization, Logical support, Grammar, Vocabulary |
 
-### 3.2. Tính điểm động cho chế độ Luyện tập theo Part (Part Practice)
-Khi người dùng chọn chế độ luyện tập riêng lẻ từng part hoặc kết hợp một số part (ví dụ chỉ làm Writing Part 1 gồm Q1-Q5), tổng điểm tối đa sẽ **không mặc định là 200** mà sẽ được tính động bằng tổng trọng số của các câu thực tế có trong bài làm (ví dụ: `X/75` đối với Writing Part 1). 
+---
 
-Công thức tính điểm này giúp học viên biết chính xác mức độ hoàn thành bài thi của mình so với mục tiêu cụ thể một cách trực quan nhất.
+## 📊 3. Scoring Scale
 
+The official TOEIC Speaking & Writing scores are calculated independently and mapped to a scale of **0 - 200** points per section:
+
+*   **Speaking Score Range:** 0 - 200 points (increment of 10 points).
+*   **Writing Score Range:** 0 - 200 points (increment of 10 points).
+*   **Subscores (Levels):**
+    *   Speaking: 8 proficiency levels.
+    *   Writing: 9 proficiency levels.
+*   **Weighting:** AI grading calculates scores based on pronunciation, vocabulary, grammatical correctness, and structure coherence, mapping them to the official scale.

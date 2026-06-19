@@ -1,39 +1,41 @@
-# Quy Tắc Ứng Xử Của Cộng Đồng Đóng Góp (CODE_OF_CONDUCT.md)
+# Contributor Covenant Code of Conduct (CODE_OF_CONDUCT.md)
 
-## Lời Cam Kết Của Chúng Tôi
+## Our Pledge
 
-Nhằm tạo ra một môi trường cởi mở, thân thiện và lành mạnh, chúng tôi với tư cách là những người phát triển và đóng góp cho dự án cam kết sẽ tham gia đóng góp dựa trên tinh thần tôn trọng, lịch sự và không phân biệt đối xử đối với bất kỳ ai, không giới hạn bởi tuổi tác, giới tính, chủng tộc, quốc tịch, tôn giáo, trình độ học vấn hay tình trạng sức khỏe.
-
----
-
-## Các Tiêu Chuẩn Hành Vi Tốt
-
-Chúng tôi khuyến khích các hành vi tích cực nhằm duy trì cộng đồng phát triển lành mạnh:
-* Sử dụng ngôn từ lịch sự, mang tính xây dựng và hòa nhã.
-* Tôn trọng các ý kiến, quan điểm khác biệt và trải nghiệm của người khác.
-* Sẵn sàng tiếp nhận ý kiến đóng góp mang tính xây dựng.
-* Tập trung vào những giải pháp tối ưu nhất cho cộng đồng học tập.
-* Thể hiện sự đồng cảm và sẻ chia đối với các thành viên khác trong cộng đồng.
+In the interest of fostering an open and welcoming environment, we as contributors and maintainers pledge to make participation in our project and our community a harassment-free experience for everyone, regardless of age, body size, disability, ethnicity, gender identity and expression, level of experience, education, socio-economic status, nationality, personal appearance, race, religion, or sexual identity and orientation.
 
 ---
 
-## Các Hành Vi Không Chấp Nhận Được
+## Expected Standards
 
-Các hành vi sau đây bị coi là vi phạm nghiêm trọng quy tắc ứng xử của cộng đồng:
-* Sử dụng ngôn từ kích động, xúc phạm, hạ nhục hoặc đe dọa các thành viên khác.
-* Quấy rối dưới mọi hình thức, bao gồm quấy rối tình dục hoặc quấy rối cá nhân.
-* Công bố thông tin cá nhân của người khác (như địa chỉ email, số điện thoại, địa chỉ nhà riêng) khi chưa được sự đồng ý rõ ràng của họ.
-* Các hành vi thiếu văn hóa, quấy rối thảo luận hoặc gây rối cộng đồng trên các kênh Issue hay Pull Request.
-* Mọi hành vi khác có thể coi là không phù hợp trong môi trường làm việc chuyên nghiệp và học thuật.
-
----
-
-## Trách Nhiệm Vận Hành
-
-Ban quản trị dự án có trách nhiệm làm rõ và thực thi các tiêu chuẩn về hành vi ứng xử lành mạnh này. Chúng tôi có quyền loại bỏ, chỉnh sửa hoặc từ chối các ý kiến đóng góp, commit, mã nguồn, issue hoặc PR không tuân thủ Quy tắc ứng xử này, hoặc cấm tạm thời/vĩnh viễn bất kỳ thành viên nào có hành vi không phù hợp.
+Examples of behavior that contributes to creating a positive environment include:
+* Using welcoming and inclusive language.
+* Being respectful of differing viewpoints and experiences.
+* Gracefully accepting constructive criticism.
+* Focusing on what is best for the community.
+* Showing empathy towards other community members.
 
 ---
 
-## Báo Cáo Vi Phạm
+## Unacceptable Standards
 
-Nếu bạn phát hiện bất kỳ hành vi nào vi phạm quy tắc ứng xử này, vui lòng báo cáo trực tiếp cho ban quản trị dự án thông qua mục tạo Issue bảo mật hoặc liên hệ trực tiếp qua thông tin liên hệ của tác giả để chúng tôi xử lý kịp thời.
+Examples of unacceptable behavior by participants include:
+* The use of sexualized language or imagery and unwelcome sexual attention or advances.
+* Trolling, insulting/derogatory comments, and personal or political attacks.
+* Public or private harassment.
+* Publishing others' private information, such as a physical or electronic address, without explicit permission.
+* Other conduct which could reasonably be considered inappropriate in a professional context.
+
+---
+
+## Enforcement Responsibilities
+
+Project maintainers are responsible for clarifying the standards of acceptable behavior and are expected to take appropriate and fair corrective action in response to any instances of unacceptable behavior.
+
+Project maintainers have the right and responsibility to remove, edit, or reject comments, commits, code, wiki edits, issues, and other contributions that are not aligned to this Code of Conduct, or to ban temporarily or permanently any contributor for other behaviors that they deem inappropriate, threatening, offensive, or harmful.
+
+---
+
+## Reporting Violations
+
+Instances of abusive, harassing, or otherwise unacceptable behavior may be reported by contacting the project maintainer directly or opening a confidential report. All complaints will be reviewed and investigated and will result in a response that is deemed necessary and appropriate to the circumstances.

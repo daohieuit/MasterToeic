@@ -1,23 +1,23 @@
-# Nhật Ký Thay Đổi (CHANGELOG.md)
+# Changelog (CHANGELOG.md)
 
-Tất cả các thay đổi đáng chú ý đối với dự án **MASTER TOEIC** sẽ được ghi lại chi tiết trong tệp tin này.
+All notable changes to the **MASTER TOEIC** project will be documented in this file.
 
-Định dạng của nhật ký thay đổi này bám sát theo chuẩn [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) và tuân thủ nguyên tắc định vị phiên bản [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ---
 
 ## [1.0.0] - 2026-06-19
 
-### 🎉 Đã Thêm (Added)
-* **Zen Exam Room:** Giao diện tập trung tối giản bám sát format thi thực tế TOEIC S&W.
-* **Tự Chấm Điểm AI:** Hỗ trợ quy trình đóng gói dữ liệu JSON bài thi + ghép nối âm thanh Speaking thành 1 file WAV duy nhất có chèn chỉ dẫn để nộp chấm điểm miễn phí trên Gemini Web.
-* **Audio Visualizer & Control:** Tích hợp sóng âm Canvas động thời gian thực và tuỳ chỉnh tốc độ phát âm thanh ghi âm.
-* **Cloud Sync & Local-First:** Cơ chế đồng bộ dữ liệu thông minh giữa cơ sở dữ liệu đám mây Supabase (Auth, RLS, Storage + pg_cron tự động xóa file ghi âm sau 7 ngày) và LocalStorage của trình duyệt.
-* **Quản trị Đề thi:** Giao diện quản lý Admin cao cấp hỗ trợ tạo đề bằng prompt AI, chỉnh sửa dữ liệu thủ công, nạp JSON Gemini trực tiếp và kho ảnh dùng chung.
-* **Nút bấm Tiến trình:** Nút bấm tác vụ quản trị (Kiểm tra ảnh lỗi, Cập nhật đề thiếu ảnh) có tích hợp thanh tiến trình background sweep trực quan ngay bên trong nút.
-* **Thanh hiển thị Phiên bản:** Thêm nhãn thông tin phiên bản hoạt động ở chân Drawer Cài đặt.
-* **Tài liệu Dự án:** Bổ sung các hướng dẫn kỹ thuật chuyên nghiệp bao gồm đặc tả kiến trúc (`architecture.md`), thiết kế (`DESIGN.md`), PRD (`PRD.md`), cấu trúc TOEIC (`toeic_format.md`) và triển khai deploy (`deployment.md`).
+### 🎉 Added
+* **Zen Exam Room:** A focused, distraction-free environment matching the official TOEIC S&W testing layout.
+* **AI Self-Grading Workflow:** Complete package download containing exam attempts JSON + Speaking recordings merged into a single WAV audio file with embedded voice commands for easy grading on Gemini Web.
+* **Audio Visualizer & Control:** Canvas audio waves visualizer during recording and a custom audio player supporting playback speed adjustments (0.75x to 2x).
+* **Cloud Sync & Local-First:** Seamless synchronization between Supabase Cloud (Auth, Database, Storage, and pg_cron auto-cleanup for files older than 7 days) and browser LocalStorage.
+* **Admin Dashboard:** Interface supporting AI prompt-driven test generation, direct JSON imports, manual test editing, and image pool assets management.
+* **Button Progress Bars:** Real-time background sweep progress bars integrated directly into long-running admin buttons ("Recheck" and "Update Missing Images").
+* **Settings Version Label:** Displays the active version at the bottom of the Settings Drawer.
+* **Technical Documentation:** Detailed guides including architecture specifications (`architecture.md`), design system (`DESIGN.md`), PRD (`PRD.md`), TOEIC format specs (`toeic_format.md`), and Vercel development setups (`getting-started.md`).
 
-### 🛠️ Đã Sửa (Fixed)
-* **Client-Side Image Validation:** Chuyển hoàn toàn cơ chế kiểm tra ảnh hỏng sang client-side, khắc phục triệt để lỗi CDN chặn request HEAD từ server-side gây báo lỗi giả.
-* **Đồng bộ UI/UX:** Cập nhật khoảng cách tiêu đề phông chữ Space Grotesk, bo góc modal cảnh báo và dọn dẹp các thư mục rỗng trong dự án.
+### 🛠️ Fixed
+* **Client-Side Image Validation:** Switched image checks to run parallelly on the client browser, eliminating false "broken link" errors caused by CDNs blocking server-side requests.
+* **UI/UX Consistency:** Adjusted title font tracking for Space Grotesk, modal border-radius alignment, scrollbar formatting, and cleared out unused repository directories.

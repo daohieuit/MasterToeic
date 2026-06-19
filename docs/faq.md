@@ -1,36 +1,36 @@
-# Các Câu Hỏi Thường Gặp (docs/faq.md)
+# Frequently Asked Questions (docs/faq.md)
 
-Tổng hợp các câu trả lời cho những câu hỏi thường gặp của học viên và các nhà phát triển khi tham gia vận hành dự án **MASTER TOEIC**.
-
----
-
-## 💡 HỌC VIÊN & NGƯỜI SỬ DỤNG (User FAQs)
-
-### Q1: Tại sao MASTER TOEIC lại hoàn toàn miễn phí và không cần API Key?
-* **Trả lời:** Các ứng dụng AI thông thường yêu cầu bạn nhập API Key hoặc trả phí duy trì máy chủ proxy. MASTER TOEIC sử dụng cơ chế **Tự chấm điểm (Self-Grading Workflow)**: Bạn tải bài làm (.json + .wav) về máy cục bộ, sau đó gửi lên giao diện Google Gemini Web (hoặc ChatGPT) để nhờ chấm và nhận lại mã JSON nhận xét. Nhờ vậy, ứng dụng hoạt động 100% độc lập, không phát sinh chi phí API Key và an toàn bảo mật dữ liệu.
-
-### Q2: Tại sao tệp tin âm thanh Speaking tải về lại được gộp thành 1 tệp duy nhất?
-* **Trả lời:** Một bài thi Speaking có 11 câu hỏi ghi âm. Nếu tải xuống riêng lẻ từng câu, học viên sẽ phải đính kèm 11 file ghi âm lên Gemini Web rất phiền phức. Hệ thống đã tích hợp thuật toán trộn âm để ghép nối tất cả 11 câu ghi âm đó kèm theo giọng đọc chỉ dẫn của AI (ví dụ: *"Part 1, Question 1"*) thành **1 tệp WAV duy nhất** giúp bạn tải lên Gemini Web cực kỳ tiện lợi và nhanh chóng.
-
-### Q3: Tôi có thể làm thi thử mà không cần đăng nhập tài khoản không?
-* **Trả lời:** **Hoàn toàn được.** Nếu chọn chế độ Khách (Guest Mode):
-  * Dữ liệu làm bài được lưu tự động trên LocalStorage của trình duyệt.
-  * Các file âm thanh Speaking được lưu dưới dạng cache tạm (Object URLs).
-  * Lịch sử thi sẽ bị mất nếu bạn xóa dữ liệu trang web hoặc chuyển sang trình duyệt khác. Đăng nhập qua Supabase giúp đồng bộ dữ liệu và file âm thanh ổn định lâu dài.
+A compilation of answers to common questions asked by students, teachers, and developers when deploying or using the **MASTER TOEIC** platform.
 
 ---
 
-## 🛠️ NHÀ PHÁT TRIỂN & QUẢN TRỊ VIÊN (Developer FAQs)
+## 💡 USER FAQS
 
-### Q1: Làm thế nào để thêm đề thi thử mới vào cơ sở dữ liệu?
-* **Trả lời:** Bạn truy cập vào trang Admin `/admin` (tài khoản đăng nhập phải được cấp role `admin` trong bảng metadata người dùng của Supabase). Tại đây bạn có thể:
-  1. Sử dụng tính năng **Tạo đề bằng AI** để biên soạn đề tự động bằng prompt.
-  2. Tải đề mẫu JSON về, tự chỉnh sửa thủ công và dán nạp đề trực tiếp trên form Quản lý đề thi.
+### Q1: Why is MASTER TOEIC completely free and requires no API key?
+* **Answer:** Normal AI platforms require you to enter an API key or pay for their proxy server usage. MASTER TOEIC uses an innovative **Self-Grading Workflow**: You download your exam attempt (.json file + merged .wav audio) locally and submit them onto the public Google Gemini Web (or ChatGPT) interface along with our custom criteria prompt. You copy-paste the AI evaluation response back into the website. This keeps the project 100% free, private, and fully functional without running costs.
 
-### Q2: Tại sao một số hình ảnh của đề thi bị báo lỗi link hỏng hoặc thiếu ảnh?
-* **Trả lời:**
-  * **Thiếu ảnh:** Do đề thi TOEIC Speaking Part 2 và Writing Part 1 bắt buộc phải có hình ảnh miêu tả tranh, nếu đề được tạo bằng AI mà chưa được gán link ảnh thì hệ thống sẽ hiển thị trạng thái thiếu ảnh. Bạn chỉ cần nhấn **"Cập nhật đề thiếu ảnh"** ở dashboard admin để lấy ảnh từ kho ảnh dự phòng gán tự động.
-  * **Lỗi ảnh:** Hệ thống quản trị của chúng tôi chạy cơ chế tải song song trên client để xác minh link ảnh. Nếu ảnh thực sự không thể hiển thị được do liên kết die, hệ thống sẽ báo đỏ để admin kịp thời sửa đổi.
+### Q2: Why is the Speaking recording downloaded as one single audio file?
+* **Answer:** A standard TOEIC Speaking test contains 11 questions. Uploading 11 files individually to Gemini Web would be tedious and slow. The platform decodes your recordings on the browser and merges them together, inserting AI voice commands (e.g., *"Part 1, Question 1"*) and silent intervals, generating **one single WAV file** for easy uploading.
 
-### Q3: Dung lượng lưu trữ file âm thanh Speaking của học viên trên Cloud có bị quá tải không?
-* **Trả lời:** Không. Dự án cấu hình cơ chế tự động dọn dẹp bằng extension **`pg_cron`** tích hợp trong cơ sở dữ liệu Supabase PostgreSQL. Mỗi đêm, một tác vụ tự động sẽ chạy để xóa vĩnh viễn toàn bộ các bản ghi âm thanh đã được tạo từ quá 7 ngày trước. Điều này đảm bảo dung lượng lưu trữ Supabase Storage của bạn luôn nằm trong hạn mức gói Free trọn đời.
+### Q3: Can I take practice tests without logging in?
+* **Answer:** **Yes, absolutely.** If you select Guest Mode:
+  * Your practice attempts are saved directly in your browser's LocalStorage.
+  * Audio recordings are kept as temporary browser object URLs.
+  * *Note:* Clearing browser site data or switching browsers will wipe your practice history. Log in via Supabase to secure your history and recordings permanently.
+
+---
+
+## 🛠️ DEVELOPER FAQS
+
+### Q1: How do I add new practice tests to the database?
+* **Answer:** Log in to the platform with an account that has been granted the `admin` role in Supabase. Navigate to the `/admin` portal, where you can:
+  1. Use the **AI Generator** to write a prompt and generate tests automatically.
+  2. Edit test configurations manually, copy-pasting JSON files directly on the console.
+
+### Q2: Why are some images in practice tests flagged as missing or broken?
+* **Answer:**
+  * **Missing Images:** Speaking Part 2 and Writing Part 1 require prompt images. When tests are generated by AI, they might lack image links. Simply click the **"Update Missing Images"** button in the Admin Tests dashboard to randomly assign available images from the unused pool.
+  * **Broken Images:** The admin console runs an asynchronous client-side validation check on image URLs. If a link returns a network error or fails to load, it is flagged as broken so administrators can replace it.
+
+### Q3: Will storing user recording files exhaust my free Supabase storage quota?
+* **Answer:** No. We utilize the **`pg_cron`** extension on Supabase PostgreSQL. A cron job is scheduled to run daily at midnight, executing a cleanup function that purges all Speaking recording files older than 7 days. This ensures your cloud storage stays well within the free tier.
