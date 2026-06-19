@@ -278,6 +278,7 @@ export default function ReviewConsole({
   const [localReviews, setLocalReviews] = useState<QuestionReview[]>(reviews);
   const [mergingAudio, setMergingAudio] = useState(false);
   const [mergeProgress, setMergeProgress] = useState(0);
+  const speakingCount = localReviews.filter(r => r.section === 'speaking' && r.audioUrl).length;
 
   const getPromptTemplate = (title: string, revs: any[]) => {
     const hasSpeaking = revs.some(r => r.section === 'speaking');
@@ -534,34 +535,35 @@ Bạn BẮT BUỘC phải trả về kết quả dưới dạng một khối mã
     }
   };
 
-  const handleDownloadMaterials = async () => {
-    handleExportJson();
-
+  const handleExportAudio = async () => {
     const speakingCount = localReviews.filter(r => r.section === 'speaking' && r.audioUrl).length;
-    if (speakingCount > 0) {
-      setMergingAudio(true);
-      setMergeProgress(0);
-      try {
-        const wavBlob = await mergeAudioResponses(localReviews, (p) => setMergeProgress(p));
-        if (wavBlob) {
-          const url = URL.createObjectURL(wavBlob);
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = `toeic_speaking_merged_${Date.now()}.wav`;
-          document.body.appendChild(a);
-          a.click();
-          document.body.removeChild(a);
-          URL.revokeObjectURL(url);
-          toast.success(language === 'vi' ? 'Đã tải xuống file âm thanh thành công!' : 'Audio downloaded successfully!');
-        } else {
-          toast.error(language === 'vi' ? 'Lỗi gộp âm thanh!' : 'Failed to merge audio!');
-        }
-      } catch (err) {
-        console.error(err);
-        toast.error('Error generating audio.');
-      } finally {
-        setMergingAudio(false);
+    if (speakingCount === 0) {
+      toast.error(language === 'vi' ? 'Không có file ghi âm Speaking để tải!' : 'No Speaking audio recordings to download!');
+      return;
+    }
+
+    setMergingAudio(true);
+    setMergeProgress(0);
+    try {
+      const wavBlob = await mergeAudioResponses(localReviews, (p) => setMergeProgress(p));
+      if (wavBlob) {
+        const url = URL.createObjectURL(wavBlob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `toeic_speaking_merged_${Date.now()}.wav`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        toast.success(language === 'vi' ? 'Đã tải xuống file âm thanh thành công!' : 'Audio downloaded successfully!');
+      } else {
+        toast.error(language === 'vi' ? 'Lỗi gộp âm thanh!' : 'Failed to merge audio!');
       }
+    } catch (err) {
+      console.error(err);
+      toast.error('Error generating audio.');
+    } finally {
+      setMergingAudio(false);
     }
   };
 
@@ -838,17 +840,29 @@ Bạn BẮT BUỘC phải trả về kết quả dưới dạng một khối mã
         <Link href="/" className="btn-secondary" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '8px 16px' }}>
           <ArrowLeft size={16} /> {t.backDashboard}
         </Link>
-        <button 
-          className="btn-primary" 
-          onClick={handleDownloadMaterials} 
-          disabled={mergingAudio}
-          style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '8px 16px', background: 'var(--accent)', color: '#fff', border: 'none', fontWeight: 'bold' }}
-        >
-          <Download size={16} /> 
-          {mergingAudio 
-            ? `${language === 'vi' ? 'Đang gộp...' : 'Merging...'} (${mergeProgress}%)` 
-            : (language === 'vi' ? 'Tải JSON & Audio' : 'Download JSON & Audio')}
-        </button>
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <button 
+            className="btn-secondary" 
+            onClick={handleExportJson}
+            style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '8px 16px', borderRadius: '0px' }}
+          >
+            <Download size={16} /> 
+            {language === 'vi' ? 'Tải File JSON' : 'Download JSON'}
+          </button>
+          {speakingCount > 0 && (
+            <button 
+              className="btn-primary" 
+              onClick={handleExportAudio} 
+              disabled={mergingAudio}
+              style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '8px 16px', background: 'var(--accent)', color: '#fff', border: 'none', fontWeight: 'bold' }}
+            >
+              <Download size={16} /> 
+              {mergingAudio 
+                ? `${language === 'vi' ? 'Đang gộp...' : 'Merging...'} (${mergeProgress}%)` 
+                : (language === 'vi' ? 'Tải File Audio (WAV)' : 'Download Audio (WAV)')}
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Header Panel */}
@@ -909,16 +923,28 @@ Bạn BẮT BUỘC phải trả về kết quả dưới dạng một khối mã
                   {language === 'vi' ? 'Tải file JSON đề bài và file âm thanh WAV đã gộp bài nói của bạn.' : 'Download the exported JSON and your merged WAV audio file.'}
                 </p>
               </div>
-              <div style={{ marginTop: '12px' }}>
+              <div style={{ marginTop: '12px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
                 <button 
                   className="btn-accent" 
-                  onClick={handleDownloadMaterials} 
-                  disabled={mergingAudio}
+                  onClick={handleExportJson}
                   style={{ width: '100%', padding: '8px', fontSize: '0.8rem', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}
                 >
                   <Download size={14} />
-                  {mergingAudio ? `${language === 'vi' ? 'Đang gộp...' : 'Merging...'} (${mergeProgress}%)` : (language === 'vi' ? 'Tải JSON & Audio' : 'Download JSON & Audio')}
+                  {language === 'vi' ? 'Tải File JSON' : 'Download JSON'}
                 </button>
+                {speakingCount > 0 && (
+                  <button 
+                    className="btn-secondary" 
+                    onClick={handleExportAudio} 
+                    disabled={mergingAudio}
+                    style={{ width: '100%', padding: '8px', fontSize: '0.8rem', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}
+                  >
+                    <Download size={14} />
+                    {mergingAudio 
+                      ? `${language === 'vi' ? 'Đang gộp...' : 'Merging...'} (${mergeProgress}%)` 
+                      : (language === 'vi' ? 'Tải File Audio (WAV)' : 'Download Audio (WAV)')}
+                  </button>
+                )}
               </div>
             </div>
 
