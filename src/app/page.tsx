@@ -146,7 +146,7 @@ export default function Dashboard() {
 
   const t = {
     vi: {
-      title: 'Master Toeic',
+      title: 'MASTER TOEIC',
       subtitle: 'Nền tảng luyện thi Nói & Viết chuẩn TOEIC S&W với AI trợ lực',
       startTest: 'Thi Thử Full Test',
       startSpeaking: 'Thi Luyện Speaking',
@@ -177,7 +177,7 @@ export default function Dashboard() {
       writingTestType: 'Writing Test (Viết)'
     },
     en: {
-      title: 'Master Toeic',
+      title: 'MASTER TOEIC',
       subtitle: 'Premium TOEIC Speaking & Writing Practice Powered by Gemini AI',
       startTest: 'Start Full Exam',
       startSpeaking: 'Start Speaking Practice',

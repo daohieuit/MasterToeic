@@ -1,6 +1,6 @@
 # Nhật Ký Thay Đổi (CHANGELOG.md)
 
-Tất cả các thay đổi đáng chú ý đối với dự án **Master Toeic** sẽ được ghi lại chi tiết trong tệp tin này.
+Tất cả các thay đổi đáng chú ý đối với dự án **MASTER TOEIC** sẽ được ghi lại chi tiết trong tệp tin này.
 
 Định dạng của nhật ký thay đổi này bám sát theo chuẩn [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) và tuân thủ nguyên tắc định vị phiên bản [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 

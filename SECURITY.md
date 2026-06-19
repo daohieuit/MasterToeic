@@ -1,6 +1,6 @@
 # Chính Sách Bảo Mật (SECURITY.md)
 
-Chúng tôi rất coi trọng vấn đề bảo mật thông tin và an toàn hệ thống của dự án **Master Toeic**. Nếu bạn phát hiện bất kỳ lỗ hổng bảo mật nào trong mã nguồn hoặc hệ thống kết nối Supabase của dự án, vui lòng thông báo cho chúng tôi để xử lý nhanh nhất có thể.
+Chúng tôi rất coi trọng vấn đề bảo mật thông tin và an toàn hệ thống của dự án **MASTER TOEIC**. Nếu bạn phát hiện bất kỳ lỗ hổng bảo mật nào trong mã nguồn hoặc hệ thống kết nối Supabase của dự án, vui lòng thông báo cho chúng tôi để xử lý nhanh nhất có thể.
 
 ---
 
@@ -35,4 +35,4 @@ Quy trình báo cáo lỗ hổng bảo mật an toàn:
 3. **Khắc phục lỗi:**
    * Sau khi sửa lỗi thành công, chúng tôi sẽ phát hành bản cập nhật (hotfix) và công bố lời cảm ơn đối với các chuyên gia bảo mật đã đóng góp phát hiện lỗ hổng một cách văn minh.
 
-Cảm ơn bạn đã hỗ trợ chúng tôi bảo vệ an toàn cho học viên học tập tại Master Toeic!
+Cảm ơn bạn đã hỗ trợ chúng tôi bảo vệ an toàn cho học viên học tập tại MASTER TOEIC!

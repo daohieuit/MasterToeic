@@ -1,6 +1,6 @@
 # Hướng Dẫn Bắt Đầu Phát Triển (docs/getting-started.md)
 
-Chào mừng bạn đã đến với dự án **Master Toeic**! Hướng dẫn này sẽ giúp bạn thiết lập dự án cục bộ từ đầu, kết nối cơ sở dữ liệu Supabase và triển khai lên môi trường production.
+Chào mừng bạn đã đến với dự án **MASTER TOEIC**! Hướng dẫn này sẽ giúp bạn thiết lập dự án cục bộ từ đầu, kết nối cơ sở dữ liệu Supabase và triển khai lên môi trường production.
 
 ---
 
@@ -71,13 +71,13 @@ npm run dev
 
 ## 🚀 Triển Khai Lên Vercel (Production Deployment)
 
-Dự án MasterToeic được tối ưu hóa hoàn hảo cho kiến trúc Serverless của Vercel:
+Dự án MASTER TOEIC được tối ưu hóa hoàn hảo cho kiến trúc Serverless của Vercel:
 
 ### Bước 1: Đẩy mã nguồn lên GitHub cá nhân
 ```bash
 git init
 git add .
-git commit -m "Initial commit of MasterToeic"
+git commit -m "Initial commit of MASTER TOEIC"
 git remote add origin https://github.com/your-username/master-toeic.git
 git branch -M main
 git push -u origin main

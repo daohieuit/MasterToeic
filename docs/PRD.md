@@ -1,6 +1,6 @@
-# Product Requirements Document (PRD) - Master Toeic
+# Product Requirements Document (PRD) - MASTER TOEIC
 
-Master Toeic là nền tảng web serverless hỗ trợ người dùng tự luyện thi kỹ năng Nói (Speaking) và Viết (Writing) theo chuẩn định dạng TOEIC S&W chính thức, sử dụng công nghệ AI Gemini để tự động đánh giá và phản hồi chi tiết bằng tiếng Việt với chi phí vận hành 0đ.
+MASTER TOEIC là nền tảng web serverless hỗ trợ người dùng tự luyện thi kỹ năng Nói (Speaking) và Viết (Writing) theo chuẩn định dạng TOEIC S&W chính thức, sử dụng công nghệ AI Gemini để tự động đánh giá và phản hồi chi tiết bằng tiếng Việt với chi phí vận hành 0đ.
 
 ---
 

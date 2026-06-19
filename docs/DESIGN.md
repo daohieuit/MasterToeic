@@ -1,6 +1,6 @@
 # Design System & User Experience Document (DESIGN.md)
 
-Tài liệu này định nghĩa hệ thống thiết kế (Design System), triết lý UX và giao diện trực quan cho ứng dụng **MasterToeic S&W**. 
+Tài liệu này định nghĩa hệ thống thiết kế (Design System), triết lý UX và giao diện trực quan cho ứng dụng **MASTER TOEIC S&W**. 
 
 ---
 

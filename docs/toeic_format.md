@@ -1,6 +1,6 @@
 # Cấu Trúc Đề Thi TOEIC Speaking & Writing (docs/toeic_format.md)
 
-Ứng dụng MasterToeic S&W mô phỏng chính xác cấu trúc và thời gian làm bài của bài thi TOEIC Speaking & Writing chính thức được tổ chức bởi ETS.
+Ứng dụng MASTER TOEIC S&W mô phỏng chính xác cấu trúc và thời gian làm bài của bài thi TOEIC Speaking & Writing chính thức được tổ chức bởi ETS.
 
 ---
 
@@ -74,7 +74,7 @@ Gồm **8 câu hỏi** thực hiện trong vòng **60 phút**. Thang điểm quy
 
 ## 3. Cơ Chế Chấm Điểm & Tính Điểm Trọng Số
 
-Trong ứng dụng MasterToeic S&W, điểm số được tính toán chính xác theo thang điểm trọng số của ETS:
+Trong ứng dụng MASTER TOEIC S&W, điểm số được tính toán chính xác theo thang điểm trọng số của ETS:
 
 ### 3.1. Thang điểm cho từng câu hỏi (Trọng số chi tiết)
 Học viên và AI chấm điểm sẽ đánh giá mỗi câu theo thang điểm phần trăm (0 - 100%). Sau đó, hệ thống sẽ tự động nhân với trọng số tối đa của câu hỏi đó để ra điểm thành phần thực tế:

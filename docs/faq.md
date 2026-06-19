@@ -1,13 +1,13 @@
 # Các Câu Hỏi Thường Gặp (docs/faq.md)
 
-Tổng hợp các câu trả lời cho những câu hỏi thường gặp của học viên và các nhà phát triển khi tham gia vận hành dự án **Master Toeic**.
+Tổng hợp các câu trả lời cho những câu hỏi thường gặp của học viên và các nhà phát triển khi tham gia vận hành dự án **MASTER TOEIC**.
 
 ---
 
 ## 💡 HỌC VIÊN & NGƯỜI SỬ DỤNG (User FAQs)
 
-### Q1: Tại sao Master Toeic lại hoàn toàn miễn phí và không cần API Key?
-* **Trả lời:** Các ứng dụng AI thông thường yêu cầu bạn nhập API Key hoặc trả phí duy trì máy chủ proxy. Master Toeic sử dụng cơ chế **Tự chấm điểm (Self-Grading Workflow)**: Bạn tải bài làm (.json + .wav) về máy cục bộ, sau đó gửi lên giao diện Google Gemini Web (hoặc ChatGPT) để nhờ chấm và nhận lại mã JSON nhận xét. Nhờ vậy, ứng dụng hoạt động 100% độc lập, không phát sinh chi phí API Key và an toàn bảo mật dữ liệu.
+### Q1: Tại sao MASTER TOEIC lại hoàn toàn miễn phí và không cần API Key?
+* **Trả lời:** Các ứng dụng AI thông thường yêu cầu bạn nhập API Key hoặc trả phí duy trì máy chủ proxy. MASTER TOEIC sử dụng cơ chế **Tự chấm điểm (Self-Grading Workflow)**: Bạn tải bài làm (.json + .wav) về máy cục bộ, sau đó gửi lên giao diện Google Gemini Web (hoặc ChatGPT) để nhờ chấm và nhận lại mã JSON nhận xét. Nhờ vậy, ứng dụng hoạt động 100% độc lập, không phát sinh chi phí API Key và an toàn bảo mật dữ liệu.
 
 ### Q2: Tại sao tệp tin âm thanh Speaking tải về lại được gộp thành 1 tệp duy nhất?
 * **Trả lời:** Một bài thi Speaking có 11 câu hỏi ghi âm. Nếu tải xuống riêng lẻ từng câu, học viên sẽ phải đính kèm 11 file ghi âm lên Gemini Web rất phiền phức. Hệ thống đã tích hợp thuật toán trộn âm để ghép nối tất cả 11 câu ghi âm đó kèm theo giọng đọc chỉ dẫn của AI (ví dụ: *"Part 1, Question 1"*) thành **1 tệp WAV duy nhất** giúp bạn tải lên Gemini Web cực kỳ tiện lợi và nhanh chóng.

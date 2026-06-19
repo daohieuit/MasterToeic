@@ -19,7 +19,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'Master Toeic - Luyện thi TOEIC Speaking & Writing',
+  title: 'MASTER TOEIC - Luyện thi TOEIC Speaking & Writing',
   description: 'Trang web luyện thi TOEIC Speaking & Writing chuẩn format đề thi chính thức, đánh giá chi tiết bằng AI tiếng Việt miễn phí.',
   icons: {
     icon: [

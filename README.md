@@ -1,10 +1,10 @@
 <p align="center">
-  <img src="./public/logo.png" alt="Master Toeic Logo" width="120" height="120" />
+  <img src="./public/logo.png" alt="MASTER TOEIC Logo" width="120" height="120" />
 </p>
 
-# Master Toeic - Luyện Thi TOEIC Speaking & Writing Bằng AI
+# MASTER TOEIC - Luyện Thi TOEIC Speaking & Writing Bằng AI
 
-Master Toeic là ứng dụng web serverless tối giản, hiệu quả và hoàn toàn miễn phí (0đ chi phí vận hành) hỗ trợ ôn luyện và thi thử hai kỹ năng Nói (Speaking) và Viết (Writing) theo chuẩn định dạng TOEIC quốc tế. 
+MASTER TOEIC là ứng dụng web serverless tối giản, hiệu quả và hoàn toàn miễn phí (0đ chi phí vận hành) hỗ trợ ôn luyện và thi thử hai kỹ năng Nói (Speaking) và Viết (Writing) theo chuẩn định dạng TOEIC quốc tế. 
 
 Hệ thống hỗ trợ cơ chế **Tự chấm điểm bằng Gemini Web** hoàn toàn miễn phí, an toàn và bảo mật riêng tư, không cần cài đặt hay duy trì bất kỳ API Key hoặc máy chủ proxy nào.
 
@@ -89,10 +89,10 @@ Hệ thống tài liệu hướng dẫn chi tiết nằm trong thư mục `/docs
 
 ## 💡 Quy Trình Tự Chấm Điểm AI Miễn Phí (Self-Grading Workflow)
 
-Để tối ưu hóa chi phí vận hành 0đ và đảm bảo dự án hoạt động trọn đời không lo hết hạn API Key, MasterToeic hỗ trợ quy trình tự chấm điểm miễn phí bằng AI:
+Để tối ưu hóa chi phí vận hành 0đ và đảm bảo dự án hoạt động trọn đời không lo hết hạn API Key, MASTER TOEIC hỗ trợ quy trình tự chấm điểm miễn phí bằng AI:
 
 1.  **Làm bài:** Học viên hoàn thành phần thi Nói/Viết và nhấn nộp bài. Trang kết quả ban đầu hiển thị trạng thái `Chờ chấm (Pending)`.
 2.  **Tải tư liệu:** Nhấn nút **"Tải JSON & Audio"**. Hệ thống sẽ tải xuống 1 file JSON bài làm và tự động ghép nối các bản thu âm của bạn thành **1 tệp âm thanh WAV duy nhất** có chèn chỉ thị của AI.
 3.  **Copy Prompt:** Nhấp vào nút **"Copy Prompt"** để sao chép chỉ thị chấm điểm chuyên sâu bằng tiếng Việt.
 4.  **Tải lên Gemini Web:** Truy cập [Gemini Web](https://gemini.google.com), đính kèm file JSON + file WAV vừa tải về, dán prompt đã copy và gửi.
-5.  **Áp dụng kết quả:** Sao chép đoạn mã JSON kết quả nhận xét mà Gemini Web trả về, dán vào ô dán JSON trên MasterToeic và bấm **"Áp dụng kết quả"**. Hệ thống sẽ ngay lập tức hiển thị điểm trọng số chi tiết, biểu đồ Radar và phần sửa lỗi ngữ pháp.
+5.  **Áp dụng kết quả:** Sao chép đoạn mã JSON kết quả nhận xét mà Gemini Web trả về, dán vào ô dán JSON trên MASTER TOEIC và bấm **"Áp dụng kết quả"**. Hệ thống sẽ ngay lập tức hiển thị điểm trọng số chi tiết, biểu đồ Radar và phần sửa lỗi ngữ pháp.

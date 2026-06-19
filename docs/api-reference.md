@@ -1,6 +1,6 @@
 # Đặc Tả API Hệ Thống (docs/api-reference.md)
 
-Dự án **Master Toeic** cung cấp một số API nội bộ phục vụ cho quá trình đồng bộ lịch sử làm bài, chuyển văn bản thành giọng đọc (TTS) và pipeline quản lý hình ảnh trong trang quản trị Admin.
+Dự án **MASTER TOEIC** cung cấp một số API nội bộ phục vụ cho quá trình đồng bộ lịch sử làm bài, chuyển văn bản thành giọng đọc (TTS) và pipeline quản lý hình ảnh trong trang quản trị Admin.
 
 ---
 

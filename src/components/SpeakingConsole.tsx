@@ -170,7 +170,7 @@ export default function SpeakingConsole({
         const barGap = 3;
         const totalBars = Math.floor(canvas.width / (barWidth + barGap));
         
-        // Use css variable --accent or default to MasterTOEIC gold #BEA45F
+        // Use css variable --accent or default to MASTER TOEIC gold #BEA45F
         ctx.fillStyle = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#BEA45F';
 
         for (let i = 0; i < totalBars; i++) {

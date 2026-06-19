@@ -1,12 +1,12 @@
 # Kiến Trúc Hệ Thống (docs/architecture.md)
 
-Tài liệu này mô tả chi tiết kiến trúc kỹ thuật, mô hình dữ liệu, luồng xử lý âm thanh và tích hợp AI của ứng dụng **MasterToeic S&W**.
+Tài liệu này mô tả chi tiết kiến trúc kỹ thuật, mô hình dữ liệu, luồng xử lý âm thanh và tích hợp AI của ứng dụng **MASTER TOEIC S&W**.
 
 ---
 
 ## 1. Tổng Quan Kiến Trúc (Architecture Overview)
 
-MasterToeic S&W là ứng dụng web serverless hiệu năng cao được xây dựng trên Next.js (App Router), vận hành theo mô hình kết hợp (Hybrid Model):
+MASTER TOEIC S&W là ứng dụng web serverless hiệu năng cao được xây dựng trên Next.js (App Router), vận hành theo mô hình kết hợp (Hybrid Model):
 
 *   **Chế độ Khách (Guest Mode - Offline-First):** Lưu trữ toàn bộ dữ liệu lịch sử thi tại `localStorage`. File âm thanh ghi âm Speaking được duy trì tạm thời dưới dạng Object URL (`blob:`) trên bộ nhớ RAM trình duyệt. Hoàn toàn không phát sinh chi phí truyền tải đám mây.
 *   **Chế độ Đăng nhập (Authenticated Mode - Cloud Sync):** Đồng bộ dữ liệu lịch sử thi lên Supabase Database. Tự động tải các file ghi âm Speaking của người dùng lên Supabase Storage và thiết lập lịch dọn dẹp tự động để tối ưu dung lượng lưu trữ.

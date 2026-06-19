@@ -1,6 +1,6 @@
 # Hướng Dẫn Đóng Góp Ý Kiến & Phát Triển (CONTRIBUTING.md)
 
-Chào mừng bạn đã đến với dự án **Master Toeic**! Chúng tôi vô cùng trân quý và hoan nghênh mọi sự đóng góp của bạn để phát triển ứng dụng này tốt hơn.
+Chào mừng bạn đã đến với dự án **MASTER TOEIC**! Chúng tôi vô cùng trân quý và hoan nghênh mọi sự đóng góp của bạn để phát triển ứng dụng này tốt hơn.
 
 Dưới đây là một số hướng dẫn chi tiết giúp bạn bắt đầu đóng góp cho dự án.
 
@@ -83,4 +83,4 @@ Nếu bạn phát hiện lỗi hoặc muốn đề xuất tính năng mới, hã
 * Ảnh chụp màn hình hoặc log console (nếu có).
 * Môi trường thử nghiệm (Hệ điều hành, Trình duyệt).
 
-Cảm ơn bạn đã đồng hành cùng Master Toeic để nâng cao kỹ năng Nói & Viết cho cộng đồng!
+Cảm ơn bạn đã đồng hành cùng MASTER TOEIC để nâng cao kỹ năng Nói & Viết cho cộng đồng!

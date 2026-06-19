@@ -151,7 +151,7 @@ export default function LoginPage() {
             {isSignUp ? t.signUpTitle : t.loginTitle}
           </h2>
           <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginTop: '4px' }}>
-            Master Toeic - Sync history across all devices.
+            MASTER TOEIC - Sync history across all devices.
           </p>
         </div>
 
