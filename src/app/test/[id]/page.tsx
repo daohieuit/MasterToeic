@@ -803,7 +803,7 @@ export default function TestPage({ params }: { params: Promise<TestParams> }) {
 
         <div className="lobby-grid">
           {/* Left Column: Test Details */}
-          <div className="card-sharp" style={{ background: 'var(--background-secondary)', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          <div className="card-sharp" style={{ background: 'var(--background-secondary)', display: 'flex', flexDirection: 'column', gap: '20px', alignSelf: 'start' }}>
             <h3 style={{ fontSize: '1.2rem', color: 'var(--accent)', borderBottom: '1px solid var(--border)', paddingBottom: '12px' }}>
               {t.lobbyDetails}
             </h3>

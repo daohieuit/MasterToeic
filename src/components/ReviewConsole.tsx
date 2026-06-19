@@ -840,7 +840,7 @@ Bạn BẮT BUỘC phải trả về kết quả dưới dạng một khối mã
         <Link href="/" className="btn-secondary" style={{ textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '8px', padding: '8px 16px' }}>
           <ArrowLeft size={16} /> {t.backDashboard}
         </Link>
-        <div style={{ display: 'flex', gap: '8px' }}>
+        <div style={{ display: 'flex', gap: '8px' }} className="desktop-only">
           <button 
             className="btn-secondary" 
             onClick={handleExportJson}
