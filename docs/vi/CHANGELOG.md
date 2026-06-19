@@ -6,6 +6,14 @@ Tất cả các thay đổi đáng chú ý đối với dự án **MASTER TOEIC*
 
 ---
 
+## [1.0.1] - 2026-06-20
+
+### 🚀 Thay Đổi (Changed)
+* **Kho Ảnh Lưu Trữ Trong CSDL:** Di chuyển kho ảnh TOEIC Speaking & Writing từ lưu trữ file JSON cục bộ (`unused_images.json`/`used_images.json`) sang bảng cơ sở dữ liệu `toeic_images` trên Supabase có cấu hình Row-Level Security (RLS).
+* **Đồng bộ API & CLI:** Cập nhật API route của Admin (`/api/admin/pipeline`) và CLI Script (`pipeline_cli.js`) để đọc/ghi dữ liệu ảnh trực tiếp với cơ sở dữ liệu.
+* **Đồng bộ Dữ liệu & Dọn dẹp:** Chạy script chuyển đổi 124 hình ảnh cũ sang database thành công và làm sạch các file JSON cục bộ.
+* **Tài liệu Quy trình:** Cập nhật tài liệu quy trình hình ảnh (`IMAGE_WORKFLOW.md`) để bám sát mô hình kiến trúc lưu trữ database mới.
+
 ## [1.0.0] - 2026-06-19
 
 ### 🎉 Đã Thêm (Added)

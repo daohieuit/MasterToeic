@@ -21,11 +21,10 @@ Tất cả các tệp tin quản lý hình ảnh được đặt trong các thư
 4. 📝 **`workspace/paste_ai_here.txt` (File Dán Kết Quả AI)**:
    * Chỗ dán khối JSON (dạng mảng) phản hồi từ Gemini Web.
 
-5. 📂 **`data/unused_images.json` (Kho ảnh sẵn sàng - Chưa sử dụng)**:
-   * CSDL cục bộ lưu các ảnh đã có mô tả hoàn chỉnh để hệ thống bốc ngán vào đề thi mới.
-
-6. 📂 **`data/used_images.json` (Kho ảnh đã sử dụng)**:
-   * Lưu lịch sử những ảnh đã được gán vào đề thi để đảm bảo không bị trùng lặp.
+5. 🗄️ **Bảng `toeic_images` trên Supabase (Kho ảnh dự án)**:
+   * Được lưu trữ tập trung trên database Supabase để dùng cho cả môi trường Local lẫn Production.
+   * Cột `is_used` (boolean) phân biệt ảnh đã gán vào đề thi (`true`) hay chưa dùng (`false`), đảm bảo không có sự trùng lặp.
+   * Các tệp tin cục bộ `data/unused_images.json` và `data/used_images.json` đã được dọn sạch về `[]` và không còn sử dụng.
 
 ---
 
@@ -77,7 +76,7 @@ Do đó, mô tả của AI cần phải bao quát từ tổng quát đến chi t
    ```bash
    node image_pipeline/scripts/pipeline_cli.js parse
    ```
-   * **Kết quả**: Script sẽ trích xuất khối JSON từ file dán, thêm mới các hình ảnh vào file CSDL [unused_images.json](file:///d:/Workspace/MasterToeic/image_pipeline/data/unused_images.json) (không trùng lặp), tự động xóa các link tương ứng khỏi [imgbb_links.txt](file:///d:/Workspace/MasterToeic/image_pipeline/workspace/imgbb_links.txt) và dọn sạch file [paste_ai_here.txt](file:///d:/Workspace/MasterToeic/image_pipeline/workspace/paste_ai_here.txt) để sẵn sàng cho lần tiếp theo.
+   * **Kết quả**: Script sẽ trích xuất khối JSON từ file dán, lưu trực tiếp các hình ảnh mới vào bảng `toeic_images` trên Supabase (không trùng lặp), tự động xóa các link tương ứng khỏi [imgbb_links.txt](file:///d:/Workspace/MasterToeic/image_pipeline/workspace/imgbb_links.txt) và dọn sạch file [paste_ai_here.txt](file:///d:/Workspace/MasterToeic/image_pipeline/workspace/paste_ai_here.txt) để sẵn sàng cho lần tiếp theo.
 
 ---
 

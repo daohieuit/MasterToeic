@@ -10,7 +10,8 @@ This security policy applies to the following active versions of the project:
 
 | Version | Supported |
 | :--- | :---: |
-| v1.0.0 (Current) | ✅ Supported |
+| v1.0.1 (Current) | ✅ Supported |
+| v1.0.0 | ✅ Supported |
 | < v1.0.0 (Beta drafts) | ❌ Unsupported |
 
 ---
