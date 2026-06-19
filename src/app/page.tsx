@@ -498,7 +498,7 @@ export default function Dashboard() {
                 {t.noHistory}
               </p>
             ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', maxHeight: '320px', overflowY: 'auto' }} className="no-scrollbar">
+              <div className="history-list no-scrollbar">
                 {history.map((h) => (
                   <div 
                     key={h.id} 
