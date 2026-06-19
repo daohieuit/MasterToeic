@@ -503,28 +503,84 @@ export default function Dashboard() {
                   <div 
                     key={h.id} 
                     style={{ 
-                      padding: '12px', 
+                      padding: '16px', 
                       border: '1px solid var(--border)', 
-                      background: 'var(--background)',
+                      background: 'var(--background-secondary)',
                       display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center'
+                      flexDirection: 'column',
+                      gap: '12px',
+                      position: 'relative',
+                      transition: 'border-color 0.2s ease, transform 0.2s ease',
+                      borderRadius: '0px'
                     }}
+                    className="card-sharp"
                   >
-                    <div>
-                      <h4 style={{ fontSize: '0.85rem', marginBottom: '4px' }} className="no-scrollbar">{h.testTitle}</h4>
-                      <span style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>{h.date}</span>
-                      <span style={{ fontSize: '0.7rem', color: 'var(--accent)', marginLeft: '8px', fontWeight: 'bold' }}>
-                        {h.mode.toUpperCase()} {h.partName ? `- Part ${h.partName}` : ''}
-                      </span>
-                    </div>
-                    <div style={{ display: 'flex', gap: '6px', alignItems: 'center' }}>
-                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', fontSize: '0.8rem', fontFamily: 'var(--font-mono)', fontWeight: 'bold' }}>
-                        {h.speakingScore !== null && <span style={{ color: 'var(--accent)' }}>Sp: {h.speakingScore}</span>}
-                        {h.writingScore !== null && <span style={{ color: 'var(--success)' }}>Wr: {h.writingScore}</span>}
+                    {/* Top Row: Title & Meta */}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: '12px' }}>
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <h4 
+                          style={{ 
+                            fontSize: '0.9rem', 
+                            fontWeight: 'bold', 
+                            color: 'var(--text-primary)',
+                            whiteSpace: 'nowrap',
+                            overflow: 'hidden',
+                            textOverflow: 'ellipsis'
+                          }} 
+                          title={h.testTitle}
+                        >
+                          {h.testTitle}
+                        </h4>
+                        <div style={{ display: 'flex', gap: '8px', alignItems: 'center', marginTop: '4px', flexWrap: 'wrap' }}>
+                          <span style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>{h.date}</span>
+                          <span style={{ width: '3px', height: '3px', borderRadius: '50%', background: 'var(--border)' }} />
+                          <span style={{ fontSize: '0.7rem', color: 'var(--accent)', fontWeight: 'bold' }}>
+                            {h.mode.toUpperCase()} {h.partName ? `#${h.partName}` : ''}
+                          </span>
+                        </div>
                       </div>
-                      <Link href={`/test/${h.testId}/review?attemptId=${h.id}`} style={{ color: 'var(--text-primary)', textDecoration: 'none', padding: '4px 8px', border: '1px solid var(--border)', fontSize: '0.75rem', background: 'var(--background-secondary)' }}>
-                        Detail
+                    </div>
+
+                    {/* Bottom Row: Score Badges & Review Button */}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px dashed var(--border)', paddingTop: '10px' }}>
+                      {/* Scores */}
+                      <div style={{ display: 'flex', gap: '12px' }}>
+                        {(h.mode === 'full' || h.mode === 'speaking') && (
+                          <div style={{ display: 'flex', flexDirection: 'column' }}>
+                            <span style={{ fontSize: '0.65rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Speaking</span>
+                            <span style={{ fontSize: '0.9rem', fontWeight: 'bold', color: 'var(--accent)', fontFamily: 'var(--font-mono)' }}>
+                              {h.speakingScore !== null ? h.speakingScore : (language === 'vi' ? 'Chờ chấm' : 'Grading')}
+                            </span>
+                          </div>
+                        )}
+
+                        {(h.mode === 'full' || h.mode === 'writing') && (
+                          <div style={{ display: 'flex', flexDirection: 'column' }}>
+                            <span style={{ fontSize: '0.65rem', color: 'var(--text-secondary)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Writing</span>
+                            <span style={{ fontSize: '0.9rem', fontWeight: 'bold', color: 'var(--success)', fontFamily: 'var(--font-mono)' }}>
+                              {h.writingScore !== null ? h.writingScore : (language === 'vi' ? 'Chờ chấm' : 'Grading')}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Detail Link */}
+                      <Link 
+                        href={`/test/${h.testId}/review?attemptId=${h.id}`} 
+                        className="btn-secondary" 
+                        style={{ 
+                          padding: '6px 12px', 
+                          fontSize: '0.75rem', 
+                          textDecoration: 'none',
+                          background: 'var(--background)',
+                          fontWeight: 'bold',
+                          display: 'inline-flex',
+                          alignItems: 'center',
+                          gap: '4px',
+                          borderRadius: '0px'
+                        }}
+                      >
+                        {language === 'vi' ? 'Chi tiết' : 'Review'} <ArrowRight size={12} />
                       </Link>
                     </div>
                   </div>
@@ -603,7 +659,7 @@ export default function Dashboard() {
                 <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 'bold', color: 'var(--text-secondary)' }}>
                   {language === 'vi' ? 'TÀI KHOẢN' : 'ACCOUNT'}
                 </label>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 12px', background: 'var(--background)', border: '1px solid var(--border)', width: '100%' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '4px 0', width: '100%' }}>
                   <User size={16} style={{ color: 'var(--accent)' }} />
                   <span style={{ fontSize: '0.85rem', fontWeight: 'bold', color: 'var(--text-primary)', wordBreak: 'break-all' }}>{user.email}</span>
                 </div>
