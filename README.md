@@ -4,6 +4,10 @@
 
 # MASTER TOEIC - AI-Powered TOEIC Speaking & Writing Practice Platform
 
+<p align="center">
+  <b>English</b> | <b><a href="./docs/vi/README.md">Tiếng Việt</a></b>
+</p>
+
 MASTER TOEIC is a minimalist, highly efficient, and completely free (zero operational cost) serverless web application designed to help users practice and take mock tests for both the Speaking and Writing sections under the official international TOEIC format.
 
 The system supports a **Free Self-Grading Workflow via Gemini Web**, which is secure, privacy-friendly, and requires no API keys or proxy servers.

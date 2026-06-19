@@ -4,6 +4,10 @@
 
 # MASTER TOEIC - Luyện Thi TOEIC Speaking & Writing Bằng AI
 
+<p align="center">
+  <b><a href="../../README.md">English</a></b> | <b>Tiếng Việt</b>
+</p>
+
 MASTER TOEIC là ứng dụng web serverless tối giản, hiệu quả và hoàn toàn miễn phí (0đ chi phí vận hành) hỗ trợ ôn luyện và thi thử hai kỹ năng Nói (Speaking) và Viết (Writing) theo chuẩn định dạng TOEIC quốc tế. 
 
 Hệ thống hỗ trợ cơ chế **Tự chấm điểm bằng Gemini Web** hoàn toàn miễn phí, an toàn và bảo mật riêng tư, không cần cài đặt hay duy trì bất kỳ API Key hoặc máy chủ proxy nào.
@@ -77,13 +81,15 @@ Hệ thống hỗ trợ cơ chế **Tự chấm điểm bằng Gemini Web** hoà
 ## 📄 Tài Liệu Chi Tiết (Docs)
 
 Hệ thống tài liệu hướng dẫn chi tiết nằm trong thư mục `/docs/`:
-*   [Yêu cầu Sản phẩm (PRD)](./docs/PRD.md): Mục tiêu, đối tượng, và luồng tính năng.
-*   [Hệ thống Thiết kế (DESIGN)](./docs/DESIGN.md): UI/UX, biến CSS, quy tắc thiết kế.
-*   [Kiến trúc Hệ thống (ARCHITECTURE)](./docs/architecture.md): Mô hình dữ liệu, luồng Audio và hoạt động của Cron Job.
-*   [Cấu trúc Database (SQL)](./supabase/migrations/20260613000000_init_schema.sql): Mã lệnh SQL khởi tạo bảng trên Supabase.
-*   [Thiết lập Storage (SQL)](./supabase/migrations/20260618000000_setup_storage.sql): Mã lệnh SQL cấu hình Storage Bucket và RLS cho file ghi âm.
-*   [Cấu trúc Đề thi TOEIC S&W](./docs/toeic_format.md): Mô tả chi tiết thời gian và luật thi của các Part.
-*   [Hướng dẫn Triển khai Vercel](./docs/deployment.md): Hướng dẫn deploy miễn phí lên Vercel.
+*   [Yêu cầu Sản phẩm (PRD)](../PRD.md): Mục tiêu, đối tượng, và luồng tính năng.
+*   [Hệ thống Thiết kế (DESIGN)](../DESIGN.md): UI/UX, biến CSS, quy tắc thiết kế.
+*   [Kiến trúc Hệ thống (ARCHITECTURE)](../architecture.md): Mô hình dữ liệu, luồng Audio và hoạt động của Cron Job.
+*   [Cấu trúc Database (SQL)](../../supabase/migrations/20260613000000_init_schema.sql): Mã lệnh SQL khởi tạo bảng trên Supabase.
+*   [Thiết lập Storage (SQL)](../../supabase/migrations/20260618000000_setup_storage.sql): Mã lệnh SQL cấu hình Storage Bucket và RLS cho file ghi âm.
+*   [Cấu trúc Đề thi TOEIC S&W](../toeic_format.md): Mô tả chi tiết thời gian và luật thi của các Part.
+*   [Hướng Dẫn Bắt Đầu Phát Triển](../getting-started.md): Hướng dẫn thiết lập môi trường cục bộ và deploy lên Vercel.
+*   [Các Câu Hỏi Thường Gặp (FAQ)](../faq.md): Các câu hỏi thường gặp khi vận hành.
+*   [Đặc Tả API Hệ Thống](../api-reference.md): Tài liệu đặc tả các API endpoints nội bộ.
 
 ---
 
