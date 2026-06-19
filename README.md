@@ -102,3 +102,6 @@ To maintain a zero operating cost structure, MASTER TOEIC supports a free, web-b
 3.  **Copy Prompt:** Click **"Copy Prompt"** to copy the detailed grading criteria in Vietnamese.
 4.  **Submit to Gemini Web:** Open [Gemini Web](https://gemini.google.com), attach the JSON and WAV files, paste the prompt, and send.
 5.  **Apply Results:** Copy the JSON evaluation block returned by Gemini, paste it into the JSON text area on MASTER TOEIC, and click **"Apply Result"**. The screen will immediately render your radar chart, subscores, and grammar corrections.
+
+---
+Designed by **DaoHieuIT** (and maybe a little bit of AI) in 2026.
