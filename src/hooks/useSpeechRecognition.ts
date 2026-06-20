@@ -2,6 +2,7 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 
 export function useSpeechRecognition() {
   const [transcript, setTranscript] = useState('');
+  const [interimTranscript, setInterimTranscript] = useState('');
   const [isListening, setIsListening] = useState(false);
   const recognitionRef = useRef<any>(null);
 
@@ -28,14 +29,18 @@ export function useSpeechRecognition() {
 
     recognition.onresult = (event: any) => {
       let finalTranscript = '';
+      let currentInterim = '';
       for (let i = event.resultIndex; i < event.results.length; ++i) {
         if (event.results[i].isFinal) {
           finalTranscript += event.results[i][0].transcript + ' ';
+        } else {
+          currentInterim += event.results[i][0].transcript;
         }
       }
       if (finalTranscript) {
         setTranscript((prev) => prev + finalTranscript);
       }
+      setInterimTranscript(currentInterim);
     };
 
     recognition.onerror = (event: any) => {
@@ -61,6 +66,7 @@ export function useSpeechRecognition() {
       isListeningRef.current = false;
     }
     setTranscript('');
+    setInterimTranscript('');
     try {
       recognitionRef.current.start();
       isListeningRef.current = true;
@@ -75,14 +81,20 @@ export function useSpeechRecognition() {
         recognitionRef.current.stop();
       } catch (err) {
         console.error('Error stopping recognition:', err);
+        // Fallback in case stop() fails
+        setIsListening(false);
+        isListeningRef.current = false;
       }
-      setIsListening(false);
-      isListeningRef.current = false;
+      // DO NOT set isListening to false here on success. 
+      // Let the onend event handle it so we wait for the final STT chunks.
     }
   }, []);
 
+  const fullTranscript = `${transcript} ${interimTranscript}`.trim();
+
   return {
     transcript,
+    fullTranscript,
     setTranscript,
     isListening,
     startListening,

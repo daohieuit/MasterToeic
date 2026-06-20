@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useApp } from '@/context/AppContext';
 import { supabase } from '@/utils/supabase';
 import toast from 'react-hot-toast';
@@ -25,6 +26,8 @@ export default function Dashboard() {
   const [showConfig, setShowConfig] = useState(false);
   const [filter, setFilter] = useState<'all' | 'full' | 'speaking' | 'writing'>('all');
   const [activeMobileTab, setActiveMobileTab] = useState<'tests' | 'history'>('tests');
+  const [navigatingId, setNavigatingId] = useState<string | null>(null);
+  const router = useRouter();
   
   // Custom tests uploaded by admin (saved in database or localStorage)
   const [customTests, setCustomTests] = useState<any[]>([]);
@@ -400,13 +403,24 @@ export default function Dashboard() {
                         
                       </div>
 
-                      <Link
-                        href={`/test/${test.id}`}
+                      <button
+                        onClick={() => {
+                          setNavigatingId(test.id);
+                          router.push(`/test/${test.id}`);
+                        }}
                         className="btn-primary"
+                        disabled={navigatingId === test.id}
                         style={{ textDecoration: 'none', justifyContent: 'center', width: '100%', padding: '10px' }}
                       >
-                        {t.practiceBtn}
-                      </Link>
+                        {navigatingId === test.id ? (
+                          <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                            <Loader className="animate-spin" size={16} />
+                            {language === 'vi' ? 'Đang vào...' : 'Loading...'}
+                          </span>
+                        ) : (
+                          t.practiceBtn
+                        )}
+                      </button>
                     </div>
                   );
                 })}
@@ -565,9 +579,13 @@ export default function Dashboard() {
                       </div>
 
                       {/* Detail Link */}
-                      <Link 
-                        href={`/test/${h.testId}/review?attemptId=${h.id}`} 
+                      <button 
+                        onClick={() => {
+                          setNavigatingId(`review-${h.id}`);
+                          router.push(`/test/${h.testId}/review?attemptId=${h.id}`);
+                        }}
                         className="btn-secondary" 
+                        disabled={navigatingId === `review-${h.id}`}
                         style={{ 
                           padding: '6px 12px', 
                           fontSize: '0.75rem', 
@@ -580,8 +598,14 @@ export default function Dashboard() {
                           borderRadius: '0px'
                         }}
                       >
-                        {language === 'vi' ? 'Chi tiết' : 'Review'} <ArrowRight size={12} />
-                      </Link>
+                        {navigatingId === `review-${h.id}` ? (
+                          <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                            <Loader className="animate-spin" size={12} />
+                          </span>
+                        ) : (
+                          <>{language === 'vi' ? 'Chi tiết' : 'Review'} <ArrowRight size={12} /></>
+                        )}
+                      </button>
                     </div>
                   </div>
                 ))}

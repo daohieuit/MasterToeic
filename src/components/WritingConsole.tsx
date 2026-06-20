@@ -56,6 +56,7 @@ export default function WritingConsole({
   const activeQ = groupQuestions[subIdx];
   const [answers, setAnswers] = useState<string[]>(Array(groupQuestions.length).fill(''));
   const [timeLeft, setTimeLeft] = useState(duration);
+  const [pendingSubmit, setPendingSubmit] = useState(false);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const handleNextRef = useRef<() => void>(() => {});
 
@@ -108,7 +109,11 @@ export default function WritingConsole({
   }, [timeLeft, imageLoaded]);
 
   const handleSubmit = () => {
-    handleNextRef.current();
+    setPendingSubmit(true);
+    setTimeout(() => {
+      handleNextRef.current();
+      setPendingSubmit(false); // Reset in case component isn't unmounted immediately
+    }, 50);
   };
 
   // Helpers
@@ -315,8 +320,16 @@ export default function WritingConsole({
         <button 
           className="btn-accent writing-submit-btn" 
           onClick={handleSubmit}
+          disabled={pendingSubmit}
         >
-          {t.submit}
+          {pendingSubmit ? (
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '8px' }}>
+              <span className="animate-spin" style={{ width: '16px', height: '16px', border: '2px solid var(--background)', borderTopColor: 'transparent', borderRadius: '50%' }} />
+              {language === 'vi' ? 'Đang xử lý...' : 'Processing...'}
+            </span>
+          ) : (
+            t.submit
+          )}
         </button>
       </div>
 

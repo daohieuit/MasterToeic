@@ -278,6 +278,7 @@ export default function ReviewConsole({
   const [localReviews, setLocalReviews] = useState<QuestionReview[]>(reviews);
   const [mergingAudio, setMergingAudio] = useState(false);
   const [mergeProgress, setMergeProgress] = useState(0);
+  const [isApplying, setIsApplying] = useState(false);
   const speakingCount = localReviews.filter(r => r.section === 'speaking' && r.audioUrl).length;
 
   const getPromptTemplate = (title: string, revs: any[]) => {
@@ -434,7 +435,9 @@ Bạn BẮT BUỘC phải trả về kết quả dưới dạng một khối mã
       return;
     }
 
-    try {
+    setIsApplying(true);
+    setTimeout(async () => {
+      try {
       let cleaned = pastedJson.trim();
       if (cleaned.startsWith('```')) {
         cleaned = cleaned.replace(/^```json\s*/i, '').replace(/```$/, '');
@@ -533,6 +536,8 @@ Bạn BẮT BUỘC phải trả về kết quả dưới dạng một khối mã
       console.error(e);
       toast.error(language === 'vi' ? 'Lỗi phân tích JSON. Vui lòng kiểm tra lại định dạng dán vào!' : 'JSON parsing error. Please check the format!');
     }
+    setIsApplying(false);
+    }, 50);
   };
 
   const handleExportAudio = async () => {
@@ -999,9 +1004,17 @@ Bạn BẮT BUỘC phải trả về kết quả dưới dạng một khối mã
               <button 
                 className="btn-primary" 
                 onClick={handleApplyJson}
+                disabled={isApplying}
                 style={{ width: '100%', padding: '8px', fontSize: '0.85rem', background: 'var(--accent)', color: '#fff', border: 'none', fontWeight: 'bold', display: 'flex', justifyContent: 'center', alignItems: 'center' }}
               >
-                {language === 'vi' ? 'Áp dụng kết quả' : 'Apply Results'}
+                {isApplying ? (
+                  <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span className="animate-spin" style={{ width: '14px', height: '14px', border: '2px solid #fff', borderTopColor: 'transparent', borderRadius: '50%' }} />
+                    {language === 'vi' ? 'Đang áp dụng...' : 'Applying...'}
+                  </span>
+                ) : (
+                  language === 'vi' ? 'Áp dụng kết quả' : 'Apply Results'
+                )}
               </button>
             </div>
           </div>

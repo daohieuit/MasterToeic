@@ -6,6 +6,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ---
 
+## [1.0.4] - 2026-06-20
+
+### 🛠️ Fixed
+* **UI Responsiveness:** Improved UI responsiveness across the application. Converted `<Link>` tags to `<button>` with `router.push()` for heavy navigation actions (e.g., Practice Now, Review, Edit Test) to allow rendering a local Loading spinner before the main thread blocks.
+* **Loading States:** Added explicit `isApplying`, `isDeletingId`, and `isCheckingImages` states to administrative and review buttons to prevent double-clicking and provide immediate visual feedback.
+* **Speaking STT Fallback:** Refactored the Speech-to-Text hook (`useSpeechRecognition.ts`) and `SpeakingConsole.tsx` to delay the auto-submission of the recording by up to 5 seconds. This captures the final `interimTranscript` chunks, fixing the issue where the final spoken words were being cut off.
+
 ## [1.0.3] - 2026-06-20
 
 ### 🚀 Changed

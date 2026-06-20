@@ -47,6 +47,7 @@ export default function TestPage({ params }: { params: Promise<TestParams> }) {
   const [loading, setLoading] = useState(true);
   const [evaluating, setEvaluating] = useState(false);
   const [evalProgress, setEvalProgress] = useState(0);
+  const [isStarting, setIsStarting] = useState(false);
 
   // Exam flow states
   const [questions, setQuestions] = useState<any[]>([]);
@@ -466,7 +467,10 @@ export default function TestPage({ params }: { params: Promise<TestParams> }) {
         setCurrentIdx((prev) => prev + 1);
       }
     } else {
-      evaluateTest(newAnswers);
+      setEvaluating(true);
+      setTimeout(() => {
+        evaluateTest(newAnswers);
+      }, 50);
     }
   };
 
@@ -766,18 +770,21 @@ export default function TestPage({ params }: { params: Promise<TestParams> }) {
 
   if (!isStarted && !attemptId) {
     const handleStartExam = () => {
-      const params = new URLSearchParams();
-      params.set('started', 'true');
-      params.set('mode', lobbyMode);
-      if (lobbyMode === 'part') {
-        params.set('skill', lobbySkill);
-        params.set('parts', lobbyParts.join(','));
-      }
-      params.set('customTime', lobbyCustomTime.toString());
-      params.set('spMult', lobbySpMult.toString());
-      params.set('wrMult', lobbyWrMult.toString());
-      
-      router.replace(`/test/${testId}?${params.toString()}`);
+      setIsStarting(true);
+      setTimeout(() => {
+        const params = new URLSearchParams();
+        params.set('started', 'true');
+        params.set('mode', lobbyMode);
+        if (lobbyMode === 'part') {
+          params.set('skill', lobbySkill);
+          params.set('parts', lobbyParts.join(','));
+        }
+        params.set('customTime', lobbyCustomTime.toString());
+        params.set('spMult', lobbySpMult.toString());
+        params.set('wrMult', lobbyWrMult.toString());
+        
+        router.replace(`/test/${testId}?${params.toString()}`);
+      }, 50);
     };
 
     return (
@@ -1201,9 +1208,17 @@ export default function TestPage({ params }: { params: Promise<TestParams> }) {
             <button 
               className="btn-accent" 
               onClick={handleStartExam}
+              disabled={isStarting}
               style={{ width: '100%', justifyContent: 'center', padding: '14px', fontSize: '1.05rem', fontWeight: 'bold', marginTop: '12px' }}
             >
-              {t.lobbyStart} &rarr;
+              {isStarting ? (
+                <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <Loader className="animate-spin" size={18} />
+                  {language === 'vi' ? 'Đang chuẩn bị...' : 'Starting...'}
+                </span>
+              ) : (
+                <>{t.lobbyStart} &rarr;</>
+              )}
             </button>
           </div>
         </div>

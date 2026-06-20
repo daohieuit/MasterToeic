@@ -266,6 +266,9 @@ export default function ManageTestsPage() {
   const [filter, setFilter] = useState<'all' | 'full' | 'speaking' | 'writing'>('all');
   const [imageStatuses, setImageStatuses] = useState<Record<string, 'ok' | 'missing' | 'broken'>>({});
   const [activeTooltip, setActiveTooltip] = useState<string | null>(null);
+  const [isCheckingImages, setIsCheckingImages] = useState(false);
+  const [isNavigatingId, setIsNavigatingId] = useState<string | null>(null);
+  const [isDeletingId, setIsDeletingId] = useState<string | null>(null);
 
   // Validate images of all tests
   const validateAllImages = useCallback(async (testList: TestData[], force: boolean = false) => {
@@ -293,6 +296,7 @@ export default function ManageTestsPage() {
       } catch (e) {}
     }
 
+    setIsCheckingImages(true);
     // Async background validation
     await Promise.all(
       testList.map(async (test) => {
@@ -301,6 +305,7 @@ export default function ManageTestsPage() {
       })
     );
     setImageStatuses({ ...newStatuses });
+    setIsCheckingImages(false);
   }, []);
 
   // Fetch all custom tests
@@ -378,6 +383,7 @@ export default function ManageTestsPage() {
     );
     if (!confirmDelete) return;
 
+    setIsDeletingId(testId);
     if (user && supabase) {
       try {
         const { error } = await supabase
@@ -407,6 +413,7 @@ export default function ManageTestsPage() {
         }
       }
     }
+    setIsDeletingId(null);
   };
 
   // Filtered tests (by section type and search query)
@@ -445,10 +452,17 @@ export default function ManageTestsPage() {
           <button 
             className="btn-secondary"
             onClick={() => validateAllImages(tests, true)}
+            disabled={isCheckingImages}
             style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '10px 16px', borderRadius: '0px', height: '100%' }}
             title={language === 'vi' ? 'Kiểm tra lại toàn bộ ảnh (Xóa cache)' : 'Re-check all images (Clear cache)'}
           >
-            <RefreshCw size={18} /> <span className="desktop-only">{language === 'vi' ? 'Kiểm tra lại ảnh' : 'Recheck Images'}</span>
+            {isCheckingImages ? <Loader2 size={18} className="animate-spin" /> : <RefreshCw size={18} />}
+            <span className="desktop-only">
+              {isCheckingImages 
+                ? (language === 'vi' ? 'Đang kiểm tra...' : 'Checking...') 
+                : (language === 'vi' ? 'Kiểm tra lại ảnh' : 'Recheck Images')
+              }
+            </span>
           </button>
         </div>
 
@@ -659,9 +673,13 @@ export default function ManageTestsPage() {
 
                   {/* Card Actions */}
                   <div style={{ display: 'flex', gap: '12px', borderTop: '1px solid var(--border)', paddingTop: '12px', marginTop: '4px' }}>
-                    <Link
-                      href={`/admin/tests/edit/${test.id}`}
+                    <button
+                      onClick={() => {
+                        setIsNavigatingId(test.id);
+                        router.push(`/admin/tests/edit/${test.id}`);
+                      }}
                       className="btn-primary" 
+                      disabled={isNavigatingId === test.id}
                       style={{ 
                         flex: 1, 
                         justifyContent: 'center', 
@@ -677,11 +695,17 @@ export default function ManageTestsPage() {
                         gap: '6px'
                       }}
                     >
-                      <Edit2 size={14} /> <span>{language === 'vi' ? 'Chỉnh sửa' : 'Edit'}</span>
-                    </Link>
+                      {isNavigatingId === test.id ? (
+                        <Loader2 size={14} className="animate-spin" />
+                      ) : (
+                        <Edit2 size={14} />
+                      )}
+                      <span>{language === 'vi' ? 'Chỉnh sửa' : 'Edit'}</span>
+                    </button>
                     <button 
                       onClick={() => handleDeleteTest(test.id, test.title)}
                       className="btn-secondary" 
+                      disabled={isDeletingId === test.id}
                       style={{ 
                         padding: '6px 12px', 
                         fontSize: '0.85rem', 
@@ -693,7 +717,11 @@ export default function ManageTestsPage() {
                         borderRadius: '0px'
                       }}
                     >
-                      <Trash2 size={14} />
+                      {isDeletingId === test.id ? (
+                        <Loader2 size={14} className="animate-spin" />
+                      ) : (
+                        <Trash2 size={14} />
+                      )}
                     </button>
                   </div>
                 </div>

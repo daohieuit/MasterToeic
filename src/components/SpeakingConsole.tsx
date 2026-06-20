@@ -45,7 +45,7 @@ export default function SpeakingConsole({
   language
 }: SpeakingConsoleProps) {
   const { isRecording, audioUrl, startRecording, stopRecording, stream } = useAudioRecorder();
-  const { transcript, isListening, startListening, stopListening, isSupported } = useSpeechRecognition();
+  const { fullTranscript, isListening, startListening, stopListening, isSupported } = useSpeechRecognition();
   
   // Set limits based on time multiplier (999 means infinite)
   const isInfinite = timeMultiplier > 100;
@@ -215,15 +215,16 @@ export default function SpeakingConsole({
 
   // Handle submission when recording finally stops and audioUrl is ready
   useEffect(() => {
-    if (pendingSubmit && !isRecording && audioUrl) {
+    // Wait for both recording and speech recognition to finish
+    if (pendingSubmit && !isRecording && audioUrl && !isListening) {
       if (submitTimeoutRef.current) {
         clearTimeout(submitTimeoutRef.current);
         submitTimeoutRef.current = null;
       }
-      onNext(transcript || '(No speech recorded)', audioUrl);
+      onNext(fullTranscript || '(No speech recorded)', audioUrl);
       setPendingSubmit(false);
     }
-  }, [pendingSubmit, isRecording, audioUrl, transcript, onNext]);
+  }, [pendingSubmit, isRecording, audioUrl, isListening, fullTranscript, onNext]);
 
   // Clean up timeout on unmount
   useEffect(() => {
@@ -233,22 +234,28 @@ export default function SpeakingConsole({
   }, []);
 
   const handleSubmit = () => {
-    if (isRecording) {
+    if (isRecording || isListening) {
       setPendingSubmit(true);
-      handleStopRecording();
+      if (isRecording) {
+        handleStopRecording();
+      } else if (isListening && isSupported) {
+        stopListening();
+      }
       
       if (submitTimeoutRef.current) clearTimeout(submitTimeoutRef.current);
       submitTimeoutRef.current = setTimeout(() => {
         setPendingSubmit((stillPending) => {
           if (stillPending) {
-            onNext(transcript || '(No speech recorded)', null);
+            // Note: fullTranscript in setTimeout closure might be slightly stale
+            // but the useEffect above will usually catch it first anyway.
+            onNext(fullTranscript || '(No speech recorded)', audioUrl);
             return false;
           }
           return stillPending;
         });
-      }, 1000);
+      }, 5000);
     } else {
-      onNext(transcript || '(No speech recorded)', audioUrl);
+      onNext(fullTranscript || '(No speech recorded)', audioUrl);
     }
   };
 
@@ -418,10 +425,10 @@ export default function SpeakingConsole({
               <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Processing your recording...</p>
             )}
             
-            {transcript && (
+            {fullTranscript && (
               <div style={{ marginTop: '12px', borderTop: '1px dashed var(--border)', paddingTop: '12px' }}>
                 <p style={{ fontSize: '0.8rem', fontWeight: 'bold', color: 'var(--text-secondary)', marginBottom: '4px' }}>Speech Transcription:</p>
-                <p style={{ fontSize: '0.9rem', fontStyle: 'italic' }}>&ldquo;{transcript}&rdquo;</p>
+                <p style={{ fontSize: '0.9rem', fontStyle: 'italic' }}>&ldquo;{fullTranscript}&rdquo;</p>
               </div>
             )}
           </div>

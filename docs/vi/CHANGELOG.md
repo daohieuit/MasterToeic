@@ -6,6 +6,13 @@ Tất cả các thay đổi đáng chú ý đối với dự án **MASTER TOEIC*
 
 ---
 
+## [1.0.4] - 2026-06-20
+
+### 🛠️ Đã Sửa (Fixed)
+* **Độ Phản Hồi Giao Diện (UI Responsiveness):** Cải thiện độ phản hồi mượt mà trên toàn ứng dụng. Chuyển đổi các thẻ `<Link>` thành `<button>` kết hợp `router.push()` cho các tác vụ điều hướng nặng (VD: Bắt đầu làm bài, Xem chi tiết, Sửa đề) nhằm hiển thị vòng xoay Loading tức thì trước khi trình duyệt bị block để tải trang.
+* **Trạng Thái Tải (Loading States):** Bổ sung các state `isApplying`, `isDeletingId`, và `isCheckingImages` cho các nút bấm tác vụ quản trị và nhận xét, giúp ngăn chặn việc nhấp đúp và báo hiệu rõ ràng cho người dùng.
+* **Sửa Lỗi Mất Chữ STT Speaking:** Viết lại luồng xử lý của `useSpeechRecognition.ts` và `SpeakingConsole.tsx` để trì hoãn tự động nộp bài tối đa 5 giây sau khi kết thúc. Điều này cho phép API bắt nốt các đoạn `interimTranscript` cuối cùng, khắc phục lỗi mất chữ đuôi ở câu cuối cùng của người dùng.
+
 ## [1.0.1] - 2026-06-20
 
 ### 🚀 Thay Đổi (Changed)
